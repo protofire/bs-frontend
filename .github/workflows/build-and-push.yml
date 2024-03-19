@@ -1,0 +1,38 @@
+on:
+  push:
+    branches:
+      - 'staging-harmony'
+
+name: Docker build and push
+
+jobs:
+  push:
+    name: Docker build and push
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v3
+
+      - name: Configure AWS credentials
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          aws-access-key-id: ${{ secrets.STG_AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.STG_AWS_SECRET_ACCESS_KEY }}
+          aws-region: us-east-1
+
+      - name: Login to AWS ECR
+        id: login-ecr
+        uses: aws-actions/amazon-ecr-login@v2
+
+      - name: Prepare image tag
+        shell: bash
+        run: |
+          echo "IMAGE_TAG=$(git rev-parse --short "$GITHUB_SHA")" >> "$GITHUB_ENV"
+
+      - name: Build and push
+        env:
+          AWS_ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
+          AWS_ECR_REPOSITORY: bs-frontend
+        run: |
+          docker build -t $AWS_ECR_REGISTRY/$AWS_ECR_REPOSITORY:${{ env.IMAGE_TAG }} -t $AWS_ECR_REGISTRY/$AWS_ECR_REPOSITORY:latest --build-arg GIT_COMMIT_SHA=${{ env.IMAGE_TAG }} --build-arg GIT_TAG=${{ github.ref_type == 'tag' && github.ref_name || '' }} -f Dockerfile .
+          docker push $AWS_ECR_REGISTRY/$AWS_ECR_REPOSITORY --all-tags
