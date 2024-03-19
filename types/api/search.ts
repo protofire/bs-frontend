@@ -1,5 +1,7 @@
 import type { TokenType } from 'types/api/token';
 
+import type { Shard } from 'configs/app/features/search';
+
 export type SearchResultType = 'token' | 'address' | 'block' | 'transaction' | 'contract';
 
 export interface SearchResultToken {
@@ -68,8 +70,18 @@ export interface SearchResultUserOp {
   url?: string; // not used by the frontend, we build the url ourselves
 }
 
-export type SearchResultItem = SearchResultToken | SearchResultAddressOrContract | SearchResultBlock | SearchResultTx | SearchResultLabel | SearchResultUserOp |
-SearchResultBlob;
+export type SearchResultItem = (
+  SearchResultToken | SearchResultAddressOrContract | SearchResultBlock | SearchResultTx | SearchResultLabel | SearchResultUserOp | SearchResultBlob) & {
+  shard?: Shard;
+};
+
+export type MiltishardSearchResults = {
+  [shard: string]: {
+    data: Array<SearchResultItem>;
+    status: number;
+    elapsed_secs: number;
+  };
+}
 
 export interface SearchResult {
   items: Array<SearchResultItem>;

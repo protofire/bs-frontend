@@ -562,6 +562,10 @@ export const RESOURCES = {
   },
 
   // SEARCH
+  quick_multishard_search: {
+    path: '/api/v2/search/quick-multishard',
+    filterFields: [ 'q' ],
+  },
   quick_search: {
     path: '/api/v2/search/quick',
     filterFields: [ 'q' ],

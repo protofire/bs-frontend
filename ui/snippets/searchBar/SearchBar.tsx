@@ -1,17 +1,22 @@
 import { Box, Portal, Popover, PopoverTrigger, PopoverContent, PopoverBody, useDisclosure, PopoverFooter, useOutsideClick } from '@chakra-ui/react';
+import type { UseQueryResult } from '@tanstack/react-query';
 import _debounce from 'lodash/debounce';
 import { useRouter } from 'next/router';
 import type { FormEvent } from 'react';
 import React from 'react';
 import { Element } from 'react-scroll';
 
+import type { MiltishardSearchResults } from 'types/api/search';
+
 import { route } from 'nextjs-routes';
 
+import config from 'configs/app';
 import useIsMobile from 'lib/hooks/useIsMobile';
 import * as mixpanel from 'lib/mixpanel/index';
 import { getRecentSearchKeywords, saveToRecentKeywords } from 'lib/recentSearchKeywords';
 import LinkInternal from 'ui/shared/LinkInternal';
 
+import MultishardSearchBarSuggest from './MultishardSearchBarSuggest/MultishardSearchBarSuggest';
 import SearchBarInput from './SearchBarInput';
 import SearchBarRecentKeywords from './SearchBarRecentKeywords';
 import SearchBarSuggest from './SearchBarSuggest/SearchBarSuggest';
@@ -147,12 +152,21 @@ const SearchBar = ({ isHomepage }: Props) => {
                 <SearchBarRecentKeywords onClick={ handleSearchTermChange } onClear={ onClose }/>
               ) }
               { searchTerm.trim().length > 0 && (
-                <SearchBarSuggest
-                  query={ query }
-                  searchTerm={ debouncedSearchTerm }
-                  onItemClick={ handleItemClick }
-                  containerId={ SCROLL_CONTAINER_ID }
-                />
+                config.features.search.isEnabled ? (
+                  <MultishardSearchBarSuggest
+                    query={ query as UseQueryResult<MiltishardSearchResults> }
+                    searchTerm={ debouncedSearchTerm }
+                    onItemClick={ handleItemClick }
+                    containerId={ SCROLL_CONTAINER_ID }
+                  />
+                ) : (
+                  <SearchBarSuggest
+                    query={ query }
+                    searchTerm={ debouncedSearchTerm }
+                    onItemClick={ handleItemClick }
+                    containerId={ SCROLL_CONTAINER_ID }
+                  />
+                )
               ) }
             </Box>
           </PopoverBody>
