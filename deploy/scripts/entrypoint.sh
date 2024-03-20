@@ -24,5 +24,5 @@ echo
 # Print list of enabled features
 node ./feature-reporter.js
 
-echo "Starting Next.js application"
+echo "[Starting Next.js application]"
 exec "$@"
