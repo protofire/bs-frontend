@@ -36,3 +36,21 @@ jobs:
         run: |
           docker build -t $AWS_ECR_REGISTRY/$AWS_ECR_REPOSITORY:${{ env.IMAGE_TAG }} -t $AWS_ECR_REGISTRY/$AWS_ECR_REPOSITORY:latest --build-arg GIT_COMMIT_SHA=${{ env.IMAGE_TAG }} --build-arg GIT_TAG=${{ github.ref_type == 'tag' && github.ref_name || '' }} -f Dockerfile .
           docker push $AWS_ECR_REGISTRY/$AWS_ECR_REPOSITORY --all-tags
+
+  rollout:
+    name: K8s rollout
+    needs: push
+    runs-on: ubuntu-latest
+    steps:
+      - uses: azure/setup-kubectl@v3
+        id: install
+
+      - uses: azure/k8s-set-context@v4
+        with:
+          method: kubeconfig
+          kubeconfig: ${{ secrets.STG_HARMONY_TESTNET_KUBECONFIG }}
+
+      - name: Restart deployment
+        run: |
+          kubectl rollout restart deployment/bs-frontend-s1-frontend
+          kubectl rollout restart deployment/bs-frontend-frontend
