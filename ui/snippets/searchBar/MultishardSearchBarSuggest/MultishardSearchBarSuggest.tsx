@@ -52,6 +52,8 @@ const MultishardSearchBarSuggest = ({ query, searchTerm, onItemClick, containerI
           return items;
         }
       }
+
+      return acc;
     }, []);
   }, [ query.data ]);
 
