@@ -10,7 +10,10 @@ const headers = require('./nextjs/headers');
 const redirects = require('./nextjs/redirects');
 const rewrites = require('./nextjs/rewrites');
 
+const basePath = process.env.NEXT_APP_BASE_PATH || '';
+
 const moduleExports = {
+  basePath,
   transpilePackages: [
     'react-syntax-highlighter',
     'swagger-client',
