@@ -27,4 +27,4 @@ export { default as userOps } from './userOps';
 export { default as validators } from './validators';
 export { default as verifiedTokens } from './verifiedTokens';
 export { default as web3Wallet } from './web3Wallet';
-export { default as search } from './search';
+export { default as shards } from './shards';

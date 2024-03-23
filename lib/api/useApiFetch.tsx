@@ -1,9 +1,12 @@
 import { useQueryClient } from '@tanstack/react-query';
 import _omit from 'lodash/omit';
 import _pickBy from 'lodash/pickBy';
+import { useRouter } from 'next/router';
 import React from 'react';
 
+import { getFeaturePayload } from 'configs/app/features/types';
 import type { CsrfData } from 'types/client/account';
+import type { ShardId } from 'types/shards';
 
 import config from 'configs/app';
 import isBodyAllowed from 'lib/api/isBodyAllowed';
@@ -26,16 +29,18 @@ export interface Params<R extends ResourceName> {
 export default function useApiFetch() {
   const fetch = useFetch();
   const queryClient = useQueryClient();
+  const { query, replace } = useRouter();
+
   const { token: csrfToken } = queryClient.getQueryData<CsrfData>(getResourceKey('csrf')) || {};
 
-  return React.useCallback(<R extends ResourceName, SuccessType = unknown, ErrorType = unknown>(
+  return React.useCallback(async <R extends ResourceName, SuccessType = unknown, ErrorType = unknown>(
     resourceName: R,
     { pathParams, queryParams, fetchParams }: Params<R> = {},
   ) => {
     const apiToken = cookies.get(cookies.NAMES.API_TOKEN);
 
     const resource: ApiResource = RESOURCES[resourceName];
-    const url = buildUrl(resourceName, pathParams, queryParams);
+    let url = buildUrl(resourceName, pathParams, queryParams);
     const withBody = isBodyAllowed(fetchParams?.method);
     const headers = _pickBy({
       'x-endpoint': resource.endpoint && isNeedProxy() ? resource.endpoint : undefined,
@@ -45,7 +50,39 @@ export default function useApiFetch() {
       ...fetchParams?.headers,
     }, Boolean) as HeadersInit;
 
-    return fetch<SuccessType, ErrorType>(
+    // Check domain for shardable resources
+    if (config.features.shards.isEnabled && resource.shardable) {
+      const shards = getFeaturePayload(config.features.shards)?.shards || {};
+
+      // In some case router don't know about shard, so we need to get it from first segment of url in case if window.location is available
+      if (!query.shard && typeof window !== 'undefined') {
+        const url = new URL(window.location.href);
+        const shard = url.pathname.split('/')[1];
+        const urlShardId = shard;
+
+        if (shards[urlShardId as ShardId]) {
+          query.shard = urlShardId;
+        }
+      }
+
+      const shard = query.shard || Object.keys(shards)[0];
+      const shardInfo = shards[shard as ShardId];
+
+      // If no shard info found, we will return 404
+      if (!shardInfo) {
+        return replace('/404');
+      }
+
+      // We need replace host with shard api host
+      const shardUrl = new URL(url);
+      shardUrl.host = shardInfo.apiHost;
+
+      url = shardUrl.toString();
+    }
+
+    // console.log({resourceName, url, shardable: resource.shardable});
+
+    const response = await fetch<SuccessType, ErrorType>(
       url,
       {
         // as of today, we use cookies only
@@ -61,5 +98,7 @@ export default function useApiFetch() {
         omitSentryErrorLog: true, // disable logging of API errors to Sentry
       },
     );
-  }, [ fetch, csrfToken ]);
+
+    return response;
+  }, [ csrfToken, fetch, query, replace ]);
 }

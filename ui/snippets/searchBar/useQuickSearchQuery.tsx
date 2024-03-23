@@ -1,7 +1,6 @@
 import { useRouter } from 'next/router';
 import React from 'react';
 
-import config from 'configs/app';
 import useApiQuery from 'lib/api/useApiQuery';
 import useDebounce from 'lib/hooks/useDebounce';
 
@@ -13,9 +12,7 @@ export default function useQuickSearchQuery() {
   const debouncedSearchTerm = useDebounce(searchTerm, 300);
   const pathname = router.pathname;
 
-  const searchApi = config.features.search.isEnabled ? 'quick_multishard_search' : 'quick_search';
-
-  const query = useApiQuery(searchApi, {
+  const query = useApiQuery('quick_search', {
     queryParams: { q: debouncedSearchTerm },
     queryOptions: { enabled: debouncedSearchTerm.trim().length > 0 },
   });

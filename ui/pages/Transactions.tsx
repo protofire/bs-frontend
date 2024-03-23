@@ -146,6 +146,7 @@ const Transactions = () => {
   return (
     <>
       <PageTitle title="Transactions" withTextAd/>
+      test
       <RoutedTabs
         tabs={ tabs }
         tabListProps={ isMobile ? undefined : TAB_LIST_PROPS }

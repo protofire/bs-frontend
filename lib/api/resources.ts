@@ -111,6 +111,8 @@ export interface ApiResource {
   pathParams?: Array<string>;
   needAuth?: boolean; // for external APIs which require authentication
   headers?: RequestInit['headers'];
+  shardable?: boolean;
+  merge?: boolean;
 }
 
 export const SORTING_FIELDS = [ 'sort', 'order' ];
@@ -258,34 +260,41 @@ export const RESOURCES = {
   blocks: {
     path: '/api/v2/blocks',
     filterFields: [ 'type' as const ],
+    shardable: true,
   },
   block: {
     path: '/api/v2/blocks/:height_or_hash',
     pathParams: [ 'height_or_hash' as const ],
+    shardable: true,
   },
   block_txs: {
     path: '/api/v2/blocks/:height_or_hash/transactions',
     pathParams: [ 'height_or_hash' as const ],
     filterFields: [ 'type' as const ],
+    shardable: true,
   },
   block_withdrawals: {
     path: '/api/v2/blocks/:height_or_hash/withdrawals',
     pathParams: [ 'height_or_hash' as const ],
     filterFields: [],
+    shardable: true,
   },
   txs_validated: {
     path: '/api/v2/transactions',
     filterFields: [ 'filter' as const, 'type' as const, 'method' as const ],
+    shardable: true,
   },
   txs_pending: {
     path: '/api/v2/transactions',
     filterFields: [ 'filter' as const, 'type' as const, 'method' as const ],
+    shardable: true,
   },
   txs_with_blobs: {
     path: '/api/v2/transactions',
     filterFields: [ 'type' as const ],
+    shardable: true,
   },
-  txs_watchlist: {
+  txs_watchlist: { // TODO: Should be shardable?
     path: '/api/v2/transactions/watchlist',
     filterFields: [ ],
   },
@@ -293,42 +302,51 @@ export const RESOURCES = {
     path: '/api/v2/transactions/execution-node/:hash',
     pathParams: [ 'hash' as const ],
     filterFields: [ ],
+    shardable: true,
   },
   tx: {
     path: '/api/v2/transactions/:hash',
     pathParams: [ 'hash' as const ],
+    shardable: true,
   },
   tx_internal_txs: {
     path: '/api/v2/transactions/:hash/internal-transactions',
     pathParams: [ 'hash' as const ],
     filterFields: [ ],
+    shardable: true,
   },
   tx_logs: {
     path: '/api/v2/transactions/:hash/logs',
     pathParams: [ 'hash' as const ],
     filterFields: [ ],
+    shardable: true,
   },
   tx_token_transfers: {
     path: '/api/v2/transactions/:hash/token-transfers',
     pathParams: [ 'hash' as const ],
     filterFields: [ 'type' as const ],
+    shardable: true,
   },
   tx_raw_trace: {
     path: '/api/v2/transactions/:hash/raw-trace',
     pathParams: [ 'hash' as const ],
+    shardable: true,
   },
   tx_state_changes: {
     path: '/api/v2/transactions/:hash/state-changes',
     pathParams: [ 'hash' as const ],
     filterFields: [],
+    shardable: true,
   },
   tx_blobs: {
     path: '/api/v2/transactions/:hash/blobs',
     pathParams: [ 'hash' as const ],
+    shardable: true,
   },
   tx_interpretation: {
     path: '/api/v2/transactions/:hash/summary',
     pathParams: [ 'hash' as const ],
+    shardable: true,
   },
   withdrawals: {
     path: '/api/v2/withdrawals',
@@ -342,20 +360,24 @@ export const RESOURCES = {
   addresses: {
     path: '/api/v2/addresses/',
     filterFields: [ ],
+    shardable: true,
   },
 
   // ADDRESS
   address: {
     path: '/api/v2/addresses/:hash',
     pathParams: [ 'hash' as const ],
+    shardable: true,
   },
   address_counters: {
     path: '/api/v2/addresses/:hash/counters',
     pathParams: [ 'hash' as const ],
+    shardable: true,
   },
   address_tabs_counters: {
     path: '/api/v2/addresses/:hash/tabs-counters',
     pathParams: [ 'hash' as const ],
+    shardable: true,
   },
   // this resource doesn't have pagination, so causing huge problems on some addresses page
   // address_token_balances: {
@@ -365,55 +387,66 @@ export const RESOURCES = {
     path: '/api/v2/addresses/:hash/transactions',
     pathParams: [ 'hash' as const ],
     filterFields: [ 'filter' as const ],
+    shardable: true,
   },
   address_internal_txs: {
     path: '/api/v2/addresses/:hash/internal-transactions',
     pathParams: [ 'hash' as const ],
     filterFields: [ 'filter' as const ],
+    shardable: true,
   },
   address_token_transfers: {
     path: '/api/v2/addresses/:hash/token-transfers',
     pathParams: [ 'hash' as const ],
     filterFields: [ 'filter' as const, 'type' as const, 'token' as const ],
+    shardable: true,
   },
   address_blocks_validated: {
     path: '/api/v2/addresses/:hash/blocks-validated',
     pathParams: [ 'hash' as const ],
     filterFields: [ ],
+    shardable: true,
   },
   address_coin_balance: {
     path: '/api/v2/addresses/:hash/coin-balance-history',
     pathParams: [ 'hash' as const ],
     filterFields: [ ],
+    shardable: true,
   },
   address_coin_balance_chart: {
     path: '/api/v2/addresses/:hash/coin-balance-history-by-day',
     pathParams: [ 'hash' as const ],
+    shardable: true,
   },
   address_logs: {
     path: '/api/v2/addresses/:hash/logs',
     pathParams: [ 'hash' as const ],
     filterFields: [ ],
+    shardable: true,
   },
   address_tokens: {
     path: '/api/v2/addresses/:hash/tokens',
     pathParams: [ 'hash' as const ],
     filterFields: [ 'type' as const ],
+    shardable: true,
   },
   address_nfts: {
     path: '/api/v2/addresses/:hash/nft',
     pathParams: [ 'hash' as const ],
     filterFields: [ 'type' as const ],
+    shardable: true,
   },
   address_collections: {
     path: '/api/v2/addresses/:hash/nft/collections',
     pathParams: [ 'hash' as const ],
     filterFields: [ 'type' as const ],
+    shardable: true,
   },
   address_withdrawals: {
     path: '/api/v2/addresses/:hash/withdrawals',
     pathParams: [ 'hash' as const ],
     filterFields: [],
+    shardable: true,
   },
 
   // CONTRACT
@@ -541,12 +574,16 @@ export const RESOURCES = {
   // HOMEPAGE
   homepage_blocks: {
     path: '/api/v2/main-page/blocks',
+    shardable: true,
+    merge: true,
   },
   homepage_deposits: {
     path: '/api/v2/main-page/optimism-deposits',
   },
   homepage_txs: {
     path: '/api/v2/main-page/transactions',
+    shardable: true,
+    merge: true,
   },
   homepage_zkevm_l2_batches: {
     path: '/api/v2/main-page/zkevm/batches/confirmed',
@@ -562,10 +599,6 @@ export const RESOURCES = {
   },
 
   // SEARCH
-  quick_multishard_search: {
-    path: '/api/v2/search/quick-multishard',
-    filterFields: [ 'q' ],
-  },
   quick_search: {
     path: '/api/v2/search/quick',
     filterFields: [ 'q' ],
