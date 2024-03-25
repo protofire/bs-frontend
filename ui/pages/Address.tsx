@@ -9,6 +9,7 @@ import useApiQuery from 'lib/api/useApiQuery';
 import { useAppContext } from 'lib/contexts/app';
 import useContractTabs from 'lib/hooks/useContractTabs';
 import useIsSafeAddress from 'lib/hooks/useIsSafeAddress';
+import useShards from 'lib/hooks/useShards';
 import getQueryParamString from 'lib/router/getQueryParamString';
 import { ADDRESS_TABS_COUNTERS } from 'stubs/address';
 import { USER_OPS_ACCOUNT } from 'stubs/userOps';
@@ -37,6 +38,7 @@ import EntityTags from 'ui/shared/EntityTags';
 import IconSvg from 'ui/shared/IconSvg';
 import NetworkExplorers from 'ui/shared/NetworkExplorers';
 import PageTitle from 'ui/shared/Page/PageTitle';
+import ShardSwitcher from 'ui/shared/shardSwitcher/ShardSwitcher';
 import RoutedTabs from 'ui/shared/Tabs/RoutedTabs';
 import TabsSkeleton from 'ui/shared/Tabs/TabsSkeleton';
 
@@ -50,6 +52,8 @@ const AddressPageContent = () => {
   const hash = getQueryParamString(router.query.hash);
 
   const addressQuery = useAddressQuery({ hash });
+
+  const { shardId, shards, setActiveShardId } = useShards();
 
   const addressTabsCountersQuery = useApiQuery('address_tabs_counters', {
     pathParams: { hash },
@@ -226,16 +230,34 @@ const AddressPageContent = () => {
     </Flex>
   );
 
+  const handleSwitchShard = React.useCallback(async(shardId: string) => {
+    await setActiveShardId(shardId);
+    setTimeout(async() => {
+      await Promise.all([
+        addressQuery.refetch(),
+        addressTabsCountersQuery.refetch(),
+        userOpsAccountQuery.refetch(),
+      ]);
+    }, 100);
+
+  }, [ setActiveShardId, addressQuery, addressTabsCountersQuery, userOpsAccountQuery ]);
+
   return (
     <>
       <TextAd mb={ 6 }/>
-      <PageTitle
-        title={ `${ addressQuery.data?.is_contract ? 'Contract' : 'Address' } details` }
-        backLink={ backLink }
-        contentAfter={ tags }
-        secondRow={ titleSecondRow }
-        isLoading={ isLoading }
-      />
+      <Flex>
+        <Box flex={ 1 }>
+          <PageTitle
+            title={ `${ addressQuery.data?.is_contract ? 'Contract' : 'Address' } details` }
+            backLink={ backLink }
+            contentAfter={ tags }
+            secondRow={ titleSecondRow }
+            isLoading={ isLoading }
+          />
+        </Box>
+        <ShardSwitcher shardId={ shardId } shards={ shards } handleSwitchShard={ handleSwitchShard }/>
+      </Flex>
+
       { config.features.metasuites.isEnabled && <Box display="none" id="meta-suites__address" data-ready={ !isLoading }/> }
       <AddressDetails addressQuery={ addressQuery } scrollRef={ tabsScrollRef }/>
       { /* should stay before tabs to scroll up with pagination */ }

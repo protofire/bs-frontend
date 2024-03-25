@@ -202,7 +202,7 @@ export default function useQueryWithPages<Resource extends PaginatedResources>({
     hasPages,
     hasNextPage,
     canGoBackwards: Boolean(pageParams[page - 1]),
-    isLoading: queryResult.isPlaceholderData,
+    isLoading: queryResult.isPlaceholderData || queryResult.isFetching,
     isVisible: hasPages || hasNextPage,
   };
 

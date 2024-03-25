@@ -4,9 +4,7 @@ import _pickBy from 'lodash/pickBy';
 import { useRouter } from 'next/router';
 import React from 'react';
 
-import { getFeaturePayload } from 'configs/app/features/types';
 import type { CsrfData } from 'types/client/account';
-import type { ShardId } from 'types/shards';
 
 import config from 'configs/app';
 import isBodyAllowed from 'lib/api/isBodyAllowed';
@@ -15,6 +13,7 @@ import { getResourceKey } from 'lib/api/useApiQuery';
 import * as cookies from 'lib/cookies';
 import type { Params as FetchParams } from 'lib/hooks/useFetch';
 import useFetch from 'lib/hooks/useFetch';
+import useShards from 'lib/hooks/useShards';
 
 import buildUrl from './buildUrl';
 import { RESOURCES } from './resources';
@@ -29,7 +28,8 @@ export interface Params<R extends ResourceName> {
 export default function useApiFetch() {
   const fetch = useFetch();
   const queryClient = useQueryClient();
-  const { query, replace } = useRouter();
+  const { replace } = useRouter();
+  const { shard } = useShards();
 
   const { token: csrfToken } = queryClient.getQueryData<CsrfData>(getResourceKey('csrf')) || {};
 
@@ -52,35 +52,16 @@ export default function useApiFetch() {
 
     // Check domain for shardable resources
     if (config.features.shards.isEnabled && resource.shardable) {
-      const shards = getFeaturePayload(config.features.shards)?.shards || {};
-
-      // In some case router don't know about shard, so we need to get it from first segment of url in case if window.location is available
-      if (!query.shard && typeof window !== 'undefined') {
-        const url = new URL(window.location.href);
-        const shard = url.pathname.split('/')[1];
-        const urlShardId = shard;
-
-        if (shards[urlShardId as ShardId]) {
-          query.shard = urlShardId;
-        }
-      }
-
-      const shard = query.shard || Object.keys(shards)[0];
-      const shardInfo = shards[shard as ShardId];
-
       // If no shard info found, we will return 404
-      if (!shardInfo) {
+      if (!shard) {
         return replace('/404');
       }
 
       // We need replace host with shard api host
       const shardUrl = new URL(url);
-      shardUrl.host = shardInfo.apiHost;
-
+      shardUrl.host = shard.apiHost;
       url = shardUrl.toString();
     }
-
-    // console.log({resourceName, url, shardable: resource.shardable});
 
     const response = await fetch<SuccessType, ErrorType>(
       url,
@@ -100,5 +81,5 @@ export default function useApiFetch() {
     );
 
     return response;
-  }, [ csrfToken, fetch, query, replace ]);
+  }, [ csrfToken, fetch, replace, shard ]);
 }

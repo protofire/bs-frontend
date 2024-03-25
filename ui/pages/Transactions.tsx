@@ -1,3 +1,4 @@
+import { Box, Flex } from '@chakra-ui/react';
 import { useRouter } from 'next/router';
 import React from 'react';
 
@@ -7,12 +8,14 @@ import config from 'configs/app';
 import useHasAccount from 'lib/hooks/useHasAccount';
 import useIsMobile from 'lib/hooks/useIsMobile';
 import useNewTxsSocket from 'lib/hooks/useNewTxsSocket';
+import useShards from 'lib/hooks/useShards';
 import getQueryParamString from 'lib/router/getQueryParamString';
 import { TX } from 'stubs/tx';
 import { generateListStub } from 'stubs/utils';
 import PageTitle from 'ui/shared/Page/PageTitle';
 import Pagination from 'ui/shared/pagination/Pagination';
 import useQueryWithPages from 'ui/shared/pagination/useQueryWithPages';
+import ShardSwitcher from 'ui/shared/shardSwitcher/ShardSwitcher';
 import RoutedTabs from 'ui/shared/Tabs/RoutedTabs';
 import TxsWatchlist from 'ui/txs/TxsWatchlist';
 import TxsWithFrontendSorting from 'ui/txs/TxsWithFrontendSorting';
@@ -28,6 +31,7 @@ const Transactions = () => {
   const router = useRouter();
   const isMobile = useIsMobile();
   const tab = getQueryParamString(router.query.tab);
+  const { shardId, shards, setActiveShardId } = useShards();
 
   React.useEffect(() => {
     if (tab === 'blob_txs' && config.UI.views.tx.hiddenViews?.blob_txs) {
@@ -143,10 +147,29 @@ const Transactions = () => {
     }
   })();
 
+  const handleSwitchShard = React.useCallback(async(shardId: string) => {
+    await setActiveShardId(shardId);
+    switch (tab) {
+      case 'pending':
+        await txsPendingQuery.refetch();
+        break;
+      case 'watchlist':
+        await txsWatchlistQuery.refetch();
+        break;
+      case 'blob_txs':
+        await txsWithBlobsQuery.refetch();
+        break;
+      default: await txsValidatedQuery.refetch();
+    }
+  }, [ tab, txsWatchlistQuery, txsPendingQuery, txsWithBlobsQuery, txsValidatedQuery, setActiveShardId ]);
+
   return (
     <>
-      <PageTitle title="Transactions" withTextAd/>
-      test
+      <Flex>
+        <Box flex={ 1 }><PageTitle title="Transactions" withTextAd/></Box>
+        <ShardSwitcher shardId={ shardId } shards={ shards } handleSwitchShard={ handleSwitchShard }/>
+      </Flex>
+
       <RoutedTabs
         tabs={ tabs }
         tabListProps={ isMobile ? undefined : TAB_LIST_PROPS }

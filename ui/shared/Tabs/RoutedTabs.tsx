@@ -6,6 +6,8 @@ import React, { useEffect, useRef } from 'react';
 
 import type { RoutedTab } from './types';
 
+import useShards from 'lib/hooks/useShards';
+
 import TabsWithScroll from './TabsWithScroll';
 import useTabIndexFromQuery from './useTabIndexFromQuery';
 
@@ -21,6 +23,7 @@ interface Props extends ThemingProps<'Tabs'> {
 
 const RoutedTabs = ({ tabs, tabListProps, rightSlot, rightSlotProps, stickyEnabled, className, onTabChange, ...themeProps }: Props) => {
   const router = useRouter();
+  const { shardId } = useShards();
   const tabIndex = useTabIndexFromQuery(tabs);
   const tabsRef = useRef<HTMLDivElement>(null);
 
@@ -29,13 +32,13 @@ const RoutedTabs = ({ tabs, tabListProps, rightSlot, rightSlotProps, stickyEnabl
 
     const queryForPathname = _pickBy(router.query, (value, key) => router.pathname.includes(`[${ key }]`));
     router.push(
-      { pathname: router.pathname, query: { ...queryForPathname, tab: nextTab.id } },
+      { pathname: router.pathname, query: { ...queryForPathname, tab: nextTab.id, shard: shardId } },
       undefined,
       { shallow: true },
     );
 
     onTabChange?.(index);
-  }, [ tabs, router, onTabChange ]);
+  }, [ tabs, router, shardId, onTabChange ]);
 
   useEffect(() => {
     if (router.query.scroll_to_tabs) {

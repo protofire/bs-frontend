@@ -16,10 +16,12 @@ const config: Feature<{proxyUrl: string; shards: Record<ShardId, ShardInfo>; pag
     proxyUrl,
     shards,
     pages: [
+      '/accounts',
       '/address',
       '/block/',
       '/blocks',
       '/tx',
+      '/txs',
     ],
   });
 })();
