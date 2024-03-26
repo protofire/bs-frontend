@@ -1,7 +1,6 @@
 import { useQueryClient } from '@tanstack/react-query';
 import _omit from 'lodash/omit';
 import _pickBy from 'lodash/pickBy';
-import { useRouter } from 'next/router';
 import React from 'react';
 
 import type { CsrfData } from 'types/client/account';
@@ -28,7 +27,6 @@ export interface Params<R extends ResourceName> {
 export default function useApiFetch() {
   const fetch = useFetch();
   const queryClient = useQueryClient();
-  const { replace } = useRouter();
   const { shard } = useShards();
 
   const { token: csrfToken } = queryClient.getQueryData<CsrfData>(getResourceKey('csrf')) || {};
@@ -51,12 +49,7 @@ export default function useApiFetch() {
     }, Boolean) as HeadersInit;
 
     // Check domain for shardable resources
-    if (config.features.shards.isEnabled && resource.shardable) {
-      // If no shard info found, we will return 404
-      if (!shard) {
-        return replace('/404');
-      }
-
+    if (config.features.shards.isEnabled && resource.shardable && shard) {
       // We need replace host with shard api host
       const shardUrl = new URL(url);
       shardUrl.host = shard.apiHost;
@@ -81,5 +74,5 @@ export default function useApiFetch() {
     );
 
     return response;
-  }, [ csrfToken, fetch, replace, shard ]);
+  }, [ csrfToken, fetch, shard ]);
 }
