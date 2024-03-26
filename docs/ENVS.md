@@ -273,7 +273,7 @@ Settings for meta tags and OG tags
 | NEXT_PUBLIC_HIDE_INDEXING_ALERT_INT_TXS | `boolean` | Set to `true` to hide indexing alert in the page footer about indexing block's internal transactions | - | `false` | `true` |
 | NEXT_PUBLIC_MAINTENANCE_ALERT_MESSAGE | `string` | Used for displaying custom announcements or alerts in the header of the site. Could be a regular string or a HTML code. | - | - | `Hello world! 🤪` |
 | NEXT_PUBLIC_MULTI_SHARDS_PROXY_URL | `string` | Url to multishard proxy | - | `` | `https://multishard-proxy-example.com` |
-| NEXT_PUBLIC_SHARDS | `string` | Used for set shards instances that will used for show shard specific data | - | - | `{'s1': {'title': 'Shard 1', 'apiHost': 'https://s0.example.io'}}` |
+| NEXT_PUBLIC_SHARDS | `string` | Used for set shards instances that will used for show shard specific data | - | - | `[{'id': 's0', 'title': 'Shard 0', 'apiHost': 's0.example.io'}, {'id': 's1', 'title': 'Shard 1', 'apiHost': 's1.example.io'}]` |
 #### Network explorer configuration properties
 
 | Variable | Type| Description | Compulsoriness  | Default value | Example value |

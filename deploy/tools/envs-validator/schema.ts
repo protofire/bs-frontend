@@ -351,8 +351,9 @@ const bridgedTokensSchema = yup
   });
 
 const shardsSchema = yup.object().shape({
+  id: yup.string().required(),
   title: yup.string().required(),
-  apiHost: yup.string().test(urlTest).required(),
+  apiHost: yup.string().required(),
 });
 
 const schema = yup
@@ -479,7 +480,7 @@ const schema = yup
     NEXT_PUBLIC_HIDE_INDEXING_ALERT_BLOCKS: yup.boolean(),
     NEXT_PUBLIC_HIDE_INDEXING_ALERT_INT_TXS: yup.boolean(),
     NEXT_PUBLIC_MAINTENANCE_ALERT_MESSAGE: yup.string(),
-    NEXT_PUBLIC_MULTI_SHARDS_PROXY_URL: yup.string().test(urlTest),
+    NEXT_PUBLIC_MULTI_SHARDS_PROXY_URL: yup.string().optional(),
     NEXT_PUBLIC_SHARDS: yup
       .array()
       .transform(replaceQuotes)
