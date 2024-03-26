@@ -27,17 +27,6 @@ export default function useShards(): UseShardsResult {
         const defaultShardId = Object.keys(shards)[0];
         const shardId = queryStringParams.get('shard') || defaultShardId;
 
-        // In some case router don't know about shard, so we need to get it from first segment of url in case if window.location is available
-        // if (!shardId && typeof window !== 'undefined') {
-        //   const url = new URL(window.location.href);
-        //   const shard = url.pathname.split('/')[1];
-        //   const urlShardId = shard;
-
-        //   if (shards[urlShardId as ShardId]) {
-        //     query.shard = urlShardId;
-        //   }
-        // }
-
         const shardInfo = shards[shardId as ShardId];
 
         return {
@@ -57,7 +46,7 @@ export default function useShards(): UseShardsResult {
             const isShardable = shardablePages?.find((page) => url.startsWith(page)) !== undefined;
 
             if (isShardable && shardId) {
-              const newUrl = new URL(url as string, 'http://localhost:8080');
+              const newUrl = new URL(url as string, router.basePath);
 
               // Add shardId to query params for tabs
               if (!newUrl.searchParams.has('shard')) {
