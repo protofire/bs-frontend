@@ -46,7 +46,13 @@ export default function useShards(): UseShardsResult {
             const isShardable = shardablePages?.find((page) => url.startsWith(page)) !== undefined;
 
             if (isShardable && shardId) {
-              const newUrl = new URL(url as string, config.app.baseUrl);
+              const baseUrl = [
+                config.app.protocol || 'http',
+                '://',
+                config.app.host || 'localhost',
+                config.app.port && ':' + config.app.port,
+              ].filter(Boolean).join('');
+              const newUrl = new URL(url as string, baseUrl);
 
               // Add shardId to query params for tabs
               if (!newUrl.searchParams.has('shard')) {
