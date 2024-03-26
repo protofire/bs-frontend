@@ -602,6 +602,8 @@ export const RESOURCES = {
   quick_search: {
     path: '/api/v2/search/quick',
     filterFields: [ 'q' ],
+    shardable: true,
+    merge: true,
   },
   search: {
     path: '/api/v2/search',

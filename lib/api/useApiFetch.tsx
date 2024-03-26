@@ -3,7 +3,9 @@ import _omit from 'lodash/omit';
 import _pickBy from 'lodash/pickBy';
 import React from 'react';
 
+import { getFeaturePayload } from 'configs/app/features/types';
 import type { CsrfData } from 'types/client/account';
+import type { ShardId } from 'types/shards';
 
 import config from 'configs/app';
 import isBodyAllowed from 'lib/api/isBodyAllowed';
@@ -16,7 +18,7 @@ import useShards from 'lib/hooks/useShards';
 
 import buildUrl from './buildUrl';
 import { RESOURCES } from './resources';
-import type { ApiResource, ResourceName, ResourcePathParams } from './resources';
+import type { ApiResource, ResourceError, ResourceName, ResourcePathParams } from './resources';
 
 export interface Params<R extends ResourceName> {
   pathParams?: ResourcePathParams<R>;
@@ -48,15 +50,33 @@ export default function useApiFetch() {
       ...fetchParams?.headers,
     }, Boolean) as HeadersInit;
 
+    const isUsedShardingFeature = config.features.shards.isEnabled && resource.shardable;
+
     // Check domain for shardable resources
-    if (config.features.shards.isEnabled && resource.shardable && shard) {
-      // We need replace host with shard api host
-      const shardUrl = new URL(url);
-      shardUrl.host = shard.apiHost;
-      url = shardUrl.toString();
+    if (isUsedShardingFeature) {
+      if (resource.merge) {
+        // We need request from all shards by using proxy and merge responses
+        const configPayload = getFeaturePayload(config.features.shards);
+        if (configPayload?.proxyUrl) {
+          const proxyUrl = new URL(configPayload?.proxyUrl);
+          const shardUrl = new URL(url);
+
+          // Replace base url with proxy url
+          shardUrl.protocol = proxyUrl.protocol;
+          shardUrl.host = proxyUrl.host;
+
+          // We need to replace host with proxy host
+          url = shardUrl.toString();
+        }
+      } else if (shard) {
+        // We need replace host with shard api host
+        const shardUrl = new URL(url);
+        shardUrl.host = shard.apiHost;
+        url = shardUrl.toString();
+      }
     }
 
-    const response = await fetch<SuccessType, ErrorType>(
+    let response = await fetch<SuccessType, ErrorType>(
       url,
       {
         // as of today, we use cookies only
@@ -72,6 +92,26 @@ export default function useApiFetch() {
         omitSentryErrorLog: true, // disable logging of API errors to Sentry
       },
     );
+
+    if (isUsedShardingFeature && resource.merge) {
+      // Merge responses from all shards
+      const shards = getFeaturePayload(config.features.shards)?.shards || {};
+      const shardsIds = Object.keys(shards);
+      type ShardedResponse = (Array<never> | NonNullable<SuccessType>) & {__shardId: ShardId};
+
+      response = shardsIds.reduce((acc, shardId) => {
+        let shardResponse = (response as Record<ShardId, SuccessType>)[shardId] || [];
+        if (shardResponse && Array.isArray(shardResponse) && shardResponse.length > 0) {
+          shardResponse = shardResponse.map((item: ShardedResponse) => {
+            item.__shardId = shardId as ShardId;
+            return item;
+          }) as ShardedResponse;
+          acc.push(...shardResponse as Array<never>);
+        }
+
+        return acc;
+      }, [] as Array<never>) as ResourceError<ErrorType> | Awaited<SuccessType>;
+    }
 
     return response;
   }, [ csrfToken, fetch, shard ]);
