@@ -6,10 +6,10 @@ import { route } from 'nextjs-routes';
 
 import * as EntityBase from 'ui/shared/entities/base/components';
 
-type LinkProps = EntityBase.LinkBaseProps & Pick<EntityProps, 'hash'>;
+type LinkProps = EntityBase.LinkBaseProps & Pick<EntityProps, 'hash' | 'shard'>;
 
 const Link = chakra((props: LinkProps) => {
-  const defaultHref = route({ pathname: '/tx/[hash]', query: { hash: props.hash } });
+  const defaultHref = route({ pathname: '/tx/[hash]', query: { hash: props.hash, shard: props.shard } });
 
   return (
     <EntityBase.Link
@@ -62,6 +62,7 @@ const Container = EntityBase.Container;
 
 export interface EntityProps extends EntityBase.EntityBaseProps {
   hash: string;
+  shard?: string;
   text?: string;
 }
 

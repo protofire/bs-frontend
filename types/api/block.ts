@@ -42,6 +42,7 @@ export interface Block {
   burnt_blob_fees?: string;
   excess_blob_gas?: string;
   blob_tx_count?: number;
+  __id?: string; // block shard id
 }
 
 export interface BlocksResponse {

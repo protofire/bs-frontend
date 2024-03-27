@@ -11,6 +11,7 @@ import type { Transaction } from 'types/api/transaction';
 
 import config from 'configs/app';
 import getValueWithUnit from 'lib/getValueWithUnit';
+import useShards from 'lib/hooks/useShards';
 import useTimeAgoIncrement from 'lib/hooks/useTimeAgoIncrement';
 import { currencyUnits } from 'lib/units';
 import AddressFromTo from 'ui/shared/address/AddressFromTo';
@@ -27,6 +28,7 @@ type Props = {
 }
 
 const LatestTxsItem = ({ tx, isLoading }: Props) => {
+  const { shards } = useShards();
   const dataTo = tx.to ? tx.to : tx.created_contract;
   const timeAgo = useTimeAgoIncrement(tx.timestamp || '0', true);
 
@@ -57,6 +59,7 @@ const LatestTxsItem = ({ tx, isLoading }: Props) => {
         <TxEntity
           isLoading={ isLoading }
           hash={ tx.hash }
+          shard={ tx.__id }
           fontWeight="700"
           truncation="constant_long"
         />
@@ -88,6 +91,12 @@ const LatestTxsItem = ({ tx, isLoading }: Props) => {
           ) : (
             <Text as="span" variant="secondary">{ tx.fee.value ? getValueWithUnit(tx.fee.value).dp(5).toFormat() : '-' }</Text>
           ) }
+        </Skeleton>
+      ) }
+      { config.features.shards.isEnabled && (
+        <Skeleton isLoaded={ !isLoading } display="flex" whiteSpace="pre" my="3px">
+          <Text as="span">Shard </Text>
+          <Text as="span" variant="secondary">{ tx.__id ? shards[tx.__id].title : 'unknown' }</Text>
         </Skeleton>
       ) }
     </Box>
