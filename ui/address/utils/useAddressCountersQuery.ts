@@ -1,11 +1,13 @@
 import type { UseQueryResult } from '@tanstack/react-query';
 import { useQuery } from '@tanstack/react-query';
+import { useMemo } from 'react';
 
 import type { AddressCounters } from 'types/api/address';
 
 import type { ResourceError } from 'lib/api/resources';
 import useApiQuery from 'lib/api/useApiQuery';
-import { publicClient } from 'lib/web3/client';
+import useShards from 'lib/hooks/useShards';
+import { getShardPublicClient } from 'lib/web3/client';
 import { ADDRESS_COUNTERS } from 'stubs/address';
 import { GET_TRANSACTIONS_COUNT } from 'stubs/RPC';
 
@@ -22,23 +24,31 @@ export type AddressCountersQuery = UseQueryResult<AddressCounters, ResourceError
 interface Params {
   hash: string;
   addressQuery: AddressQuery;
+  shardId?: string;
 }
 
 export default function useAddressQuery({ hash, addressQuery }: Params): AddressCountersQuery {
   const enabled = Boolean(hash) && !addressQuery.isPlaceholderData;
+  const { shardId } = useShards();
+  const publicClient = useMemo(() => {
+    return shardId ? getShardPublicClient(shardId) : null;
+  }, [ shardId ]);
 
-  const apiQuery = useApiQuery<'address_counters', { status: number }>('address_counters', {
-    pathParams: { hash },
-    queryOptions: {
-      enabled: enabled && !addressQuery.isDegradedData,
-      placeholderData: ADDRESS_COUNTERS,
-      refetchOnMount: false,
-    },
-  });
+  const apiQuery = useApiQuery<'address_counters', { status: number }>(
+    'address_counters',
+    {
+      pathParams: { hash },
+      queryOptions: {
+        enabled: enabled && !addressQuery.isDegradedData,
+        placeholderData: ADDRESS_COUNTERS,
+        refetchOnMount: false,
+      },
+    });
 
   const rpcQuery = useQuery<RpcResponseType, unknown, AddressCounters | null>({
-    queryKey: [ 'RPC', 'address_counters', { hash } ],
+    queryKey: [ 'RPC', 'address_counters', { hash }, publicClient, shardId ],
     queryFn: async() => {
+
       if (!publicClient) {
         throw new Error('No public RPC client');
       }

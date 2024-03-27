@@ -563,12 +563,15 @@ export const RESOURCES = {
     headers: {
       'updated-gas-oracle': 'true',
     },
+    shardable: true,
   },
   stats_charts_txs: {
     path: '/api/v2/stats/charts/transactions',
+    shardable: true,
   },
   stats_charts_market: {
     path: '/api/v2/stats/charts/market',
+    shardable: true,
   },
 
   // HOMEPAGE

@@ -53,7 +53,7 @@ const AddressPageContent = () => {
 
   const addressQuery = useAddressQuery({ hash });
 
-  const { shardId, shards, setActiveShardId } = useShards();
+  const { shardId, shards } = useShards();
 
   const addressTabsCountersQuery = useApiQuery('address_tabs_counters', {
     pathParams: { hash },
@@ -230,17 +230,13 @@ const AddressPageContent = () => {
     </Flex>
   );
 
-  const handleSwitchShard = React.useCallback(async(shardId: string) => {
-    await setActiveShardId(shardId);
-    setTimeout(async() => {
-      await Promise.all([
-        addressQuery.refetch(),
-        addressTabsCountersQuery.refetch(),
-        userOpsAccountQuery.refetch(),
-      ]);
-    }, 100);
-
-  }, [ setActiveShardId, addressQuery, addressTabsCountersQuery, userOpsAccountQuery ]);
+  const handleSwitchShard = React.useCallback(async() => {
+    await Promise.all([
+      addressQuery.refetch(),
+      addressTabsCountersQuery.refetch(),
+      userOpsAccountQuery.refetch(),
+    ]);
+  }, [ addressQuery, addressTabsCountersQuery, userOpsAccountQuery ]);
 
   return (
     <>
@@ -259,7 +255,7 @@ const AddressPageContent = () => {
       </Flex>
 
       { config.features.metasuites.isEnabled && <Box display="none" id="meta-suites__address" data-ready={ !isLoading }/> }
-      <AddressDetails addressQuery={ addressQuery } scrollRef={ tabsScrollRef }/>
+      <AddressDetails key={ shardId } addressQuery={ addressQuery } scrollRef={ tabsScrollRef }/>
       { /* should stay before tabs to scroll up with pagination */ }
       <Box ref={ tabsScrollRef }></Box>
       { (isLoading || addressTabsCountersQuery.isPlaceholderData) ?

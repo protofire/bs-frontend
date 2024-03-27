@@ -17,7 +17,7 @@ import ShardSwitcher from 'ui/shared/shardSwitcher/ShardSwitcher';
 const PAGE_SIZE = 50;
 
 const Accounts = () => {
-  const { shardId, shards, setActiveShardId } = useShards();
+  const { shardId, shards } = useShards();
 
   const { isError, isPlaceholderData, data, pagination, refetch } = useQueryWithPages({
     resourceName: 'addresses',
@@ -75,10 +75,9 @@ const Accounts = () => {
     </>
   ) : null;
 
-  const handleSwitchShard = React.useCallback(async(shardId: string) => {
-    await setActiveShardId(shardId);
+  const handleSwitchShard = React.useCallback(async() => {
     await refetch();
-  }, [ setActiveShardId, refetch ]);
+  }, [ refetch ]);
 
   return (
     <>

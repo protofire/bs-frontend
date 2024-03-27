@@ -26,7 +26,6 @@ interface Props {
 
 const AddressDetails = ({ addressQuery, scrollRef }: Props) => {
   const router = useRouter();
-
   const addressHash = getQueryParamString(router.query.hash);
 
   const countersQuery = useAddressCountersQuery({
@@ -129,7 +128,7 @@ const AddressDetails = ({ addressQuery, scrollRef }: Props) => {
           hint="Number of transactions related to this address"
           isLoading={ addressQuery.isPlaceholderData || countersQuery.isPlaceholderData }
         >
-          { addressQuery.data ? (
+          { !is404Error && addressQuery.data ? (
             <AddressCounterItem
               prop="transactions_count"
               query={ countersQuery }
@@ -147,7 +146,7 @@ const AddressDetails = ({ addressQuery, scrollRef }: Props) => {
             hint="Number of transfers to/from this address"
             isLoading={ addressQuery.isPlaceholderData || countersQuery.isPlaceholderData }
           >
-            { addressQuery.data ? (
+            { (!is404Error && addressQuery.data) ? (
               <AddressCounterItem
                 prop="token_transfers_count"
                 query={ countersQuery }
@@ -166,7 +165,7 @@ const AddressDetails = ({ addressQuery, scrollRef }: Props) => {
             hint="Gas used by the address"
             isLoading={ addressQuery.isPlaceholderData || countersQuery.isPlaceholderData }
           >
-            { addressQuery.data ? (
+            { !is404Error && addressQuery.data ? (
               <AddressCounterItem
                 prop="gas_usage_count"
                 query={ countersQuery }
@@ -185,7 +184,7 @@ const AddressDetails = ({ addressQuery, scrollRef }: Props) => {
             hint="Number of blocks validated by this validator"
             isLoading={ addressQuery.isPlaceholderData || countersQuery.isPlaceholderData }
           >
-            { addressQuery.data ? (
+            { !is404Error && addressQuery.data ? (
               <AddressCounterItem
                 prop="validations_count"
                 query={ countersQuery }

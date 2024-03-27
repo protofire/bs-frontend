@@ -31,7 +31,7 @@ const Transactions = () => {
   const router = useRouter();
   const isMobile = useIsMobile();
   const tab = getQueryParamString(router.query.tab);
-  const { shardId, shards, setActiveShardId } = useShards();
+  const { shardId, shards } = useShards();
 
   React.useEffect(() => {
     if (tab === 'blob_txs' && config.UI.views.tx.hiddenViews?.blob_txs) {
@@ -147,8 +147,7 @@ const Transactions = () => {
     }
   })();
 
-  const handleSwitchShard = React.useCallback(async(shardId: string) => {
-    await setActiveShardId(shardId);
+  const handleSwitchShard = React.useCallback(async() => {
     switch (tab) {
       case 'pending':
         await txsPendingQuery.refetch();
@@ -161,7 +160,7 @@ const Transactions = () => {
         break;
       default: await txsValidatedQuery.refetch();
     }
-  }, [ tab, txsWatchlistQuery, txsPendingQuery, txsWithBlobsQuery, txsValidatedQuery, setActiveShardId ]);
+  }, [ tab, txsWatchlistQuery, txsPendingQuery, txsWithBlobsQuery, txsValidatedQuery ]);
 
   return (
     <>

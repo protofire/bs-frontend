@@ -26,7 +26,7 @@ const BlocksPageContent = () => {
   const router = useRouter();
   const isMobile = useIsMobile();
   const tab = getQueryParamString(router.query.tab);
-  const { shardId, shards, setActiveShardId } = useShards();
+  const { shardId, shards } = useShards();
 
   const blocksQuery = useQueryWithPages({
     resourceName: 'blocks',
@@ -78,8 +78,7 @@ const BlocksPageContent = () => {
     { id: 'uncles', title: 'Uncles', component: <BlocksContent type="uncle" query={ unclesQuery }/> },
   ];
 
-  const handleSwitchShard = React.useCallback(async(shardId: string) => {
-    await setActiveShardId(shardId);
+  const handleSwitchShard = React.useCallback(async() => {
     if (tab === 'reorgs') {
       await reorgsQuery.refetch();
     }
@@ -87,7 +86,7 @@ const BlocksPageContent = () => {
       await unclesQuery.refetch();
     }
     await blocksQuery.refetch();
-  }, [ tab, reorgsQuery, unclesQuery, blocksQuery, setActiveShardId ]);
+  }, [ tab, reorgsQuery, unclesQuery, blocksQuery ]);
 
   return (
     <>
