@@ -55,7 +55,7 @@ export default function useShards(): UseShardsResult {
               const newUrl = new URL(url as string, baseUrl);
 
               // Add shardId to query params for tabs
-              if (!newUrl.searchParams.has('shard')) {
+              if (!newUrl.searchParams.has('shard') || !newUrl.searchParams.get('shard')) {
                 newUrl.searchParams.append('shard', shardId);
               }
 
@@ -69,6 +69,7 @@ export default function useShards(): UseShardsResult {
 
       return {
         shards: {},
+        rpcClient: undefined,
         setActiveShardId() {
           return Promise.resolve();
         },
