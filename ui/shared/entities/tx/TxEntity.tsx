@@ -9,7 +9,11 @@ import * as EntityBase from 'ui/shared/entities/base/components';
 type LinkProps = EntityBase.LinkBaseProps & Pick<EntityProps, 'hash' | 'shard'>;
 
 const Link = chakra((props: LinkProps) => {
-  const defaultHref = route({ pathname: '/tx/[hash]', query: { hash: props.hash, shard: props.shard } });
+  const queryParams: {hash: string; shard?: string} = { hash: props.hash };
+  if (props.shard) {
+    queryParams.shard = props.shard;
+  }
+  const defaultHref = route({ pathname: '/tx/[hash]', query: queryParams });
 
   return (
     <EntityBase.Link

@@ -10,7 +10,14 @@ type LinkProps = EntityBase.LinkBaseProps & Pick<EntityProps, 'hash' | 'number' 
 
 const Link = chakra((props: LinkProps) => {
   const heightOrHash = props.hash ?? String(props.number);
-  const defaultHref = route({ pathname: '/block/[height_or_hash]', query: { height_or_hash: heightOrHash, shard: props.shard } });
+  const queryParams: {height_or_hash: string; shard?: string} = { height_or_hash: heightOrHash };
+  if (props.shard) {
+    queryParams.shard = props.shard;
+  }
+  const defaultHref = route({
+    pathname: '/block/[height_or_hash]',
+    query: queryParams,
+  });
 
   return (
     <EntityBase.Link
