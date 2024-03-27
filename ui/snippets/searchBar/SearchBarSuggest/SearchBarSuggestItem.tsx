@@ -1,3 +1,4 @@
+import { Box, Text } from '@chakra-ui/react';
 import type { LinkProps as NextLinkProps } from 'next/link';
 import NextLink from 'next/link';
 import React from 'react';
@@ -5,6 +6,8 @@ import React from 'react';
 import type { SearchResultItem } from 'types/api/search';
 
 import { route } from 'nextjs-routes';
+
+import useShards from 'lib/hooks/useShards';
 
 import SearchBarSuggestAddress from './SearchBarSuggestAddress';
 import SearchBarSuggestBlob from './SearchBarSuggestBlob';
@@ -23,28 +26,29 @@ interface Props {
 }
 
 const SearchBarSuggestItem = ({ data, isMobile, searchTerm, onClick }: Props) => {
+  const { shards } = useShards();
 
   const url = (() => {
     switch (data.type) {
       case 'token': {
-        return route({ pathname: '/token/[hash]', query: { hash: data.address } });
+        return route({ pathname: '/token/[hash]', query: { hash: data.address, shard: data.__id } });
       }
       case 'contract':
       case 'address':
       case 'label': {
-        return route({ pathname: '/address/[hash]', query: { hash: data.address } });
+        return route({ pathname: '/address/[hash]', query: { hash: data.address, shard: data.__id } });
       }
       case 'transaction': {
-        return route({ pathname: '/tx/[hash]', query: { hash: data.tx_hash } });
+        return route({ pathname: '/tx/[hash]', query: { hash: data.tx_hash, shard: data.__id } });
       }
       case 'block': {
-        return route({ pathname: '/block/[height_or_hash]', query: { height_or_hash: String(data.block_hash) } });
+        return route({ pathname: '/block/[height_or_hash]', query: { height_or_hash: String(data.block_hash), shard: data.__id } });
       }
       case 'user_operation': {
-        return route({ pathname: '/op/[hash]', query: { hash: data.user_operation_hash } });
+        return route({ pathname: '/op/[hash]', query: { hash: data.user_operation_hash, shard: data.__id } });
       }
       case 'blob': {
-        return route({ pathname: '/blobs/[hash]', query: { hash: data.blob_hash } });
+        return route({ pathname: '/blobs/[hash]', query: { hash: data.blob_hash, shard: data.__id } });
       }
     }
   })();
@@ -80,6 +84,13 @@ const SearchBarSuggestItem = ({ data, isMobile, searchTerm, onClick }: Props) =>
   return (
     <NextLink href={ url as NextLinkProps['href'] } passHref legacyBehavior>
       <SearchBarSuggestItemLink onClick={ onClick }>
+        { data.__id ? (
+          <Box>
+            <Text size="xs">
+              { shards[data.__id].title }
+            </Text>
+          </Box>
+        ) : null }
         { content }
       </SearchBarSuggestItemLink>
     </NextLink>

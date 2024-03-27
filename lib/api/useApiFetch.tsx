@@ -97,20 +97,24 @@ export default function useApiFetch() {
       // Merge responses from all shards
       const shards = getFeaturePayload(config.features.shards)?.shards || {};
       const shardsIds = Object.keys(shards);
-      type ShardedResponse = (Array<never> | NonNullable<SuccessType>) & {__shardId: ShardId};
 
       response = shardsIds.reduce((acc, shardId) => {
-        let shardResponse = (response as Record<ShardId, SuccessType>)[shardId] || [];
+        const shardResponse = (response as Record<ShardId, {data: SuccessType}>)[shardId]['data'] || [];
         if (shardResponse && Array.isArray(shardResponse) && shardResponse.length > 0) {
-          shardResponse = shardResponse.map((item: ShardedResponse) => {
-            item.__shardId = shardId as ShardId;
-            return item;
-          }) as ShardedResponse;
           acc.push(...shardResponse as Array<never>);
         }
 
         return acc;
       }, [] as Array<never>) as ResourceError<ErrorType> | Awaited<SuccessType>;
+
+      // Sort by timestamp
+      type MergedResponse = Array<NonNullable<SuccessType> & {timestamp?: string}>;
+      response = (response as MergedResponse).sort((a, b) => {
+        if (!a.timestamp || !b.timestamp) {
+          return 0;
+        }
+        return new Date(b.timestamp).getTime() - new Date(a.timestamp).getTime();
+      }) as ResourceError<ErrorType> | Awaited<SuccessType>;
     }
 
     return response;
