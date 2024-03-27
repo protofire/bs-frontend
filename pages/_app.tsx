@@ -16,6 +16,7 @@ import { ScrollDirectionProvider } from 'lib/contexts/scrollDirection';
 import { growthBook } from 'lib/growthbook/init';
 import useLoadFeatures from 'lib/growthbook/useLoadFeatures';
 import useNotifyOnNavigation from 'lib/hooks/useNotifyOnNavigation';
+import useShards from 'lib/hooks/useShards';
 import { SocketProvider } from 'lib/socket/context';
 import theme from 'theme';
 import AppErrorBoundary from 'ui/shared/AppError/AppErrorBoundary';
@@ -48,12 +49,24 @@ function MyApp({ Component, pageProps }: AppPropsWithLayout) {
   useNotifyOnNavigation();
 
   const queryClient = useQueryClientConfig();
+  const { shard } = useShards();
 
   const handleError = React.useCallback((error: Error) => {
     Sentry.captureException(error);
   }, []);
 
   const getLayout = Component.getLayout ?? ((page) => <Layout>{ page }</Layout>);
+
+  const wsUrl = React.useMemo(() => {
+    const url = new URL(`${ config.api.socket }${ config.api.basePath }/socket/v2`);
+    const shardHost = shard?.apiHost;
+    if (shardHost) {
+      // Replace host
+      url.host = shardHost;
+    }
+
+    return url.toString();
+  }, [ shard ]);
 
   return (
     <ChakraProvider theme={ theme } cookies={ pageProps.cookies }>
@@ -66,7 +79,7 @@ function MyApp({ Component, pageProps }: AppPropsWithLayout) {
             <QueryClientProvider client={ queryClient }>
               <GrowthBookProvider growthbook={ growthBook }>
                 <ScrollDirectionProvider>
-                  <SocketProvider url={ `${ config.api.socket }${ config.api.basePath }/socket/v2` }>
+                  <SocketProvider url={ wsUrl }>
                     { getLayout(<Component { ...pageProps }/>) }
                   </SocketProvider>
                 </ScrollDirectionProvider>
