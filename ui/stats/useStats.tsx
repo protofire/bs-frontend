@@ -16,7 +16,7 @@ function isChartNameMatches(q: string, chart: StatsChartInfo) {
 }
 
 export default function useStats() {
-  const { data, isPlaceholderData, isError } = useApiQuery('stats_lines', {
+  const { data, isPlaceholderData, isError, refetch } = useApiQuery('stats_lines', {
     queryOptions: {
       placeholderData: STATS_CHARTS,
     },
@@ -54,6 +54,7 @@ export default function useStats() {
   }, []);
 
   return React.useMemo(() => ({
+    refetch,
     sections: data?.sections,
     sectionIds,
     isPlaceholderData,
@@ -66,6 +67,7 @@ export default function useStats() {
     handleFilterChange,
     displayedCharts,
   }), [
+    refetch,
     data,
     sectionIds,
     isPlaceholderData,

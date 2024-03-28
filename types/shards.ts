@@ -7,6 +7,7 @@ export type ShardInfo = {
   id: ShardId;
   title: string;
   apiHost: string;
+  statsHost: string;
   chain: Chain;
 };
 

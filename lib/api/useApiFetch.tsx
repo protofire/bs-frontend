@@ -71,7 +71,7 @@ export default function useApiFetch() {
       } else if (shard) {
         // We need replace host with shard api host
         const shardUrl = new URL(url);
-        shardUrl.host = shard.apiHost;
+        shardUrl.host = resource.shardable === 'stats' ? shard.statsHost : shard.apiHost;
         url = shardUrl.toString();
       }
     }

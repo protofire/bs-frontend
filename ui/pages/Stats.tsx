@@ -1,8 +1,10 @@
-import { Box } from '@chakra-ui/react';
+import { Box, Flex } from '@chakra-ui/react';
 import React from 'react';
 
 import config from 'configs/app';
+import useShards from 'lib/hooks/useShards';
 import PageTitle from 'ui/shared/Page/PageTitle';
+import ShardSwitcher from 'ui/shared/shardSwitcher/ShardSwitcher';
 
 import ChartsWidgetsList from '../stats/ChartsWidgetsList';
 import NumberWidgetsList from '../stats/NumberWidgetsList';
@@ -10,6 +12,7 @@ import StatsFilters from '../stats/StatsFilters';
 import useStats from '../stats/useStats';
 
 const Stats = () => {
+  const { shardId, shards } = useShards();
   const {
     isPlaceholderData,
     isError,
@@ -21,11 +24,19 @@ const Stats = () => {
     handleFilterChange,
     displayedCharts,
     filterQuery,
+    refetch,
   } = useStats();
+
+  const handleSwitchShard = React.useCallback(async() => {
+    await refetch();
+  }, [ refetch ]);
 
   return (
     <>
-      <PageTitle title={ `${ config.chain.name } stats` }/>
+      <Flex>
+        <Box flex={ 1 }><PageTitle title={ `${ config.chain.name } stats` }/></Box>
+        <ShardSwitcher shardId={ shardId } shards={ shards } handleSwitchShard={ handleSwitchShard }/>
+      </Flex>
 
       <Box mb={{ base: 6, sm: 8 }}>
         <NumberWidgetsList/>
