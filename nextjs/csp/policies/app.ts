@@ -33,7 +33,7 @@ const getCspReportUrl = () => {
 export function app(): CspDev.DirectiveDescriptor {
   const marketplaceFeaturePayload = getFeaturePayload(config.features.marketplace);
   const shardsFeaturePayload = getFeaturePayload(config.features.shards);
-  const shardsApiHosts = Object.values(shardsFeaturePayload?.shards || {}).map((shard) => shard.apiHost);
+  const shardsApiHosts = Object.values(shardsFeaturePayload?.shards || {}).map((shard) => `https://${ shard.apiHost }`);
   const shardsWebsocketHosts = shardsApiHosts.map((apiHost) => apiHost.replace(/^http/, 'ws'));
 
   return {
