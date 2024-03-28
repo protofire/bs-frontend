@@ -518,59 +518,71 @@ export const RESOURCES = {
   token: {
     path: '/api/v2/tokens/:hash',
     pathParams: [ 'hash' as const ],
+    shardable: 'api',
   },
   token_verified_info: {
     path: '/api/v1/chains/:chainId/token-infos/:hash',
     pathParams: [ 'chainId' as const, 'hash' as const ],
     endpoint: getFeaturePayload(config.features.verifiedTokens)?.api.endpoint,
     basePath: getFeaturePayload(config.features.verifiedTokens)?.api.basePath,
+    shardable: 'api',
   },
   token_counters: {
     path: '/api/v2/tokens/:hash/counters',
     pathParams: [ 'hash' as const ],
+    shardable: 'api',
   },
   token_holders: {
     path: '/api/v2/tokens/:hash/holders',
     pathParams: [ 'hash' as const ],
     filterFields: [],
+    shardable: 'api',
   },
   token_transfers: {
     path: '/api/v2/tokens/:hash/transfers',
     pathParams: [ 'hash' as const ],
     filterFields: [],
+    shardable: 'api',
   },
   token_inventory: {
     path: '/api/v2/tokens/:hash/instances',
     pathParams: [ 'hash' as const ],
     filterFields: [ 'holder_address_hash' as const ],
+    shardable: 'api',
   },
   tokens: {
     path: '/api/v2/tokens',
     filterFields: [ 'q' as const, 'type' as const ],
+    shardable: 'api',
   },
   tokens_bridged: {
     path: '/api/v2/tokens/bridged',
     filterFields: [ 'q' as const, 'chain_ids' as const ],
+    shardable: 'api',
   },
 
   // TOKEN INSTANCE
   token_instance: {
     path: '/api/v2/tokens/:hash/instances/:id',
     pathParams: [ 'hash' as const, 'id' as const ],
+    shardable: 'api',
   },
   token_instance_transfers_count: {
     path: '/api/v2/tokens/:hash/instances/:id/transfers-count',
     pathParams: [ 'hash' as const, 'id' as const ],
+    shardable: 'api',
   },
   token_instance_transfers: {
     path: '/api/v2/tokens/:hash/instances/:id/transfers',
     pathParams: [ 'hash' as const, 'id' as const ],
     filterFields: [],
+    shardable: 'api',
   },
   token_instance_holders: {
     path: '/api/v2/tokens/:hash/instances/:id/holders',
     pathParams: [ 'hash' as const, 'id' as const ],
     filterFields: [],
+    shardable: 'api',
   },
 
   // APP STATS

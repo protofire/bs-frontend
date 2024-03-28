@@ -1,4 +1,4 @@
-import { Box } from '@chakra-ui/react';
+import { Box, Flex } from '@chakra-ui/react';
 import { useRouter } from 'next/router';
 import React from 'react';
 
@@ -9,6 +9,7 @@ import type { RoutedTab } from 'ui/shared/Tabs/types';
 import config from 'configs/app';
 import useDebounce from 'lib/hooks/useDebounce';
 import useIsMobile from 'lib/hooks/useIsMobile';
+import useShards from 'lib/hooks/useShards';
 import getQueryParamString from 'lib/router/getQueryParamString';
 import { TOKEN_INFO_ERC_20 } from 'stubs/token';
 import { generateListStub } from 'stubs/utils';
@@ -16,6 +17,7 @@ import PopoverFilter from 'ui/shared/filters/PopoverFilter';
 import TokenTypeFilter from 'ui/shared/filters/TokenTypeFilter';
 import PageTitle from 'ui/shared/Page/PageTitle';
 import useQueryWithPages from 'ui/shared/pagination/useQueryWithPages';
+import ShardSwitcher from 'ui/shared/shardSwitcher/ShardSwitcher';
 import getSortParamsFromValue from 'ui/shared/sort/getSortParamsFromValue';
 import getSortValueFromQuery from 'ui/shared/sort/getSortValueFromQuery';
 import RoutedTabs from 'ui/shared/Tabs/RoutedTabs';
@@ -41,6 +43,7 @@ const bridgedTokensFeature = config.features.bridgedTokens;
 const Tokens = () => {
   const router = useRouter();
   const isMobile = useIsMobile();
+  const { shardId, shards } = useShards();
 
   const tab = getQueryParamString(router.query.tab);
   const q = getQueryParamString(router.query.q);
@@ -170,9 +173,17 @@ const Tokens = () => {
     } : undefined,
   ].filter(Boolean);
 
+  const handleSwitchShard = React.useCallback(async() => {
+    await tokensQuery.refetch();
+  }, [ tokensQuery ]);
+
   return (
     <>
-      <PageTitle title="Tokens" withTextAd/>
+      <Flex>
+        <Box flex={ 1 }><PageTitle title="Tokens" withTextAd/></Box>
+        <ShardSwitcher shardId={ shardId } shards={ shards } handleSwitchShard={ handleSwitchShard }/>
+      </Flex>
+
       { tabs.length === 1 && !isMobile && actionBar }
       <RoutedTabs
         tabs={ tabs }
