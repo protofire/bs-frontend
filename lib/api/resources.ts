@@ -497,9 +497,11 @@ export const RESOURCES = {
   verified_contracts: {
     path: '/api/v2/smart-contracts',
     filterFields: [ 'q' as const, 'filter' as const ],
+    shardable: 'api',
   },
   verified_contracts_counters: {
     path: '/api/v2/smart-contracts/counters',
+    shardable: 'api',
   },
 
   // TOKEN
