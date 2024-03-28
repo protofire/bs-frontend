@@ -457,41 +457,51 @@ export const RESOURCES = {
   contract: {
     path: '/api/v2/smart-contracts/:hash',
     pathParams: [ 'hash' as const ],
+    shardable: 'api',
   },
   contract_methods_read: {
     path: '/api/v2/smart-contracts/:hash/methods-read',
     pathParams: [ 'hash' as const ],
+    shardable: 'api',
   },
   contract_methods_read_proxy: {
     path: '/api/v2/smart-contracts/:hash/methods-read-proxy',
     pathParams: [ 'hash' as const ],
+    shardable: 'api',
   },
   contract_method_query: {
     path: '/api/v2/smart-contracts/:hash/query-read-method',
     pathParams: [ 'hash' as const ],
+    shardable: 'api',
   },
   contract_methods_write: {
     path: '/api/v2/smart-contracts/:hash/methods-write',
     pathParams: [ 'hash' as const ],
+    shardable: 'api',
   },
   contract_methods_write_proxy: {
     path: '/api/v2/smart-contracts/:hash/methods-write-proxy',
     pathParams: [ 'hash' as const ],
+    shardable: 'api',
   },
   contract_verification_config: {
     path: '/api/v2/smart-contracts/verification/config',
+    shardable: 'api',
   },
   contract_verification_via: {
     path: '/api/v2/smart-contracts/:hash/verification/via/:method',
     pathParams: [ 'hash' as const, 'method' as const ],
+    shardable: 'api',
   },
   contract_solidityscan_report: {
     path: '/api/v2/smart-contracts/:hash/solidityscan-report',
     pathParams: [ 'hash' as const ],
+    shardable: 'api',
   },
   contract_security_audits: {
     path: '/api/v2/smart-contracts/:hash/audit-reports',
     pathParams: [ 'hash' as const ],
+    shardable: 'api',
   },
 
   verified_contracts: {
