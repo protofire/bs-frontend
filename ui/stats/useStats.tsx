@@ -39,7 +39,7 @@ export default function useStats() {
           charts,
         };
       }).filter((section) => section.charts.length > 0);
-  }, [ currentSection, data?.sections, debouncedFilterQuery ]);
+  }, [ currentSection, data, debouncedFilterQuery ]);
 
   const handleSectionChange = useCallback((newSection: string) => {
     setCurrentSection(newSection);

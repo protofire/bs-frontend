@@ -55,6 +55,7 @@ const Stats = () => {
         </Box>
 
         <ChartsWidgetsList
+          key={ `charts_${ shardId }` }
           filterQuery={ filterQuery }
           isError={ isError }
           isPlaceholderData={ isPlaceholderData }
