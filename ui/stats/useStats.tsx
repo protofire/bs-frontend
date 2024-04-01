@@ -5,6 +5,7 @@ import type { StatsIntervalIds } from 'types/client/stats';
 
 import useApiQuery from 'lib/api/useApiQuery';
 import useDebounce from 'lib/hooks/useDebounce';
+import useShards from 'lib/hooks/useShards';
 import { STATS_CHARTS } from 'stubs/stats';
 
 function isSectionMatches(section: StatsChartsSection, currentSection: string): boolean {
@@ -16,6 +17,8 @@ function isChartNameMatches(q: string, chart: StatsChartInfo) {
 }
 
 export default function useStats() {
+  const { shardId } = useShards();
+
   const { data, isPlaceholderData, isError, refetch } = useApiQuery('stats_lines', {
     queryOptions: {
       placeholderData: STATS_CHARTS,
@@ -37,9 +40,10 @@ export default function useStats() {
         return {
           ...section,
           charts,
+          shardId,
         };
       }).filter((section) => section.charts.length > 0);
-  }, [ currentSection, data, debouncedFilterQuery ]);
+  }, [ currentSection, data, debouncedFilterQuery, shardId ]);
 
   const handleSectionChange = useCallback((newSection: string) => {
     setCurrentSection(newSection);
