@@ -5,7 +5,6 @@ import type { StatsIntervalIds } from 'types/client/stats';
 
 import useApiQuery from 'lib/api/useApiQuery';
 import useDebounce from 'lib/hooks/useDebounce';
-import useShards from 'lib/hooks/useShards';
 import { STATS_CHARTS } from 'stubs/stats';
 
 function isSectionMatches(section: StatsChartsSection, currentSection: string): boolean {
@@ -17,9 +16,7 @@ function isChartNameMatches(q: string, chart: StatsChartInfo) {
 }
 
 export default function useStats() {
-  const { shardId } = useShards();
-
-  const { data, isPlaceholderData, isError, refetch } = useApiQuery('stats_lines', {
+  const { data, isPlaceholderData, isError } = useApiQuery('stats_lines', {
     queryOptions: {
       placeholderData: STATS_CHARTS,
     },
@@ -40,10 +37,9 @@ export default function useStats() {
         return {
           ...section,
           charts,
-          shardId,
         };
       }).filter((section) => section.charts.length > 0);
-  }, [ currentSection, data, debouncedFilterQuery, shardId ]);
+  }, [ currentSection, data, debouncedFilterQuery ]);
 
   const handleSectionChange = useCallback((newSection: string) => {
     setCurrentSection(newSection);
@@ -58,7 +54,6 @@ export default function useStats() {
   }, []);
 
   return React.useMemo(() => ({
-    refetch,
     sections: data?.sections,
     sectionIds,
     isPlaceholderData,
@@ -71,7 +66,6 @@ export default function useStats() {
     handleFilterChange,
     displayedCharts,
   }), [
-    refetch,
     data,
     sectionIds,
     isPlaceholderData,

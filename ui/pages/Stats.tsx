@@ -24,12 +24,11 @@ const Stats = () => {
     handleFilterChange,
     displayedCharts,
     filterQuery,
-    refetch,
   } = useStats();
 
   const handleSwitchShard = React.useCallback(async() => {
-    await refetch();
-  }, [ refetch ]);
+    location.reload();
+  }, [ ]);
 
   return (
     <>
