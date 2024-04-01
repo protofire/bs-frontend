@@ -37,7 +37,7 @@ const Stats = () => {
         <ShardSwitcher shardId={ shardId } shards={ shards } handleSwitchShard={ handleSwitchShard }/>
       </Flex>
 
-      <Box key={ shardId }>
+      <Box>
         <Box mb={{ base: 6, sm: 8 }}>
           <NumberWidgetsList/>
         </Box>
@@ -54,7 +54,6 @@ const Stats = () => {
         </Box>
 
         <ChartsWidgetsList
-          key={ `charts_${ shardId }` }
           filterQuery={ filterQuery }
           isError={ isError }
           isPlaceholderData={ isPlaceholderData }
