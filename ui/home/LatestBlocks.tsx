@@ -66,7 +66,8 @@ const LatestBlocks = () => {
       event: 'new_block',
       onMessage: handleNewBlockMessage,
     });
-  }, [ sockets, handleNewBlockMessage ]);
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [ handleNewBlockMessage ]);
 
   // const handleNewBlockMessage: SocketMessage.NewBlock['handler'] = React.useCallback((payload) => {
   //   queryClient.setQueryData(getResourceKey('homepage_blocks'), (prevData: Array<Block> | undefined) => {
