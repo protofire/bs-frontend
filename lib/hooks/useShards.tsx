@@ -18,10 +18,7 @@ type UseShardsResult = {
   shards: Record<ShardId, ShardInfo>;
   getUrlWithShardId: (url: string) => string;
   setActiveShardId: (shardId: ShardId) => Promise<void>;
-  sockets: {
-    connect: () => void;
-    subscribeOnTopicMessage: (params: SubscriptionParams) => void;
-  };
+  subscribeOnTopicMessage: (params: SubscriptionParams) => void;
 };
 
 export default function useShards(): UseShardsResult {
@@ -79,8 +76,6 @@ export default function useShards(): UseShardsResult {
       }
 
       const socketInstance = new Socket(wsUrl.toString());
-      socketInstance.connect();
-
       return socketInstance;
     }, []);
 
@@ -89,6 +84,9 @@ export default function useShards(): UseShardsResult {
 
   const subscribeOnTopicMessage = useCallback(({ channelTopic, event, params, onMessage }: SubscriptionParams) => {
     const channels = sockets.map((socket, index) => {
+      // eslint-disable-next-line no-console
+      console.log(`Subscribing to ${ channelTopic } channel on shard ${ index }`);
+      socket.connect();
       const channel = socket.channel(channelTopic, params);
       // eslint-disable-next-line no-console
       channel.join().receive('ok', () => console.log(`Successfully joined ${ channelTopic } channel on shard ${ index }`));
@@ -116,9 +114,6 @@ export default function useShards(): UseShardsResult {
     shards,
     getUrlWithShardId,
     setActiveShardId,
-    sockets: {
-      connect: connectSockets,
-      subscribeOnTopicMessage,
-    },
+    subscribeOnTopicMessage,
   };
 }
