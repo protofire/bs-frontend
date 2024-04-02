@@ -1,19 +1,21 @@
 import { Box, Heading, Flex, Text, VStack, Skeleton } from '@chakra-ui/react';
 import { useQueryClient } from '@tanstack/react-query';
 import { AnimatePresence } from 'framer-motion';
-import React from 'react';
+import React, { useEffect } from 'react';
 
-import type { SocketMessage } from 'lib/socket/types';
+// import type { SocketMessage } from 'lib/socket/types';
 import type { Block } from 'types/api/block';
+import type { ShardId } from 'types/shards';
 
 import { route } from 'nextjs-routes';
 
 import config from 'configs/app';
 import useApiQuery, { getResourceKey } from 'lib/api/useApiQuery';
 import useIsMobile from 'lib/hooks/useIsMobile';
+import useShards from 'lib/hooks/useShards';
 import { nbsp } from 'lib/html-entities';
-import useSocketChannel from 'lib/socket/useSocketChannel';
-import useSocketMessage from 'lib/socket/useSocketMessage';
+// import useSocketChannel from 'lib/socket/useSocketChannel';
+// import useSocketMessage from 'lib/socket/useSocketMessage';
 import { BLOCK } from 'stubs/block';
 import { HOMEPAGE_STATS } from 'stubs/stats';
 import LinkInternal from 'ui/shared/LinkInternal';
@@ -21,6 +23,7 @@ import LinkInternal from 'ui/shared/LinkInternal';
 import LatestBlocksItem from './LatestBlocksItem';
 
 const LatestBlocks = () => {
+  const { sockets } = useShards();
   const isMobile = useIsMobile();
   // const blocksMaxCount = isMobile ? 2 : 3;
   let blocksMaxCount: number;
@@ -43,28 +46,50 @@ const LatestBlocks = () => {
     },
   });
 
-  const handleNewBlockMessage: SocketMessage.NewBlock['handler'] = React.useCallback((payload) => {
+  const handleNewBlockMessage = React.useCallback((shardId: ShardId, payload: unknown) => {
     queryClient.setQueryData(getResourceKey('homepage_blocks'), (prevData: Array<Block> | undefined) => {
-
+      const data = payload as {block: Block};
       const newData = prevData ? [ ...prevData ] : [];
 
-      if (newData.some((block => block.height === payload.block.height))) {
+      if (newData.some((block => block.height === data.block.height))) {
         return newData;
       }
 
-      return [ payload.block, ...newData ].sort((b1, b2) => b2.height - b1.height).slice(0, blocksMaxCount);
+      return [ data.block, ...newData ].sort((b1, b2) => b2.height - b1.height).slice(0, blocksMaxCount);
     });
   }, [ queryClient, blocksMaxCount ]);
 
-  const channel = useSocketChannel({
-    topic: 'blocks:new_block',
-    isDisabled: isPlaceholderData || isError,
-  });
-  useSocketMessage({
-    channel,
-    event: 'new_block',
-    handler: handleNewBlockMessage,
-  });
+  useEffect(() => {
+    sockets.connect();
+    sockets.subscribeOnTopicMessage({
+      channelTopic: 'blocks:new_block',
+      event: 'new_block',
+      onMessage: handleNewBlockMessage,
+    });
+  }, [ sockets, handleNewBlockMessage ]);
+
+  // const handleNewBlockMessage: SocketMessage.NewBlock['handler'] = React.useCallback((payload) => {
+  //   queryClient.setQueryData(getResourceKey('homepage_blocks'), (prevData: Array<Block> | undefined) => {
+
+  //     const newData = prevData ? [ ...prevData ] : [];
+
+  //     if (newData.some((block => block.height === payload.block.height))) {
+  //       return newData;
+  //     }
+
+  //     return [ payload.block, ...newData ].sort((b1, b2) => b2.height - b1.height).slice(0, blocksMaxCount);
+  //   });
+  // }, [ queryClient, blocksMaxCount ]);
+
+  // const channel = useSocketChannel({
+  //   topic: 'blocks:new_block',
+  //   isDisabled: isPlaceholderData || isError,
+  // });
+  // useSocketMessage({
+  //   channel,
+  //   event: 'new_block',
+  //   handler: handleNewBlockMessage,
+  // });
 
   let content;
 

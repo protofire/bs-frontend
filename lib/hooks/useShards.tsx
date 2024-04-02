@@ -1,11 +1,15 @@
 import { useSearchParams } from 'next/navigation';
 import { useRouter } from 'next/router';
-import React, { useCallback } from 'react';
+import type { Channel } from 'phoenix';
+import { Socket } from 'phoenix';
+import React, { useCallback, useEffect, useState } from 'react';
 
 import { getFeaturePayload } from 'configs/app/features/types';
 import type { ShardId, ShardInfo } from 'types/shards';
 
 import config from 'configs/app';
+
+type SubscriptionParams = {channelTopic: string; event: string; params?: Record<string, string>; onMessage: (shardId: ShardId, msg: unknown) => void};
 
 type UseShardsResult = {
   shardId?: ShardId;
@@ -14,9 +18,16 @@ type UseShardsResult = {
   shards: Record<ShardId, ShardInfo>;
   getUrlWithShardId: (url: string) => string;
   setActiveShardId: (shardId: ShardId) => Promise<void>;
+  sockets: {
+    connect: () => void;
+    subscribeOnTopicMessage: (params: SubscriptionParams) => void;
+  };
 };
 
 export default function useShards(): UseShardsResult {
+  const [ sockets, setSockets ] = useState<Array<Socket>>([]);
+  const [ channels, setChannels ] = useState<Array<Channel>>([]);
+
   const queryStringParams = useSearchParams();
   const router = useRouter();
   const shards = React.useMemo(() => getFeaturePayload(config.features.shards)?.shards || {}, [ ]);
@@ -57,6 +68,47 @@ export default function useShards(): UseShardsResult {
     return url;
   }, [ shardId ]);
 
+  const connectSockets = useCallback(() => {
+    const sockets: Array<Socket> = Object.keys(shards).map((shardId: ShardId) => {
+      const wsUrl = new URL(`${ config.api.socket }${ config.api.basePath }/socket/v2`);
+      const shard = shards[shardId];
+      const shardHost = shard?.apiHost;
+      if (shardHost) {
+        // Replace host
+        wsUrl.host = shardHost;
+      }
+
+      const socketInstance = new Socket(wsUrl.toString());
+      socketInstance.connect();
+
+      return socketInstance;
+    }, []);
+
+    setSockets(sockets);
+  }, [ shards ]);
+
+  const subscribeOnTopicMessage = useCallback(({ channelTopic, event, params, onMessage }: SubscriptionParams) => {
+    const channels = sockets.map((socket, index) => {
+      const channel = socket.channel(channelTopic, params);
+      // eslint-disable-next-line no-console
+      channel.join().receive('ok', () => console.log(`Successfully joined ${ channelTopic } channel on shard ${ index }`));
+      channel.on(event, (msg) => {
+        const shardId = Object.keys(shards)[index];
+        onMessage(shardId, msg);
+      });
+      return channel;
+    });
+
+    setChannels(channels);
+  }, [ shards, sockets ]);
+
+  useEffect(() => {
+    return () => {
+      channels.forEach((channel) => channel.leave());
+      sockets.forEach((socket) => socket.disconnect());
+    };
+  }, [ channels, connectSockets, sockets ]);
+
   return {
     shardId,
     shard: shards[shardId],
@@ -64,5 +116,9 @@ export default function useShards(): UseShardsResult {
     shards,
     getUrlWithShardId,
     setActiveShardId,
+    sockets: {
+      connect: connectSockets,
+      subscribeOnTopicMessage,
+    },
   };
 }
