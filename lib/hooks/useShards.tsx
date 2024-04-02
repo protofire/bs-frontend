@@ -22,7 +22,7 @@ export default function useShards(): UseShardsResult {
   const shards = React.useMemo(() => getFeaturePayload(config.features.shards)?.shards || {}, [ ]);
   const defaultShardId = Object.keys(shards)[0];
 
-  const [ shardId, setShardId ] = React.useState<ShardId>(queryStringParams.get('shard') || defaultShardId);
+  const shardId = queryStringParams.get('shard') as ShardId || defaultShardId;
 
   const setActiveShardId = useCallback(async(shardId: ShardId) => {
     if (!shardId) {
@@ -30,8 +30,7 @@ export default function useShards(): UseShardsResult {
     }
 
     await router.push({ pathname: router.pathname, query: { ...router.query, shard: shardId } });
-
-    setShardId(shardId);
+    router.reload();
   }, [ router ]);
 
   const getUrlWithShardId = useCallback((url: string) => {
