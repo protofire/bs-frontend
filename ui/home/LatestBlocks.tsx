@@ -23,7 +23,7 @@ import LinkInternal from 'ui/shared/LinkInternal';
 import LatestBlocksItem from './LatestBlocksItem';
 
 const LatestBlocks = () => {
-  const { initSockets, subscribeOnTopicMessage } = useShards();
+  const { subscribeOnTopicMessage } = useShards();
   const isMobile = useIsMobile();
   // const blocksMaxCount = isMobile ? 2 : 3;
   let blocksMaxCount: number;
@@ -60,15 +60,11 @@ const LatestBlocks = () => {
   }, [ queryClient, blocksMaxCount ]);
 
   useEffect(() => {
-    initSockets();
-    setTimeout(() => {
-      subscribeOnTopicMessage({
-        channelTopic: 'blocks:new_block',
-        event: 'new_block',
-        onMessage: handleNewBlockMessage,
-      });
-    }, 100);
-  // eslint-disable-next-line react-hooks/exhaustive-deps
+    subscribeOnTopicMessage({
+      channelTopic: 'blocks:new_block',
+      event: 'new_block',
+      onMessage: handleNewBlockMessage,
+    });
   }, [ subscribeOnTopicMessage, handleNewBlockMessage ]);
 
   // const handleNewBlockMessage: SocketMessage.NewBlock['handler'] = React.useCallback((payload) => {

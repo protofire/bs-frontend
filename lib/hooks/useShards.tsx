@@ -19,7 +19,6 @@ type UseShardsResult = {
   getUrlWithShardId: (url: string) => string;
   setActiveShardId: (shardId: ShardId) => Promise<void>;
   subscribeOnTopicMessage: (params: SubscriptionParams) => void;
-  initSockets: () => void;
 };
 
 export default function useShards(): UseShardsResult {
@@ -66,24 +65,25 @@ export default function useShards(): UseShardsResult {
     return url;
   }, [ shardId ]);
 
-  const initSockets = useCallback(() => {
-    const sockets: Array<Socket> = Object.keys(shards).map((shardId: ShardId) => {
-      const wsUrl = new URL(`${ config.api.socket }${ config.api.basePath }/socket/v2`);
-      const shard = shards[shardId];
-      const shardHost = shard?.apiHost;
-      if (shardHost) {
-        // Replace host
-        wsUrl.host = shardHost;
-      }
-
-      const socketInstance = new Socket(wsUrl.toString());
-      return socketInstance;
-    }, []);
-
-    setSockets(sockets);
-  }, [ shards ]);
-
   const subscribeOnTopicMessage = useCallback(({ channelTopic, event, params, onMessage }: SubscriptionParams) => {
+    // Init sockets if they are not initialized
+    if (!sockets.length) {
+      const sockets: Array<Socket> = Object.keys(shards).map((shardId: ShardId) => {
+        const wsUrl = new URL(`${ config.api.socket }${ config.api.basePath }/socket/v2`);
+        const shard = shards[shardId];
+        const shardHost = shard?.apiHost;
+        if (shardHost) {
+          // Replace host
+          wsUrl.host = shardHost;
+        }
+
+        const socketInstance = new Socket(wsUrl.toString());
+        return socketInstance;
+      }, []);
+
+      setSockets(sockets);
+    }
+
     const channels = sockets.map((socket, index) => {
       // eslint-disable-next-line no-console
       console.log(`Subscribing to ${ channelTopic } channel on shard ${ index }`);
@@ -115,7 +115,6 @@ export default function useShards(): UseShardsResult {
     shards,
     getUrlWithShardId,
     setActiveShardId,
-    initSockets,
     subscribeOnTopicMessage,
   };
 }
