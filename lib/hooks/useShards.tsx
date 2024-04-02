@@ -106,7 +106,8 @@ export default function useShards(): UseShardsResult {
       channels.forEach((channel) => channel.leave());
       sockets.forEach((socket) => socket.disconnect());
     };
-  }, [ channels, sockets ]);
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   return {
     shardId,
