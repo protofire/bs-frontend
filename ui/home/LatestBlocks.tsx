@@ -49,6 +49,7 @@ const LatestBlocks = () => {
   const handleNewBlockMessage = React.useCallback((shardId: ShardId, payload: unknown) => {
     queryClient.setQueryData(getResourceKey('homepage_blocks'), (prevData: Array<Block> | undefined) => {
       const data = payload as {block: Block};
+      data.block.shardID = shardId;
       const newData = prevData ? [ ...prevData ] : [];
 
       if (newData.some((block => block.height === data.block.height))) {

@@ -66,7 +66,7 @@ const LatestTxsItem = ({ tx, isLoading }: Props) => {
             <TxEntity
               isLoading={ isLoading }
               hash={ tx.hash }
-              shard={ tx.__id }
+              shard={ tx.shardID }
               fontWeight="700"
             />
             { tx.timestamp && (
@@ -111,7 +111,7 @@ const LatestTxsItem = ({ tx, isLoading }: Props) => {
         { config.features.shards.isEnabled && (
           <Skeleton isLoaded={ !isLoading } display="flex" whiteSpace="pre" my="3px">
             <Text as="span">Shard </Text>
-            <Text as="span" variant="secondary">{ tx.__id ? shards[tx.__id].title : 'unknown' }</Text>
+            <Text as="span" variant="secondary">{ tx.shardID ? shards[tx.shardID].title : 'unknown' }</Text>
           </Skeleton>
         ) }
       </Flex>
