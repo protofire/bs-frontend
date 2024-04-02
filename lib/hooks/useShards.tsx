@@ -19,6 +19,7 @@ type UseShardsResult = {
   getUrlWithShardId: (url: string) => string;
   setActiveShardId: (shardId: ShardId) => Promise<void>;
   subscribeOnTopicMessage: (params: SubscriptionParams) => void;
+  initSockets: () => void;
 };
 
 export default function useShards(): UseShardsResult {
@@ -65,7 +66,7 @@ export default function useShards(): UseShardsResult {
     return url;
   }, [ shardId ]);
 
-  const connectSockets = useCallback(() => {
+  const initSockets = useCallback(() => {
     const sockets: Array<Socket> = Object.keys(shards).map((shardId: ShardId) => {
       const wsUrl = new URL(`${ config.api.socket }${ config.api.basePath }/socket/v2`);
       const shard = shards[shardId];
@@ -105,7 +106,7 @@ export default function useShards(): UseShardsResult {
       channels.forEach((channel) => channel.leave());
       sockets.forEach((socket) => socket.disconnect());
     };
-  }, [ channels, connectSockets, sockets ]);
+  }, [ channels, sockets ]);
 
   return {
     shardId,
@@ -114,6 +115,7 @@ export default function useShards(): UseShardsResult {
     shards,
     getUrlWithShardId,
     setActiveShardId,
+    initSockets,
     subscribeOnTopicMessage,
   };
 }
