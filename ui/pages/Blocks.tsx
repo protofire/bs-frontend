@@ -78,21 +78,11 @@ const BlocksPageContent = () => {
     { id: 'uncles', title: 'Uncles', component: <BlocksContent type="uncle" query={ unclesQuery }/> },
   ];
 
-  const handleSwitchShard = React.useCallback(async() => {
-    if (tab === 'reorgs') {
-      await reorgsQuery.refetch();
-    }
-    if (tab === 'uncles') {
-      await unclesQuery.refetch();
-    }
-    await blocksQuery.refetch();
-  }, [ tab, reorgsQuery, unclesQuery, blocksQuery ]);
-
   return (
     <>
       <Flex>
         <Box flex={ 1 }><PageTitle title="Blocks" withTextAd/></Box>
-        <ShardSwitcher shardId={ shardId } shards={ shards } handleSwitchShard={ handleSwitchShard }/>
+        <ShardSwitcher shardId={ shardId } shards={ shards }/>
       </Flex>
 
       <RoutedTabs

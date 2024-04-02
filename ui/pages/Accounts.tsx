@@ -19,7 +19,7 @@ const PAGE_SIZE = 50;
 const Accounts = () => {
   const { shardId, shards } = useShards();
 
-  const { isError, isPlaceholderData, data, pagination, refetch } = useQueryWithPages({
+  const { isError, isPlaceholderData, data, pagination } = useQueryWithPages({
     resourceName: 'addresses',
     options: {
       placeholderData: generateListStub<'addresses'>(
@@ -75,15 +75,11 @@ const Accounts = () => {
     </>
   ) : null;
 
-  const handleSwitchShard = React.useCallback(async() => {
-    await refetch();
-  }, [ refetch ]);
-
   return (
     <>
       <Flex>
         <Box flex={ 1 }><PageTitle title="Top accounts" withTextAd/></Box>
-        <ShardSwitcher shardId={ shardId } shards={ shards } handleSwitchShard={ handleSwitchShard }/>
+        <ShardSwitcher shardId={ shardId } shards={ shards }/>
       </Flex>
 
       <DataListDisplay

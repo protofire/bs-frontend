@@ -29,11 +29,7 @@ export default function useShards(): UseShardsResult {
       return;
     }
 
-    await router.push(
-      { pathname: router.pathname, query: { ...router.query, shard: shardId } },
-      undefined,
-      { shallow: true },
-    );
+    await router.push({ pathname: router.pathname, query: { ...router.query, shard: shardId } });
 
     setShardId(shardId);
   }, [ router ]);

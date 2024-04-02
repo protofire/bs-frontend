@@ -10,10 +10,9 @@ import RadioButtonGroup from '../radioButtonGroup/RadioButtonGroup';
 type ShardSwitcherProps = {
   shardId: ShardId;
   shards: Record<ShardId, ShardInfo>;
-  handleSwitchShard: (shardId: ShardId) => void | Promise<void>;
 };
 
-const ShardSwitcher = ({ shardId, shards, handleSwitchShard }: ShardSwitcherProps) => {
+const ShardSwitcher = ({ shardId, shards }: ShardSwitcherProps) => {
   const { setActiveShardId } = useShards();
   const options = React.useMemo(() => {
     const allShards = shards || {};
@@ -27,8 +26,7 @@ const ShardSwitcher = ({ shardId, shards, handleSwitchShard }: ShardSwitcherProp
 
   const handleSelectShard = React.useCallback(async(shardId: string) => {
     await setActiveShardId(shardId);
-    await handleSwitchShard(shardId);
-  }, [ setActiveShardId, handleSwitchShard ]);
+  }, [ setActiveShardId ]);
 
   return (
     <RadioButtonGroup<string>

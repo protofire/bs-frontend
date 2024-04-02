@@ -27,13 +27,11 @@ const ContractVerification = () => {
     );
   }, [ configQuery.data, configQuery.isError, configQuery.isPending ]);
 
-  const handleSwitchShard = React.useCallback(async() => {}, []);
-
   return (
     <>
       <Flex>
         <Box flex={ 1 }><PageTitle title="Verify & publish contract"/></Box>
-        <ShardSwitcher shardId={ shardId } shards={ shards } handleSwitchShard={ handleSwitchShard }/>
+        <ShardSwitcher shardId={ shardId } shards={ shards }/>
       </Flex>
 
       { content }

@@ -41,7 +41,7 @@ const VerifiedContracts = () => {
 
   const isMobile = useIsMobile();
 
-  const { isError, isPlaceholderData, data, pagination, onFilterChange, onSortingChange, refetch } = useQueryWithPages({
+  const { isError, isPlaceholderData, data, pagination, onFilterChange, onSortingChange } = useQueryWithPages({
     resourceName: 'verified_contracts',
     filters: { q: debouncedSearchTerm, filter: type },
     sorting: getSortParamsFromValue<VerifiedContractsSortingValue, VerifiedContractsSortingField, VerifiedContractsSorting['order']>(sort),
@@ -130,15 +130,11 @@ const VerifiedContracts = () => {
     </>
   ) : null;
 
-  const handleSwitchShard = React.useCallback(async() => {
-    await refetch();
-  }, [ refetch ]);
-
   return (
     <Box>
       <Flex>
         <Box flex={ 1 }><PageTitle title="Verified contracts" withTextAd/></Box>
-        <ShardSwitcher shardId={ shardId } shards={ shards } handleSwitchShard={ handleSwitchShard }/>
+        <ShardSwitcher shardId={ shardId } shards={ shards }/>
       </Flex>
 
       <VerifiedContractsCounters key={ shardId }/>

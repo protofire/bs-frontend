@@ -26,15 +26,11 @@ const Stats = () => {
     filterQuery,
   } = useStats();
 
-  const handleSwitchShard = React.useCallback(async() => {
-    location.reload();
-  }, [ ]);
-
   return (
     <>
       <Flex>
         <Box flex={ 1 }><PageTitle title={ `${ config.chain.name } stats` }/></Box>
-        <ShardSwitcher shardId={ shardId } shards={ shards } handleSwitchShard={ handleSwitchShard }/>
+        <ShardSwitcher shardId={ shardId } shards={ shards }/>
       </Flex>
 
       <Box>

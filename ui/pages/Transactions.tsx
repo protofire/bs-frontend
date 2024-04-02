@@ -147,26 +147,11 @@ const Transactions = () => {
     }
   })();
 
-  const handleSwitchShard = React.useCallback(async() => {
-    switch (tab) {
-      case 'pending':
-        await txsPendingQuery.refetch();
-        break;
-      case 'watchlist':
-        await txsWatchlistQuery.refetch();
-        break;
-      case 'blob_txs':
-        await txsWithBlobsQuery.refetch();
-        break;
-      default: await txsValidatedQuery.refetch();
-    }
-  }, [ tab, txsWatchlistQuery, txsPendingQuery, txsWithBlobsQuery, txsValidatedQuery ]);
-
   return (
     <>
       <Flex>
         <Box flex={ 1 }><PageTitle title="Transactions" withTextAd/></Box>
-        <ShardSwitcher shardId={ shardId } shards={ shards } handleSwitchShard={ handleSwitchShard }/>
+        <ShardSwitcher shardId={ shardId } shards={ shards }/>
       </Flex>
 
       <RoutedTabs

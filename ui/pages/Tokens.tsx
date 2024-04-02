@@ -173,15 +173,11 @@ const Tokens = () => {
     } : undefined,
   ].filter(Boolean);
 
-  const handleSwitchShard = React.useCallback(async() => {
-    await tokensQuery.refetch();
-  }, [ tokensQuery ]);
-
   return (
     <>
       <Flex>
         <Box flex={ 1 }><PageTitle title="Tokens" withTextAd/></Box>
-        <ShardSwitcher shardId={ shardId } shards={ shards } handleSwitchShard={ handleSwitchShard }/>
+        <ShardSwitcher shardId={ shardId } shards={ shards }/>
       </Flex>
 
       { tabs.length === 1 && !isMobile && actionBar }

@@ -230,14 +230,6 @@ const AddressPageContent = () => {
     </Flex>
   );
 
-  const handleSwitchShard = React.useCallback(async() => {
-    await Promise.all([
-      addressQuery.refetch(),
-      addressTabsCountersQuery.refetch(),
-      userOpsAccountQuery.refetch(),
-    ]);
-  }, [ addressQuery, addressTabsCountersQuery, userOpsAccountQuery ]);
-
   return (
     <>
       <TextAd mb={ 6 }/>
@@ -251,7 +243,7 @@ const AddressPageContent = () => {
             isLoading={ isLoading }
           />
         </Box>
-        <ShardSwitcher shardId={ shardId } shards={ shards } handleSwitchShard={ handleSwitchShard }/>
+        <ShardSwitcher shardId={ shardId } shards={ shards }/>
       </Flex>
 
       { config.features.metasuites.isEnabled && <Box display="none" id="meta-suites__address" data-ready={ !isLoading }/> }
