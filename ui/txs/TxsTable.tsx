@@ -49,6 +49,7 @@ const TxsTable = ({
         <TheadSticky top={ top }>
           <Tr>
             <Th width="54px"></Th>
+            <Th width="80px">Shard</Th>
             <Th width="180px">Txn hash</Th>
             <Th width="160px">Type</Th>
             <Th width="20%">Method</Th>

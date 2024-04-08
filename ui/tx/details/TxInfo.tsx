@@ -39,6 +39,7 @@ import HashStringShortenDynamic from 'ui/shared/HashStringShortenDynamic';
 import IconSvg from 'ui/shared/IconSvg';
 import LogDecodedInputData from 'ui/shared/logs/LogDecodedInputData';
 import RawInputData from 'ui/shared/RawInputData';
+import ShardInfo from 'ui/shared/ShardInfo';
 import TxStatus from 'ui/shared/statusTag/TxStatus';
 import TextSeparator from 'ui/shared/TextSeparator';
 import TxFeeStability from 'ui/shared/tx/TxFeeStability';
@@ -141,6 +142,15 @@ const TxInfo = ({ data, isLoading, socketStatus }: Props) => {
             <Box display="none" flexShrink={ 0 } id="meta-suites__tx-explorer-link"/>
           </>
         ) }
+      </DetailsInfoItem>
+      <DetailsInfoItem
+        title="Shard"
+        hint="Shard information containing the transaction"
+        isLoading={ isLoading }
+      >
+        <Skeleton isLoaded={ !isLoading }>
+          <ShardInfo shardID={ data.shard_id } toShardID={ data.to_shard_id }/>
+        </Skeleton>
       </DetailsInfoItem>
       <DetailsInfoItem
         title={ rollupFeature.isEnabled && rollupFeature.type === 'zkEvm' ? 'L2 status and method' : 'Status and method' }

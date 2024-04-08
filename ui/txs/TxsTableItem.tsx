@@ -16,6 +16,7 @@ import Tag from 'ui/shared/chakra/Tag';
 import CurrencyValue from 'ui/shared/CurrencyValue';
 import BlockEntity from 'ui/shared/entities/block/BlockEntity';
 import TxEntity from 'ui/shared/entities/tx/TxEntity';
+import ShardInfo from 'ui/shared/ShardInfo';
 import TxStatus from 'ui/shared/statusTag/TxStatus';
 import TxFeeStability from 'ui/shared/tx/TxFeeStability';
 import TxWatchListTags from 'ui/shared/tx/TxWatchListTags';
@@ -46,6 +47,11 @@ const TxsTableItem = ({ tx, showBlockInfo, currentAddress, enableTimeIncrement, 
     >
       <Td pl={ 4 }>
         <TxAdditionalInfo tx={ tx } isLoading={ isLoading }/>
+      </Td>
+      <Td pr={ 4 }>
+        <VStack alignItems="start" lineHeight="24px">
+          <ShardInfo shardID={ tx.shard_id } toShardID={ tx.to_shard_id }/>
+        </VStack>
       </Td>
       <Td pr={ 4 }>
         <VStack alignItems="start" lineHeight="24px">

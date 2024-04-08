@@ -16,6 +16,7 @@ import AddressFromTo from 'ui/shared/address/AddressFromTo';
 import BlockEntity from 'ui/shared/entities/block/BlockEntity';
 import TxEntity from 'ui/shared/entities/tx/TxEntity';
 import ListItemMobile from 'ui/shared/ListItemMobile/ListItemMobile';
+import ShardInfo from 'ui/shared/ShardInfo';
 import TxStatus from 'ui/shared/statusTag/TxStatus';
 import TxFeeStability from 'ui/shared/tx/TxFeeStability';
 import TxWatchListTags from 'ui/shared/tx/TxWatchListTags';
@@ -58,6 +59,12 @@ const TxsListItem = ({ tx, isLoading, showBlockInfo, currentAddress, enableTimeI
           </Skeleton>
         ) }
       </Flex>
+      <Flex justifyContent="space-between" lineHeight="24px" mt={ 2 } alignItems="center">
+        <Flex mt={ 2 }>
+          <Skeleton isLoaded={ !isLoading } display="inline-block" whiteSpace="pre">Shard </Skeleton>
+          <Skeleton isLoaded={ !isLoading } display="inline-block" whiteSpace="pre"><ShardInfo shardID={ tx.shard_id } toShardID={ tx.to_shard_id }/></Skeleton>
+        </Flex>
+      </Flex>
       { tx.method && (
         <Flex mt={ 3 }>
           <Skeleton isLoaded={ !isLoading } display="inline-block" whiteSpace="pre">Method </Skeleton>
@@ -73,7 +80,7 @@ const TxsListItem = ({ tx, isLoading, showBlockInfo, currentAddress, enableTimeI
         </Flex>
       ) }
       { showBlockInfo && tx.block !== null && (
-        <Flex mt={ 2 }>
+        <Flex mt={ 0 }>
           <Skeleton isLoaded={ !isLoading } display="inline-block" whiteSpace="pre">Block </Skeleton>
           <BlockEntity
             isLoading={ isLoading }
