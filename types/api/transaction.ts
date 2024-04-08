@@ -85,7 +85,8 @@ export type Transaction = {
   blob_gas_price?: string;
   burnt_blob_fee?: string;
   max_fee_per_blob_gas?: string;
-  shardID?: string;
+  shard_id?: string;
+  to_shard_id?: string;
 }
 
 export const ZKEVM_L2_TX_STATUSES = [ 'Confirmed by Sequencer', 'L1 Confirmed' ];
