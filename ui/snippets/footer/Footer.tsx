@@ -72,7 +72,6 @@ const Footer = () => {
     py: { base: 4, lg: 9 },
     borderTop: '1px solid',
     borderColor: 'divider',
-    // gridTemplateColumns: { base: '1fr', lg: 'minmax(auto, 470px) 1fr' },
     columnGap: { lg: '32px', xl: '100px' },
   };
 
