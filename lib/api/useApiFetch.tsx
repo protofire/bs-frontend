@@ -100,7 +100,7 @@ export default function useApiFetch() {
       const shardsIds = Object.keys(shards);
 
       response = shardsIds.reduce((acc, shardId) => {
-        const shardResponse = (response as Record<ShardId, {data: SuccessType}>)[`s${ shardId }`]['data'] || [];
+        const shardResponse = (response as Record<ShardId, {data: SuccessType}>)[shardId]['data'] || [];
 
         if (Array.isArray(shardResponse) && shardResponse.length > 0) {
           const formattedResponse = _map(shardResponse, (item) => {
