@@ -5,7 +5,6 @@ import type { Transaction } from 'types/api/transaction';
 export type BlockType = 'block' | 'reorg' | 'uncle';
 
 export interface Block {
-  shardID?: string;
   height: number;
   timestamp: string;
   tx_count: number;
@@ -43,6 +42,7 @@ export interface Block {
   burnt_blob_fees?: string;
   excess_blob_gas?: string;
   blob_tx_count?: number;
+  shard_id?: string;
 }
 
 export interface BlocksResponse {

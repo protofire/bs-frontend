@@ -11,7 +11,6 @@ import type { Block } from 'types/api/block';
 
 import config from 'configs/app';
 import getBlockTotalReward from 'lib/block/getBlockTotalReward';
-import useShards from 'lib/hooks/useShards';
 import getNetworkValidatorTitle from 'lib/networks/getNetworkValidatorTitle';
 import BlockTimestamp from 'ui/blocks/BlockTimestamp';
 import AddressEntity from 'ui/shared/entities/address/AddressEntity';
@@ -23,7 +22,6 @@ type Props = {
 }
 
 const LatestBlocksItem = ({ block, isLoading }: Props) => {
-  const { shards } = useShards();
   const totalReward = getBlockTotalReward(block);
   return (
     <Box
@@ -41,7 +39,7 @@ const LatestBlocksItem = ({ block, isLoading }: Props) => {
       <Flex alignItems="center" overflow="hidden" w="100%" mb={ 3 }>
         <BlockEntity
           isLoading={ isLoading }
-          shard={ block.shardID }
+          shard={ block.shard_id }
           number={ block.height }
           tailLength={ 2 }
           fontSize="xl"
@@ -62,7 +60,7 @@ const LatestBlocksItem = ({ block, isLoading }: Props) => {
         { config.features.shards.isEnabled && (
           <>
             <Skeleton isLoaded={ !isLoading }>Shard</Skeleton>
-            <Skeleton isLoaded={ !isLoading } color="text_secondary"><span>{ block.shardID ? shards[block.shardID].title : 'unknown' }</span></Skeleton>
+            <Skeleton isLoaded={ !isLoading } color="text_secondary"><span>{ block.shard_id }</span></Skeleton>
           </>
         ) }
 

@@ -3,22 +3,22 @@ import { useRouter } from 'next/router';
 import React, { useCallback } from 'react';
 
 type ShardInfoProps = {
-  shardID?: string;
-  toShardID?: string;
+  shardId?: string;
+  toShardId?: string;
 };
 
-const ShardInfo: React.FC<ShardInfoProps> = ({ shardID, toShardID }) => {
+const ShardInfo: React.FC<ShardInfoProps> = ({ shardId, toShardId }) => {
   const router = useRouter();
 
   const setActiveShardId = useCallback(
-    (shardID?: string) => async() => {
-      if (shardID === undefined) {
+    (shardId?: string) => async() => {
+      if (shardId === undefined) {
         return;
       }
 
       await router.push({
         pathname: '/txs',
-        query: { shard: `s${ shardID }` },
+        query: { shard: shardId },
       });
       router.reload();
     },
@@ -28,9 +28,9 @@ const ShardInfo: React.FC<ShardInfoProps> = ({ shardID, toShardID }) => {
   return (
     <Flex>
       <Text>
-        <Link onClick={ setActiveShardId(shardID) }>{ shardID }</Link>
+        <Link onClick={ setActiveShardId(shardId) }>{ shardId }</Link>
          &nbsp;&gt;&nbsp;
-        <Link onClick={ setActiveShardId(toShardID) }>{ toShardID }</Link>
+        <Link onClick={ setActiveShardId(toShardId) }>{ toShardId }</Link>
       </Text>
     </Flex>
   );

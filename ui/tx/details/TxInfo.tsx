@@ -149,7 +149,7 @@ const TxInfo = ({ data, isLoading, socketStatus }: Props) => {
         isLoading={ isLoading }
       >
         <Skeleton isLoaded={ !isLoading }>
-          <ShardInfo shardID={ data.shard_id } toShardID={ data.to_shard_id }/>
+          <ShardInfo shardId={ data.shard_id } toShardId={ data.to_shard_id }/>
         </Skeleton>
       </DetailsInfoItem>
       <DetailsInfoItem

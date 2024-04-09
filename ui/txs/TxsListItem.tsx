@@ -62,7 +62,7 @@ const TxsListItem = ({ tx, isLoading, showBlockInfo, currentAddress, enableTimeI
       <Flex justifyContent="space-between" lineHeight="24px" mt={ 2 } alignItems="center">
         <Flex mt={ 2 }>
           <Skeleton isLoaded={ !isLoading } display="inline-block" whiteSpace="pre">Shard </Skeleton>
-          <Skeleton isLoaded={ !isLoading } display="inline-block" whiteSpace="pre"><ShardInfo shardID={ tx.shard_id } toShardID={ tx.to_shard_id }/></Skeleton>
+          <Skeleton isLoaded={ !isLoading } display="inline-block" whiteSpace="pre"><ShardInfo shardId={ tx.shard_id } toShardId={ tx.to_shard_id }/></Skeleton>
         </Flex>
       </Flex>
       { tx.method && (

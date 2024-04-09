@@ -31,24 +31,24 @@ const SearchBarSuggestItem = ({ data, isMobile, searchTerm, onClick }: Props) =>
   const url = (() => {
     switch (data.type) {
       case 'token': {
-        return route({ pathname: '/token/[hash]', query: { hash: data.address, shard: data.shardID } });
+        return route({ pathname: '/token/[hash]', query: { hash: data.address, shard: data.shard_id } });
       }
       case 'contract':
       case 'address':
       case 'label': {
-        return route({ pathname: '/address/[hash]', query: { hash: data.address, shard: data.shardID } });
+        return route({ pathname: '/address/[hash]', query: { hash: data.address, shard: data.shard_id } });
       }
       case 'transaction': {
-        return route({ pathname: '/tx/[hash]', query: { hash: data.tx_hash, shard: data.shardID } });
+        return route({ pathname: '/tx/[hash]', query: { hash: data.tx_hash, shard: data.shard_id } });
       }
       case 'block': {
-        return route({ pathname: '/block/[height_or_hash]', query: { height_or_hash: String(data.block_hash), shard: data.shardID } });
+        return route({ pathname: '/block/[height_or_hash]', query: { height_or_hash: String(data.block_hash), shard: data.shard_id } });
       }
       case 'user_operation': {
-        return route({ pathname: '/op/[hash]', query: { hash: data.user_operation_hash, shard: data.shardID } });
+        return route({ pathname: '/op/[hash]', query: { hash: data.user_operation_hash, shard: data.shard_id } });
       }
       case 'blob': {
-        return route({ pathname: '/blobs/[hash]', query: { hash: data.blob_hash, shard: data.shardID } });
+        return route({ pathname: '/blobs/[hash]', query: { hash: data.blob_hash, shard: data.shard_id } });
       }
     }
   })();
@@ -84,10 +84,10 @@ const SearchBarSuggestItem = ({ data, isMobile, searchTerm, onClick }: Props) =>
   return (
     <NextLink href={ url as NextLinkProps['href'] } passHref legacyBehavior>
       <SearchBarSuggestItemLink onClick={ onClick }>
-        { data.shardID ? (
+        { data.shard_id ? (
           <Box>
             <Text size="xs">
-              { shards[data.shardID].title }
+              { shards[data.shard_id].title }
             </Text>
           </Box>
         ) : null }
