@@ -70,7 +70,7 @@ export interface SearchResultUserOp {
 
 export type SearchResultItem = (
   SearchResultToken | SearchResultAddressOrContract | SearchResultBlock | SearchResultTx | SearchResultLabel | SearchResultUserOp | SearchResultBlob
-) & {shardID?: string};
+) & {shard_id?: string};
 
 export interface SearchResult {
   items: Array<SearchResultItem>;

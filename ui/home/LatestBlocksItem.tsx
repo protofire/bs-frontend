@@ -41,7 +41,7 @@ const LatestBlocksItem = ({ block, isLoading }: Props) => {
       <Flex alignItems="center" overflow="hidden" w="100%" mb={ 3 }>
         <BlockEntity
           isLoading={ isLoading }
-          shard={ block.shardID }
+          shard={ block.shard_id }
           number={ block.height }
           tailLength={ 2 }
           fontSize="xl"
@@ -62,7 +62,7 @@ const LatestBlocksItem = ({ block, isLoading }: Props) => {
         { config.features.shards.isEnabled && (
           <>
             <Skeleton isLoaded={ !isLoading }>Shard</Skeleton>
-            <Skeleton isLoaded={ !isLoading } color="text_secondary"><span>{ block.shardID ? shards[block.shardID].title : 'unknown' }</span></Skeleton>
+            <Skeleton isLoaded={ !isLoading } color="text_secondary"><span>{ block.shard_id ? shards[block.shard_id].title : 'unknown' }</span></Skeleton>
           </>
         ) }
 

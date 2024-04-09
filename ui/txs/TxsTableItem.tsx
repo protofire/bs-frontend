@@ -50,7 +50,7 @@ const TxsTableItem = ({ tx, showBlockInfo, currentAddress, enableTimeIncrement, 
       </Td>
       <Td pr={ 4 }>
         <VStack alignItems="start" lineHeight="24px">
-          <ShardInfo shardID={ tx.shard_id } toShardID={ tx.to_shard_id }/>
+          <ShardInfo shardId={ tx.shard_id } toShardId={ tx.to_shard_id }/>
         </VStack>
       </Td>
       <Td pr={ 4 }>

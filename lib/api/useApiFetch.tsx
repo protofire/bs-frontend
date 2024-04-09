@@ -1,4 +1,5 @@
 import { useQueryClient } from '@tanstack/react-query';
+import _map from 'lodash/map';
 import _omit from 'lodash/omit';
 import _pickBy from 'lodash/pickBy';
 import React from 'react';
@@ -99,9 +100,16 @@ export default function useApiFetch() {
       const shardsIds = Object.keys(shards);
 
       response = shardsIds.reduce((acc, shardId) => {
-        const shardResponse = (response as Record<ShardId, {data: SuccessType}>)[shardId]['data'] || [];
-        if (shardResponse && Array.isArray(shardResponse) && shardResponse.length > 0) {
-          acc.push(...shardResponse as Array<never>);
+        const shardResponse = (response as Record<ShardId, {data: SuccessType}>)[`s${ shardId }`]['data'] || [];
+
+        if (Array.isArray(shardResponse) && shardResponse.length > 0) {
+          const formattedResponse = _map(shardResponse, (item) => {
+            return {
+              ...item as Record<string, unknown>,
+              shard_id: shardId,
+            };
+          });
+          acc.push(...formattedResponse as Array<never>);
         }
 
         return acc;
