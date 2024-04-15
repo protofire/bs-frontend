@@ -7,6 +7,7 @@ import type { AddressParam } from 'types/api/addressParams';
 
 import { route } from 'nextjs-routes';
 
+import { useAddressFormatContext } from 'lib/contexts/addressFormat';
 import { useAddressHighlightContext } from 'lib/contexts/addressHighlight';
 import * as EntityBase from 'ui/shared/entities/base/components';
 
@@ -96,7 +97,7 @@ const Icon = (props: IconProps) => {
   );
 };
 
-type ContentProps = Omit<EntityBase.ContentBaseProps, 'text'> & Pick<EntityProps, 'address'>;
+type ContentProps = EntityBase.ContentBaseProps & Pick<EntityProps, 'address'>;
 
 const Content = chakra((props: ContentProps) => {
   if (props.address.name || props.address.ens_domain_name) {
@@ -120,7 +121,7 @@ const Content = chakra((props: ContentProps) => {
   return (
     <EntityBase.Content
       { ...props }
-      text={ props.address.hash }
+      text={ props.text }
     />
   );
 });
@@ -148,6 +149,7 @@ const AddressEntry = (props: EntityProps) => {
   const partsProps = _omit(props, [ 'className', 'onClick' ]);
 
   const context = useAddressHighlightContext();
+  const { formatAddress } = useAddressFormatContext();
 
   return (
     <Container
@@ -161,7 +163,7 @@ const AddressEntry = (props: EntityProps) => {
     >
       <Icon { ...partsProps }/>
       <Link { ...linkProps }>
-        <Content { ...partsProps }/>
+        <Content { ...partsProps } text={ formatAddress(props.address.hash) }/>
       </Link>
       <Copy { ...partsProps }/>
     </Container>

@@ -10,6 +10,7 @@ import type { NextPageWithLayout } from 'nextjs/types';
 
 import config from 'configs/app';
 import useQueryClientConfig from 'lib/api/useQueryClientConfig';
+import { AddressFormatProvider } from 'lib/contexts/addressFormat';
 import { AppContextProvider } from 'lib/contexts/app';
 import { ChakraProvider } from 'lib/contexts/chakra';
 import { ScrollDirectionProvider } from 'lib/contexts/scrollDirection';
@@ -76,17 +77,19 @@ function MyApp({ Component, pageProps }: AppPropsWithLayout) {
       >
         <Web3ModalProvider>
           <AppContextProvider pageProps={ pageProps }>
-            <QueryClientProvider client={ queryClient }>
-              <GrowthBookProvider growthbook={ growthBook }>
-                <ScrollDirectionProvider>
-                  <SocketProvider url={ wsUrl }>
-                    { getLayout(<Component { ...pageProps }/>) }
-                  </SocketProvider>
-                </ScrollDirectionProvider>
-              </GrowthBookProvider>
-              <ReactQueryDevtools buttonPosition="bottom-left" position="left"/>
-              <GoogleAnalytics/>
-            </QueryClientProvider>
+            <AddressFormatProvider>
+              <QueryClientProvider client={ queryClient }>
+                <GrowthBookProvider growthbook={ growthBook }>
+                  <ScrollDirectionProvider>
+                    <SocketProvider url={ wsUrl }>
+                      { getLayout(<Component { ...pageProps }/>) }
+                    </SocketProvider>
+                  </ScrollDirectionProvider>
+                </GrowthBookProvider>
+                <ReactQueryDevtools buttonPosition="bottom-left" position="left"/>
+                <GoogleAnalytics/>
+              </QueryClientProvider>
+            </AddressFormatProvider>
           </AppContextProvider>
         </Web3ModalProvider>
       </AppErrorBoundary>
