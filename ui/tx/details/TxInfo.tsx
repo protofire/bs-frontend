@@ -144,6 +144,25 @@ const TxInfo = ({ data, isLoading, socketStatus }: Props) => {
         ) }
       </DetailsInfoItem>
       <DetailsInfoItem
+        title="ETH hash"
+        hint="Unique character string (TxID) assigned to every verified transaction (ETH format)"
+        flexWrap="nowrap"
+        isLoading={ isLoading }
+      >
+        { data.status === null && <Spinner mr={ 2 } size="sm" flexShrink={ 0 }/> }
+        <Skeleton isLoaded={ !isLoading } overflow="hidden">
+          <HashStringShortenDynamic hash={ data.eth_hash ?? '' }/>
+        </Skeleton>
+        <CopyToClipboard text={ data.eth_hash } isLoading={ isLoading }/>
+
+        { config.features.metasuites.isEnabled && (
+          <>
+            <TextSeparator color="gray.500" flexShrink={ 0 } display="none" id="meta-suites__tx-explorer-separator"/>
+            <Box display="none" flexShrink={ 0 } id="meta-suites__tx-explorer-link"/>
+          </>
+        ) }
+      </DetailsInfoItem>
+      <DetailsInfoItem
         title="Shard"
         hint="Shard information containing the transaction"
         isLoading={ isLoading }

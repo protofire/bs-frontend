@@ -31,6 +31,15 @@ interface Props {
 
 const SearchResultTableItem = ({ data, searchTerm, isLoading }: Props) => {
 
+  const isUseHash = React.useMemo(() => {
+    if (data.type === 'transaction') {
+      return data.tx_hash.toLowerCase().includes(searchTerm.toLowerCase());
+    }
+
+    return true;
+  }
+  , [ data, searchTerm ]);
+
   const handleLinkClick = React.useCallback((e: React.MouseEvent<HTMLAnchorElement>) => {
     saveToRecentKeywords(searchTerm);
     mixpanel.logEvent(mixpanel.EventTypes.SEARCH_QUERY, {
@@ -267,12 +276,12 @@ const SearchResultTableItem = ({ data, searchTerm, isLoading }: Props) => {
                 <TxEntity.Icon/>
                 <TxEntity.Link
                   isLoading={ isLoading }
-                  hash={ data.tx_hash }
+                  hash={ isUseHash ? data.tx_hash : data.tx_eth_hash }
                   onClick={ handleLinkClick }
                 >
                   <TxEntity.Content
                     asProp="mark"
-                    hash={ data.tx_hash }
+                    hash={ isUseHash ? data.tx_hash : data.tx_eth_hash }
                     fontSize="sm"
                     lineHeight={ 5 }
                     fontWeight={ 700 }
