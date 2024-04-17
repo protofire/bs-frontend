@@ -29,6 +29,7 @@ import type {
   AddressNFTsResponse,
   AddressCollectionsResponse,
   AddressNFTTokensFilter,
+  AddressStakingTransactionsResponse,
 } from 'types/api/address';
 import type { AddressesResponse } from 'types/api/addresses';
 import type { TxBlobs, Blob } from 'types/api/blobs';
@@ -66,6 +67,7 @@ import type {
 import type { RawTracesResponse } from 'types/api/rawTrace';
 import type { SearchRedirectResult, SearchResult, SearchResultFilters, SearchResultItem } from 'types/api/search';
 import type { ShibariumWithdrawalsResponse, ShibariumDepositsResponse } from 'types/api/shibarium';
+import type { StakingTransactionsSorting } from 'types/api/stakingTransaction';
 import type { Counters, StatsCharts, StatsChart, HomeStats } from 'types/api/stats';
 import type {
   TokenCounters,
@@ -391,6 +393,11 @@ export const RESOURCES = {
     path: '/api/v2/addresses/:hash/transactions',
     pathParams: [ 'hash' as const ],
     filterFields: [ 'filter' as const ],
+    shardable: 'api',
+  },
+  address_staking_txs: {
+    path: '/api/v2/addresses/:hash/staking-transactions',
+    pathParams: [ 'hash' as const ],
     shardable: 'api',
   },
   address_internal_txs: {
@@ -816,7 +823,7 @@ export type PaginatedResources = 'blocks' | 'block_txs' |
 'txs_validated' | 'txs_pending' | 'txs_with_blobs' | 'txs_watchlist' | 'txs_execution_node' |
 'tx_internal_txs' | 'tx_logs' | 'tx_token_transfers' | 'tx_state_changes' | 'tx_blobs' |
 'addresses' |
-'address_txs' | 'address_internal_txs' | 'address_token_transfers' | 'address_blocks_validated' | 'address_coin_balance' |
+'address_txs' | 'address_staking_txs' | 'address_internal_txs' | 'address_token_transfers' | 'address_blocks_validated' | 'address_coin_balance' |
 'search' |
 'address_logs' | 'address_tokens' | 'address_nfts' | 'address_collections' |
 'token_transfers' | 'token_holders' | 'token_inventory' | 'tokens' | 'tokens_bridged' |
@@ -881,6 +888,7 @@ Q extends 'address' ? Address :
 Q extends 'address_counters' ? AddressCounters :
 Q extends 'address_tabs_counters' ? AddressTabsCounters :
 Q extends 'address_txs' ? AddressTransactionsResponse :
+Q extends 'address_staking_txs' ? AddressStakingTransactionsResponse :
 Q extends 'address_internal_txs' ? AddressInternalTxsResponse :
 Q extends 'address_token_transfers' ? AddressTokenTransferResponse :
 Q extends 'address_blocks_validated' ? AddressBlocksValidatedResponse :
@@ -996,6 +1004,7 @@ Q extends 'tokens' ? TokensSorting :
 Q extends 'tokens_bridged' ? TokensSorting :
 Q extends 'verified_contracts' ? VerifiedContractsSorting :
 Q extends 'address_txs' ? TransactionsSorting :
+Q extends 'address_staking_txs' ? StakingTransactionsSorting :
 Q extends 'addresses_lookup' ? EnsLookupSorting :
 Q extends 'domains_lookup' ? EnsLookupSorting :
 Q extends 'validators' ? ValidatorsSorting :

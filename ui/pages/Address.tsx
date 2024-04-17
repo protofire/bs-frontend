@@ -19,6 +19,7 @@ import AddressContract from 'ui/address/AddressContract';
 import AddressDetails from 'ui/address/AddressDetails';
 import AddressInternalTxs from 'ui/address/AddressInternalTxs';
 import AddressLogs from 'ui/address/AddressLogs';
+import AddressStakingTxs from 'ui/address/AddressStakingTxs';
 import AddressTokens from 'ui/address/AddressTokens';
 import AddressTokenTransfers from 'ui/address/AddressTokenTransfers';
 import AddressTxs from 'ui/address/AddressTxs';
@@ -83,6 +84,12 @@ const AddressPageContent = () => {
         title: 'Transactions',
         count: addressTabsCountersQuery.data?.transactions_count,
         component: <AddressTxs scrollRef={ tabsScrollRef }/>,
+      },
+      {
+        id: 'staking_txs',
+        title: 'Staking',
+        count: addressTabsCountersQuery.data?.staking_transactions_count,
+        component: <AddressStakingTxs scrollRef={ tabsScrollRef }/>,
       },
       config.features.userOps.isEnabled && Boolean(userOpsAccountQuery.data?.total_ops) ?
         {

@@ -48,6 +48,7 @@ export const ADDRESS_COUNTERS: AddressCounters = {
   gas_usage_count: '8028907522',
   token_transfers_count: '420',
   transactions_count: '119020',
+  staking_transactions_count: '0',
   validations_count: '0',
 };
 
@@ -57,6 +58,7 @@ export const ADDRESS_TABS_COUNTERS: AddressTabsCounters = {
   token_balances_count: 10,
   token_transfers_count: 10,
   transactions_count: 10,
+  staking_transactions_count: 10,
   validations_count: 10,
   withdrawals_count: 10,
 };

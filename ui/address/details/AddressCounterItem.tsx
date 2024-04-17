@@ -21,6 +21,7 @@ interface Props {
 
 const PROP_TO_TAB = {
   transactions_count: 'txs',
+  staking_transactions_count: 'staking_txs',
   token_transfers_count: 'token_transfers',
   validations_count: 'blocks_validated',
 };
@@ -40,6 +41,7 @@ const AddressCounterItem = ({ prop, query, address, onClick, isAddressQueryLoadi
     case 'gas_usage_count':
       return <span>{ BigNumber(data).toFormat() }</span>;
     case 'transactions_count':
+    case 'staking_transactions_count':
     case 'token_transfers_count':
     case 'validations_count': {
       if (data === '0') {

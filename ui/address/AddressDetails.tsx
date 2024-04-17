@@ -140,6 +140,23 @@ const AddressDetails = ({ addressQuery, scrollRef }: Props) => {
           ) :
             0 }
         </DetailsInfoItem>
+        <DetailsInfoItem
+          title="Staking transactions"
+          hint="Number of staking transactions related to this address"
+          isLoading={ addressQuery.isPlaceholderData || countersQuery.isPlaceholderData }
+        >
+          { !is404Error && addressQuery.data ? (
+            <AddressCounterItem
+              prop="staking_transactions_count"
+              query={ countersQuery }
+              address={ data.hash }
+              onClick={ handleCounterItemClick }
+              isAddressQueryLoading={ addressQuery.isPlaceholderData }
+              isDegradedData={ addressQuery.isDegradedData }
+            />
+          ) :
+            0 }
+        </DetailsInfoItem>
         { data.has_token_transfers && (
           <DetailsInfoItem
             title="Transfers"
