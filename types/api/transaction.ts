@@ -24,6 +24,7 @@ export type Transaction = {
   to: AddressParam | null;
   created_contract: AddressParam | null;
   hash: string;
+  eth_hash: string | undefined;
   result: string;
   confirmations: number;
   status: 'ok' | 'error' | null | undefined;

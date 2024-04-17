@@ -13,11 +13,16 @@ interface Props {
   searchTerm: string;
 }
 
-const SearchBarSuggestTx = ({ data, isMobile }: Props) => {
+const SearchBarSuggestTx = ({ data, isMobile, searchTerm }: Props) => {
+  const isUseHash = React.useMemo(() => {
+    return data.tx_hash.toLowerCase().includes(searchTerm.toLowerCase());
+  }
+  , [ data, searchTerm ]);
+
   const icon = <TxEntity.Icon/>;
   const hash = (
     <chakra.mark overflow="hidden" whiteSpace="nowrap" fontWeight={ 700 }>
-      <HashStringShortenDynamic hash={ data.tx_hash } isTooltipDisabled/>
+      <HashStringShortenDynamic hash={ isUseHash ? data.tx_hash : data.tx_eth_hash } isTooltipDisabled/>
     </chakra.mark>
   );
   const date = dayjs(data.timestamp).format('llll');
