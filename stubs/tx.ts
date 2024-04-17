@@ -23,6 +23,7 @@ export const TX: Transaction = {
   max_fee_per_gas: null,
   result: 'success',
   hash: '0x2b824349b320cfa72f292ab26bf525adb00083ba9fa097141896c3c8c74567cc',
+  eth_hash: '0x2b824349b320cfa72f292ab26bf525adb00083ba9fa097141896c3c8c74567cc',
   gas_price: '100000000000',
   priority_fee: null,
   base_fee_per_gas: '24',

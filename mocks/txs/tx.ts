@@ -35,6 +35,7 @@ export const base: Transaction = {
   gas_price: '48000000000',
   gas_used: '148816',
   hash: '0x62d597ebcf3e8d60096dd0363bc2f0f5e2df27ba1dacd696c51aa7c9409f3193',
+  eth_hash: '0x62d597ebcf3e8d60096dd0363bc2f0f5e2df27ba1dacd696c51aa7c9409f3193',
   max_fee_per_gas: '40190625000',
   max_priority_fee_per_gas: '28190625000',
   method: 'updateSmartAsset',
