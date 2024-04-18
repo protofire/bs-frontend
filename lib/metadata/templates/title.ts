@@ -5,6 +5,7 @@ const TEMPLATE_MAP: Record<Route['pathname'], string> = {
   '/txs': 'transactions',
   '/txs/kettle/[hash]': 'kettle %hash% transactions',
   '/tx/[hash]': 'transaction %hash%',
+  '/staking-tx/[hash]': 'staking transaction %hash%',
   '/blocks': 'blocks',
   '/block/[height_or_hash]': 'block %height_or_hash%',
   '/accounts': 'top accounts',

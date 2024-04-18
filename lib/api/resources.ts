@@ -67,7 +67,7 @@ import type {
 import type { RawTracesResponse } from 'types/api/rawTrace';
 import type { SearchRedirectResult, SearchResult, SearchResultFilters, SearchResultItem } from 'types/api/search';
 import type { ShibariumWithdrawalsResponse, ShibariumDepositsResponse } from 'types/api/shibarium';
-import type { StakingTransactionsSorting } from 'types/api/stakingTransaction';
+import type { StakingTransaction } from 'types/api/stakingTransaction';
 import type { Counters, StatsCharts, StatsChart, HomeStats } from 'types/api/stats';
 import type {
   TokenCounters,
@@ -121,7 +121,7 @@ export interface ApiResource {
 export const SORTING_FIELDS = [ 'sort', 'order' ];
 
 export const RESOURCES = {
-  // ACCOUNT
+// ACCOUNT
   csrf: {
     path: '/api/account/v2/get_csrf',
   },
@@ -360,6 +360,13 @@ export const RESOURCES = {
   },
   withdrawals_counters: {
     path: '/api/v2/withdrawals/counters',
+  },
+
+  // Staking Transactions
+  staking_tx: {
+    path: '/api/v2/staking-transactions/:hash',
+    pathParams: [ 'hash' as const ],
+    shardable: 'api',
   },
 
   // ADDRESSES
@@ -883,6 +890,7 @@ Q extends 'tx_raw_trace' ? RawTracesResponse :
 Q extends 'tx_state_changes' ? TxStateChanges :
 Q extends 'tx_blobs' ? TxBlobs :
 Q extends 'tx_interpretation' ? TxInterpretationResponse :
+Q extends 'staking_tx' ? StakingTransaction :
 Q extends 'addresses' ? AddressesResponse :
 Q extends 'address' ? Address :
 Q extends 'address_counters' ? AddressCounters :
@@ -1004,7 +1012,6 @@ Q extends 'tokens' ? TokensSorting :
 Q extends 'tokens_bridged' ? TokensSorting :
 Q extends 'verified_contracts' ? VerifiedContractsSorting :
 Q extends 'address_txs' ? TransactionsSorting :
-Q extends 'address_staking_txs' ? StakingTransactionsSorting :
 Q extends 'addresses_lookup' ? EnsLookupSorting :
 Q extends 'domains_lookup' ? EnsLookupSorting :
 Q extends 'validators' ? ValidatorsSorting :

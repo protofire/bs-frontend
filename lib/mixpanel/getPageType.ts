@@ -5,6 +5,7 @@ export const PAGE_TYPE_DICT: Record<Route['pathname'], string> = {
   '/txs': 'Transactions',
   '/txs/kettle/[hash]': 'Kettle transactions',
   '/tx/[hash]': 'Transaction details',
+  '/staking-tx/[hash]': 'Staking transaction details',
   '/blocks': 'Blocks',
   '/block/[height_or_hash]': 'Block details',
   '/accounts': 'Top accounts',

@@ -4,7 +4,7 @@ export type StakingTransaction = {
   hash: string;
   nonce: number;
   block: number | null;
-  timestamp: string | null;
+  timestamp: number;
   from: AddressParam;
   gas_price: string | null;
   gas: string | null;
@@ -27,12 +27,3 @@ export type StakingTransaction = {
   msg_slot_pub_key_to_add: string;
   msg_slot_pub_key_to_remove: string;
 }
-
-export interface StakingTransactionsSorting {
-  sort: 'value' | 'fee';
-  order: 'asc' | 'desc';
-}
-
-export type StakingTransactionsSortingField = StakingTransactionsSorting['sort'];
-
-export type StakingTransactionsSortingValue = `${ StakingTransactionsSortingField }-${ StakingTransactionsSorting['order'] }`;
