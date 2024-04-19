@@ -3,6 +3,7 @@ import type { Transaction } from 'types/api/transaction';
 import type { UserTags } from './addressParams';
 import type { Block } from './block';
 import type { InternalTransaction } from './internalTransaction';
+import type { StakingTransaction } from './stakingTransaction';
 import type { NFTTokenType, TokenInfo, TokenInstance, TokenType } from './token';
 import type { TokenTransfer, TokenTransferPagination } from './tokenTransfer';
 
@@ -38,6 +39,7 @@ export interface Address extends UserTags {
 
 export interface AddressCounters {
   transactions_count: string;
+  staking_transactions_count: string;
   token_transfers_count: string;
   gas_usage_count: string | null;
   validations_count: string | null;
@@ -98,6 +100,15 @@ export interface AddressTokensBalancesSocketMessage {
 
 export interface AddressTransactionsResponse {
   items: Array<Transaction>;
+  next_page_params: {
+    block_number: number;
+    index: number;
+    items_count: number;
+  } | null;
+}
+
+export interface AddressStakingTransactionsResponse {
+  items: Array<StakingTransaction>;
   next_page_params: {
     block_number: number;
     index: number;
@@ -192,6 +203,7 @@ export type AddressTabsCounters = {
   token_balances_count: number | null;
   token_transfers_count: number | null;
   transactions_count: number | null;
+  staking_transactions_count: number | null;
   validations_count: number | null;
   withdrawals_count: number | null;
 }

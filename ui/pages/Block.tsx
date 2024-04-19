@@ -12,6 +12,7 @@ import throwOnResourceLoadError from 'lib/errors/throwOnResourceLoadError';
 import useIsMobile from 'lib/hooks/useIsMobile';
 import getQueryParamString from 'lib/router/getQueryParamString';
 import BlockDetails from 'ui/block/BlockDetails';
+import BlockStakingTxs from 'ui/block/BlockStakingTxs';
 import BlockWithdrawals from 'ui/block/BlockWithdrawals';
 import useBlockBlobTxsQuery from 'ui/block/useBlockBlobTxsQuery';
 import useBlockQuery from 'ui/block/useBlockQuery';
@@ -65,6 +66,11 @@ const BlockPageContent = () => {
           <TxsWithFrontendSorting query={ blockTxsQuery } showBlockInfo={ false } showSocketInfo={ false }/>
         </>
       ),
+    },
+    {
+      id: 'staking_txs',
+      title: 'Staking',
+      component: <BlockStakingTxs/>,
     },
     blockQuery.data?.blob_tx_count ?
       {

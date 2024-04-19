@@ -9,18 +9,27 @@ type Props = {
   // should be string, will be fixed on the back-end
   timestamp: string | number;
   isLoading?: boolean;
-}
+};
 
 const DetailsTimestamp = ({ timestamp, isLoading }: Props) => {
   return (
     <>
-      <IconSvg name="clock" boxSize={ 5 } color="gray.500" isLoading={ isLoading }/>
+      <IconSvg
+        name="clock"
+        boxSize={ 5 }
+        color="gray.500"
+        isLoading={ isLoading }
+      />
       <Skeleton isLoaded={ !isLoading } ml={ 2 }>
-        { dayjs(timestamp).fromNow() }
+        { dayjs(
+          typeof timestamp === 'string' ? timestamp : timestamp * 1000,
+        ).fromNow() }
       </Skeleton>
       <TextSeparator color="gray.500"/>
       <Skeleton isLoaded={ !isLoading } whiteSpace="normal">
-        { dayjs(timestamp).format('llll') }
+        { dayjs(
+          typeof timestamp === 'string' ? timestamp : timestamp * 1000,
+        ).format('llll') }
       </Skeleton>
     </>
   );

@@ -7,28 +7,41 @@ import type { AddressParam } from 'types/api/addressParams';
 
 import { route } from 'nextjs-routes';
 
+import { useAddressFormatContext } from 'lib/contexts/addressFormat';
 import { useAddressHighlightContext } from 'lib/contexts/addressHighlight';
 import * as EntityBase from 'ui/shared/entities/base/components';
 
 import { getIconProps } from '../base/utils';
 import AddressIdenticon from './AddressIdenticon';
 
-type LinkProps = EntityBase.LinkBaseProps & Pick<EntityProps, 'address'>;
+type AddressHashParam = { addressHash?: string };
+
+type LinkProps = EntityBase.LinkBaseProps &
+Pick<EntityProps, 'address'> &
+AddressHashParam;
 
 const Link = chakra((props: LinkProps) => {
-  const defaultHref = route({ pathname: '/address/[hash]', query: { ...props.query, hash: props.address.hash } });
+  const defaultHref = route({
+    pathname: '/address/[hash]',
+    query: { ...props.query, hash: props.addressHash ?? props.address.hash },
+  });
 
   return (
-    <EntityBase.Link
-      { ...props }
-      href={ props.href ?? defaultHref }
-    >
+    <EntityBase.Link { ...props } href={ props.href ?? defaultHref }>
       { props.children }
     </EntityBase.Link>
   );
 });
 
-type IconProps = Pick<EntityProps, 'address' | 'isLoading' | 'iconSize' | 'noIcon' | 'isSafeAddress' | 'iconColor'> & {
+type IconProps = Pick<
+EntityProps,
+| 'address'
+| 'isLoading'
+| 'iconSize'
+| 'noIcon'
+| 'isSafeAddress'
+| 'iconColor'
+> & {
   asProp?: As;
 };
 
@@ -48,12 +61,7 @@ const Icon = (props: IconProps) => {
 
   if (props.address.is_contract) {
     if (props.isSafeAddress) {
-      return (
-        <EntityBase.Icon
-          { ...props }
-          name="brands/safe"
-        />
-      );
+      return <EntityBase.Icon { ...props } name="brands/safe"/>;
     }
 
     if (props.address.is_verified) {
@@ -74,11 +82,7 @@ const Icon = (props: IconProps) => {
     return (
       <Tooltip label="Contract">
         <span>
-          <EntityBase.Icon
-            { ...props }
-            name="contract"
-            borderRadius={ 0 }
-          />
+          <EntityBase.Icon { ...props } name="contract" borderRadius={ 0 }/>
         </span>
       </Tooltip>
     );
@@ -96,21 +100,33 @@ const Icon = (props: IconProps) => {
   );
 };
 
-type ContentProps = Omit<EntityBase.ContentBaseProps, 'text'> & Pick<EntityProps, 'address'>;
+type ContentProps = Omit<EntityBase.ContentBaseProps, 'text'> &
+Pick<EntityProps, 'address'> &
+AddressHashParam;
 
 const Content = chakra((props: ContentProps) => {
   if (props.address.name || props.address.ens_domain_name) {
     const text = props.address.ens_domain_name || props.address.name;
     const label = (
       <VStack gap={ 0 } py={ 1 } color="inherit">
-        <Box fontWeight={ 600 } whiteSpace="pre-wrap" wordBreak="break-word">{ text }</Box>
-        <Box whiteSpace="pre-wrap" wordBreak="break-word">{ props.address.hash }</Box>
+        <Box fontWeight={ 600 } whiteSpace="pre-wrap" wordBreak="break-word">
+          { text }
+        </Box>
+        <Box whiteSpace="pre-wrap" wordBreak="break-word">
+          { props.address.hash }
+        </Box>
       </VStack>
     );
 
     return (
       <Tooltip label={ label } maxW={{ base: '100vw', lg: '400px' }}>
-        <Skeleton isLoaded={ !props.isLoading } overflow="hidden" textOverflow="ellipsis" whiteSpace="nowrap" as="span">
+        <Skeleton
+          isLoaded={ !props.isLoading }
+          overflow="hidden"
+          textOverflow="ellipsis"
+          whiteSpace="nowrap"
+          as="span"
+        >
           { text }
         </Skeleton>
       </Tooltip>
@@ -120,18 +136,20 @@ const Content = chakra((props: ContentProps) => {
   return (
     <EntityBase.Content
       { ...props }
-      text={ props.address.hash }
+      text={ props.addressHash ?? props.address.hash }
     />
   );
 });
 
-type CopyProps = Omit<EntityBase.CopyBaseProps, 'text'> & Pick<EntityProps, 'address'>;
+type CopyProps = Omit<EntityBase.CopyBaseProps, 'text'> &
+Pick<EntityProps, 'address'> &
+AddressHashParam;
 
 const Copy = (props: CopyProps) => {
   return (
     <EntityBase.Copy
       { ...props }
-      text={ props.address.hash }
+      text={ props.addressHash ?? props.address.hash }
     />
   );
 };
@@ -139,7 +157,15 @@ const Copy = (props: CopyProps) => {
 const Container = EntityBase.Container;
 
 export interface EntityProps extends EntityBase.EntityBaseProps {
-  address: Pick<AddressParam, 'hash' | 'name' | 'is_contract' | 'is_verified' | 'implementation_name' | 'ens_domain_name'>;
+  address: Pick<
+  AddressParam,
+  | 'hash'
+  | 'name'
+  | 'is_contract'
+  | 'is_verified'
+  | 'implementation_name'
+  | 'ens_domain_name'
+  >;
   isSafeAddress?: boolean;
 }
 
@@ -148,32 +174,33 @@ const AddressEntry = (props: EntityProps) => {
   const partsProps = _omit(props, [ 'className', 'onClick' ]);
 
   const context = useAddressHighlightContext();
+  const { formatAddress } = useAddressFormatContext();
+  const addressHash = React.useMemo(
+    () => formatAddress(props.address.hash),
+    [ formatAddress, props.address.hash ],
+  );
 
   return (
     <Container
       // we have to use the global classnames here, see theme/global.ts
       // otherwise, if we use sx prop, Chakra will generate the same styles for each instance of the component on the page
-      className={ `${ props.className } address-entity ${ props.noCopy ? 'address-entity_no-copy' : '' }` }
+      className={ `${ props.className } address-entity ${
+        props.noCopy ? 'address-entity_no-copy' : ''
+      }` }
       data-hash={ context && !props.isLoading ? props.address.hash : undefined }
       onMouseEnter={ context?.onMouseEnter }
       onMouseLeave={ context?.onMouseLeave }
       position="relative"
     >
       <Icon { ...partsProps }/>
-      <Link { ...linkProps }>
-        <Content { ...partsProps }/>
+      <Link { ...linkProps } addressHash={ addressHash }>
+        <Content { ...partsProps } addressHash={ addressHash }/>
       </Link>
-      <Copy { ...partsProps }/>
+      <Copy { ...partsProps } addressHash={ addressHash }/>
     </Container>
   );
 };
 
 export default React.memo(chakra(AddressEntry));
 
-export {
-  Container,
-  Link,
-  Icon,
-  Content,
-  Copy,
-};
+export { Container, Link, Icon, Content, Copy };

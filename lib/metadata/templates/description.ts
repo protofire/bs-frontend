@@ -10,6 +10,7 @@ const TEMPLATE_MAP: Record<Route['pathname'], string> = {
   '/txs': DEFAULT_TEMPLATE,
   '/txs/kettle/[hash]': DEFAULT_TEMPLATE,
   '/tx/[hash]': 'View transaction %hash% on %network_title%',
+  '/staking-tx/[hash]': 'View staking transaction %hash% on %network_title%',
   '/blocks': DEFAULT_TEMPLATE,
   '/block/[height_or_hash]': 'View the transactions, token transfers, and uncles for block %height_or_hash%',
   '/accounts': DEFAULT_TEMPLATE,

@@ -63,6 +63,7 @@ export default function useAddressQuery({ hash, addressQuery }: Params): Address
       const [ txCount ] = response;
       return {
         transactions_count: txCount?.toString() ?? '0',
+        staking_transactions_count: '0',
         token_transfers_count: '0',
         gas_usage_count: null,
         validations_count: null,

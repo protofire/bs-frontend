@@ -19,8 +19,9 @@ function getUnits(diff: number) {
   return [ DAY, 2 * DAY ];
 }
 
-function getUpdateParams(ts: string) {
-  const timeDiff = Date.now() - new Date(ts).getTime();
+function getUpdateParams(ts: string | number) {
+  const txTime = typeof ts === 'string' ? ts : dayjs(ts * 1000).toISOString();
+  const timeDiff = Date.now() - new Date(txTime).getTime();
   const [ unit, higherUnit ] = getUnits(timeDiff);
 
   if (unit === DAY) {
@@ -41,8 +42,8 @@ function getUpdateParams(ts: string) {
   };
 }
 
-export default function useTimeAgoIncrement(ts: string | null, isEnabled?: boolean) {
-  const [ value, setValue ] = React.useState(ts ? dayjs(ts).fromNow() : null);
+export default function useTimeAgoIncrement(ts: string | number | null, isEnabled?: boolean) {
+  const [ value, setValue ] = React.useState(ts ? dayjs(typeof ts === 'string' ? ts : ts * 1000).fromNow() : null);
 
   React.useEffect(() => {
     if (ts !== null) {
