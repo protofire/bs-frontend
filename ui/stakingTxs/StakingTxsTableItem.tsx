@@ -71,7 +71,6 @@ const StakingTxsTableItem = ({ tx, currentAddress, isLoading }: Props) => {
             }}
             isLoading={ isLoading }
             truncation="constant"
-            noCopy
           />
         ) : (
           ''
