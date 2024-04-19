@@ -117,7 +117,6 @@ const SearchResultTableItem = ({ data, searchTerm, isLoading }: Props) => {
                   <AddressEntity.Content
                     asProp={ shouldHighlightHash ? 'mark' : 'span' }
                     address={ address }
-                    text={ address.hash }
                     fontSize="sm"
                     lineHeight={ 5 }
                     fontWeight={ 700 }
