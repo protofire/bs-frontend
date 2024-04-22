@@ -8,6 +8,9 @@ export type StakingTransaction = {
   from: AddressParam;
   gas_price: string | null;
   gas: string | null;
+  gas_used: string | null;
+  comulative_gas_used: string | null;
+  status: 'ok' | 'error' | null | undefined;
   type: string | null;
   transaction_index: number;
   msg_validator_address: string;

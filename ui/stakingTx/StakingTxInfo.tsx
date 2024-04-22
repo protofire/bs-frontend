@@ -7,6 +7,7 @@ import {
   Flex,
   Skeleton,
 } from '@chakra-ui/react';
+import BigNumber from 'bignumber.js';
 import React from 'react';
 import { scroller, Element } from 'react-scroll';
 
@@ -26,8 +27,9 @@ import BlockEntity from 'ui/shared/entities/block/BlockEntity';
 import HashStringShorten from 'ui/shared/HashStringShorten';
 import HashStringShortenDynamic from 'ui/shared/HashStringShortenDynamic';
 import StakingTxType from 'ui/shared/stakingTx/StakingTxType';
+import TxStatus from 'ui/shared/statusTag/TxStatus';
 import TextSeparator from 'ui/shared/TextSeparator';
-import TxDetailsFeePerGas from 'ui/tx/details/TxDetailsFeePerGas';
+import Utilization from 'ui/shared/Utilization/Utilization';
 import TxDetailsGasPrice from 'ui/tx/details/TxDetailsGasPrice';
 
 interface Props {
@@ -112,6 +114,15 @@ const StakingTxInfo = ({ data, isLoading }: Props) => {
       >
         <Text>{ shardId ?? '0' }</Text>
       </DetailsInfoItem>
+      { data.status && (
+        <DetailsInfoItem
+          title="Status"
+          hint="Current transaction state"
+          isLoading={ isLoading }
+        >
+          <TxStatus status={ data.status } isLoading={ isLoading }/>
+        </DetailsInfoItem>
+      ) }
       <DetailsInfoItem
         title="Type"
         hint="Type of staking transaction"
@@ -161,11 +172,16 @@ const StakingTxInfo = ({ data, isLoading }: Props) => {
 
       <TxDetailsGasPrice gasPrice={ data.gas_price } isLoading={ isLoading }/>
 
-      <TxDetailsFeePerGas
-        txFee={ data.gas }
-        gasUsed={ data.gas }
+      <DetailsInfoItem
+        title="Gas usage & limit by txn"
+        hint="Actual gas amount used by the transaction"
         isLoading={ isLoading }
-      />
+      >
+        <Skeleton isLoaded={ !isLoading }>{ BigNumber(data.gas_used || 0).toFormat() }</Skeleton>
+        <TextSeparator/>
+        <Skeleton isLoaded={ !isLoading }>{ BigNumber(data.gas || 0).toFormat() }</Skeleton>
+        <Utilization ml={ 4 } value={ BigNumber(data.gas_used || 0).dividedBy(BigNumber(data.gas || 0)).toNumber() } isLoading={ isLoading }/>
+      </DetailsInfoItem>
 
       <GridItem colSpan={{ base: undefined, lg: 2 }}>
         <Element name="TxInfo__cutLink">
