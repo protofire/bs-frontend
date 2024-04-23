@@ -4,7 +4,7 @@ export type StakingTransaction = {
   hash: string;
   nonce: number;
   block: number | null;
-  timestamp: number;
+  timestamp: string;
   from: AddressParam;
   gas_price: string | null;
   gas: string | null;
