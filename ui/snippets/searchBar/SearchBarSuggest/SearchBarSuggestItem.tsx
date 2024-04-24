@@ -25,30 +25,62 @@ interface Props {
   onClick: (event: React.MouseEvent<HTMLAnchorElement>) => void;
 }
 
-const SearchBarSuggestItem = ({ data, isMobile, searchTerm, onClick }: Props) => {
+const SearchBarSuggestItem = ({
+  data,
+  isMobile,
+  searchTerm,
+  onClick,
+}: Props) => {
   const { shards } = useShards();
 
   const url = (() => {
     switch (data.type) {
       case 'token': {
-        return route({ pathname: '/token/[hash]', query: { hash: data.address, shard: data.shard_id } });
+        return route({
+          pathname: '/token/[hash]',
+          query: { hash: data.address, shard: data.shard_id },
+        });
       }
       case 'contract':
       case 'address':
       case 'label': {
-        return route({ pathname: '/address/[hash]', query: { hash: data.address, shard: data.shard_id } });
+        return route({
+          pathname: '/address/[hash]',
+          query: { hash: data.address, shard: data.shard_id },
+        });
       }
       case 'transaction': {
-        return route({ pathname: '/tx/[hash]', query: { hash: data.tx_hash, shard: data.shard_id } });
+        return route({
+          pathname: '/tx/[hash]',
+          query: { hash: data.tx_hash, shard: data.shard_id },
+        });
+      }
+      case 'staking_transaction': {
+        return route({
+          pathname: '/staking-tx/[hash]',
+          query: { hash: data.tx_hash, shard: data.shard_id },
+        });
       }
       case 'block': {
-        return route({ pathname: '/block/[height_or_hash]', query: { height_or_hash: String(data.block_hash), shard: data.shard_id } });
+        return route({
+          pathname: '/block/[height_or_hash]',
+          query: {
+            height_or_hash: String(data.block_hash),
+            shard: data.shard_id,
+          },
+        });
       }
       case 'user_operation': {
-        return route({ pathname: '/op/[hash]', query: { hash: data.user_operation_hash, shard: data.shard_id } });
+        return route({
+          pathname: '/op/[hash]',
+          query: { hash: data.user_operation_hash, shard: data.shard_id },
+        });
       }
       case 'blob': {
-        return route({ pathname: '/blobs/[hash]', query: { hash: data.blob_hash, shard: data.shard_id } });
+        return route({
+          pathname: '/blobs/[hash]',
+          query: { hash: data.blob_hash, shard: data.shard_id },
+        });
       }
     }
   })();
@@ -56,24 +88,68 @@ const SearchBarSuggestItem = ({ data, isMobile, searchTerm, onClick }: Props) =>
   const content = (() => {
     switch (data.type) {
       case 'token': {
-        return <SearchBarSuggestToken data={ data } searchTerm={ searchTerm } isMobile={ isMobile }/>;
+        return (
+          <SearchBarSuggestToken
+            data={ data }
+            searchTerm={ searchTerm }
+            isMobile={ isMobile }
+          />
+        );
       }
       case 'contract':
       case 'address': {
-        return <SearchBarSuggestAddress data={ data } searchTerm={ searchTerm } isMobile={ isMobile }/>;
+        return (
+          <SearchBarSuggestAddress
+            data={ data }
+            searchTerm={ searchTerm }
+            isMobile={ isMobile }
+          />
+        );
       }
       case 'label': {
-        return <SearchBarSuggestLabel data={ data } searchTerm={ searchTerm } isMobile={ isMobile }/>;
-
+        return (
+          <SearchBarSuggestLabel
+            data={ data }
+            searchTerm={ searchTerm }
+            isMobile={ isMobile }
+          />
+        );
       }
       case 'block': {
-        return <SearchBarSuggestBlock data={ data } searchTerm={ searchTerm } isMobile={ isMobile }/>;
+        return (
+          <SearchBarSuggestBlock
+            data={ data }
+            searchTerm={ searchTerm }
+            isMobile={ isMobile }
+          />
+        );
       }
       case 'transaction': {
-        return <SearchBarSuggestTx data={ data } searchTerm={ searchTerm } isMobile={ isMobile }/>;
+        return (
+          <SearchBarSuggestTx
+            data={ data }
+            searchTerm={ searchTerm }
+            isMobile={ isMobile }
+          />
+        );
+      }
+      case 'staking_transaction': {
+        return (
+          <SearchBarSuggestTx
+            data={ data }
+            searchTerm={ searchTerm }
+            isMobile={ isMobile }
+          />
+        );
       }
       case 'user_operation': {
-        return <SearchBarSuggestUserOp data={ data } searchTerm={ searchTerm } isMobile={ isMobile }/>;
+        return (
+          <SearchBarSuggestUserOp
+            data={ data }
+            searchTerm={ searchTerm }
+            isMobile={ isMobile }
+          />
+        );
       }
       case 'blob': {
         return <SearchBarSuggestBlob data={ data } searchTerm={ searchTerm }/>;
@@ -86,9 +162,7 @@ const SearchBarSuggestItem = ({ data, isMobile, searchTerm, onClick }: Props) =>
       <SearchBarSuggestItemLink onClick={ onClick }>
         { data.shard_id ? (
           <Box>
-            <Text size="xs">
-              { shards[data.shard_id].title }
-            </Text>
+            <Text size="xs">{ shards[data.shard_id].title }</Text>
           </Box>
         ) : null }
         { content }

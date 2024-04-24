@@ -11,6 +11,7 @@ import RoutedTabs from 'ui/shared/Tabs/RoutedTabs';
 import TabsSkeleton from 'ui/shared/Tabs/TabsSkeleton';
 import useTabIndexFromQuery from 'ui/shared/Tabs/useTabIndexFromQuery';
 import StakingTxDetails from 'ui/stakingTx/StakingTxDetails';
+import StakingTxLogs from 'ui/stakingTx/StakingTxLogs';
 
 const StakingTransactionPageContent = () => {
   const router = useRouter();
@@ -36,6 +37,7 @@ const StakingTransactionPageContent = () => {
         title: 'Details',
         component: <StakingTxDetails query={ queryResult }/>,
       },
+      { id: 'logs', title: 'Logs', component: <StakingTxLogs txQuery={ queryResult }/> },
     ].filter(Boolean);
   })();
 

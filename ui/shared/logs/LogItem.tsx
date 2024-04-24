@@ -13,7 +13,7 @@ import LogDecodedInputData from 'ui/shared/logs/LogDecodedInputData';
 import LogTopic from 'ui/shared/logs/LogTopic';
 
 type Props = Log & {
-  type: 'address' | 'transaction';
+  type: 'address' | 'transaction' | 'staking_transaction';
   isLoading?: boolean;
 };
 
