@@ -441,6 +441,12 @@ export const RESOURCES = {
     pathParams: [ 'hash' as const ],
     shardable: 'api',
   },
+  staking_tx_logs: {
+    path: '/api/v2/staking-transactions/:hash/logs',
+    pathParams: [ 'hash' as const ],
+    filterFields: [],
+    shardable: 'api',
+  },
 
   // ADDRESSES
   addresses: {
@@ -915,6 +921,7 @@ export type PaginatedResources =
   | 'tx_token_transfers'
   | 'tx_state_changes'
   | 'tx_blobs'
+  | 'staking_tx_logs'
   | 'addresses'
   | 'address_txs'
   | 'address_staking_txs'
@@ -1045,6 +1052,8 @@ export type ResourcePayloadA<Q extends ResourceName> = Q extends 'user_info'
   ? TxInterpretationResponse
   : Q extends 'staking_tx'
   ? StakingTransaction
+  : Q extends 'staking_tx_logs'
+  ? LogsResponseTx
   : Q extends 'addresses'
   ? AddressesResponse
   : Q extends 'address'

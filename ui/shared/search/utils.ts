@@ -3,7 +3,7 @@ import type { MarketplaceAppOverview } from 'types/client/marketplace';
 
 import config from 'configs/app';
 
-export type ApiCategory = 'token' | 'nft' | 'address' | 'public_tag' | 'transaction' | 'block' | 'user_operation' | 'blob';
+export type ApiCategory = 'token' | 'nft' | 'address' | 'public_tag' | 'transaction' | 'staking_transaction' | 'block' | 'user_operation' | 'blob';
 export type Category = ApiCategory | 'app';
 
 export type ItemsCategoriesMap =
@@ -22,6 +22,7 @@ export const searchCategories: Array<{id: Category; title: string }> = [
   { id: 'address', title: 'Addresses' },
   { id: 'public_tag', title: 'Public tags' },
   { id: 'transaction', title: 'Transactions' },
+  { id: 'staking_transaction', title: 'Staking Transactions' },
   { id: 'block', title: 'Blocks' },
   { id: 'blob', title: 'Blobs' },
 ];
@@ -37,6 +38,7 @@ export const searchItemTitles: Record<Category, { itemTitle: string; itemTitleSh
   address: { itemTitle: 'Address', itemTitleShort: 'Address' },
   public_tag: { itemTitle: 'Public tag', itemTitleShort: 'Tag' },
   transaction: { itemTitle: 'Transaction', itemTitleShort: 'Txn' },
+  staking_transaction: { itemTitle: 'Staking Transaction', itemTitleShort: 'Staking Txn' },
   block: { itemTitle: 'Block', itemTitleShort: 'Block' },
   user_operation: { itemTitle: 'User operation', itemTitleShort: 'User op' },
   blob: { itemTitle: 'Blob', itemTitleShort: 'Blob' },
@@ -62,6 +64,9 @@ export function getItemCategory(item: SearchResultItem | SearchResultAppItem): C
     }
     case 'transaction': {
       return 'transaction';
+    }
+    case 'staking_transaction': {
+      return 'staking_transaction';
     }
     case 'app': {
       return 'app';

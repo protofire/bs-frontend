@@ -1,6 +1,11 @@
 import type { TokenType } from 'types/api/token';
 
-export type SearchResultType = 'token' | 'address' | 'block' | 'transaction' | 'contract';
+export type SearchResultType =
+  | 'token'
+  | 'address'
+  | 'block'
+  | 'transaction'
+  | 'contract';
 
 export interface SearchResultToken {
   type: 'token';
@@ -49,7 +54,7 @@ export interface SearchResultBlock {
 }
 
 export interface SearchResultTx {
-  type: 'transaction';
+  type: 'transaction' | 'staking_transaction';
   tx_hash: string;
   tx_eth_hash: string;
   timestamp: string;
@@ -70,21 +75,27 @@ export interface SearchResultUserOp {
 }
 
 export type SearchResultItem = (
-  SearchResultToken | SearchResultAddressOrContract | SearchResultBlock | SearchResultTx | SearchResultLabel | SearchResultUserOp | SearchResultBlob
-) & {shard_id?: string};
+  | SearchResultToken
+  | SearchResultAddressOrContract
+  | SearchResultBlock
+  | SearchResultTx
+  | SearchResultLabel
+  | SearchResultUserOp
+  | SearchResultBlob
+) & { shard_id?: string };
 
 export interface SearchResult {
   items: Array<SearchResultItem>;
   next_page_params: {
-    'address_hash': string | null;
-    'block_hash': string | null;
-    'holder_count': number | null;
-    'inserted_at': string | null;
-    'item_type': SearchResultType;
-    'items_count': number;
-    'name': string;
-    'q': string;
-    'tx_hash': string | null;
+    address_hash: string | null;
+    block_hash: string | null;
+    holder_count: number | null;
+    inserted_at: string | null;
+    item_type: SearchResultType;
+    items_count: number;
+    name: string;
+    q: string;
+    tx_hash: string | null;
   } | null;
 }
 
@@ -95,5 +106,12 @@ export interface SearchResultFilters {
 export interface SearchRedirectResult {
   parameter: string | null;
   redirect: boolean;
-  type: 'address' | 'block' | 'transaction' | 'user_operation' | 'blob' | null;
+  type:
+  | 'address'
+  | 'block'
+  | 'transaction'
+  | 'staking_transaction'
+  | 'user_operation'
+  | 'blob'
+  | null;
 }

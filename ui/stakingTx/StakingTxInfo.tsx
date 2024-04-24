@@ -70,7 +70,7 @@ const StakingTxInfo = ({ data, isLoading }: Props) => {
       }}
     >
       <DetailsInfoItem
-        title="Staking transaction hash"
+        title="Hash"
         hint="Unique character string (TxID) assigned to every verified transaction"
         flexWrap="nowrap"
         isLoading={ isLoading }
