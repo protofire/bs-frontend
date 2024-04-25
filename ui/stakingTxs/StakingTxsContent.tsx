@@ -43,7 +43,7 @@ const StakingTxsContent = ({
       <Hide below="lg" ssr={ false }>
         <StakingTxsTable
           txs={ items }
-          top={ top || query.pagination.isVisible ? 48 : 0 }
+          top={ top || query.pagination.isVisible ? 80 : 0 }
           currentAddress={ currentAddress }
           isLoading={ isPlaceholderData }
         />

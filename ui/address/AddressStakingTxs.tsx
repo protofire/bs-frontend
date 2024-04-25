@@ -28,7 +28,8 @@ const AddressStakingTxs = ({ scrollRef }: Props) => {
     <>
       { !isMobile && (
         <ActionBar mt={ -6 }>
-          <Pagination { ...addressTxsQuery.pagination } ml={ 8 }/>
+          <div></div>
+          <Pagination { ...addressTxsQuery.pagination } ml={ 8 } isVisible={ true }/>
         </ActionBar>
       ) }
       <StakingTxsContent
