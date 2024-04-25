@@ -1,11 +1,14 @@
+import { Box, Flex } from '@chakra-ui/react';
 import type { NextPage } from 'next';
 import dynamic from 'next/dynamic';
 import React from 'react';
 
 import PageNextJs from 'nextjs/PageNextJs';
 
+import useShards from 'lib/hooks/useShards';
 import ContentLoader from 'ui/shared/ContentLoader';
 import PageTitle from 'ui/shared/Page/PageTitle';
+import ShardSwitcher from 'ui/shared/shardSwitcher/ShardSwitcher';
 
 const GraphQL = dynamic(() => import('ui/graphQL/GraphQL'), {
   loading: () => <ContentLoader/>,
@@ -13,10 +16,16 @@ const GraphQL = dynamic(() => import('ui/graphQL/GraphQL'), {
 });
 
 const Page: NextPage = () => {
+  const { shardId, shards } = useShards();
 
   return (
     <PageNextJs pathname="/graphiql">
-      <PageTitle title="GraphQL playground"/>
+      <Flex>
+        <Box flex={ 1 }>
+          <PageTitle title="GraphQL playground"/>
+        </Box>
+        <ShardSwitcher shardId={ shardId } shards={ shards }/>
+      </Flex>
       <GraphQL/>
     </PageNextJs>
   );
