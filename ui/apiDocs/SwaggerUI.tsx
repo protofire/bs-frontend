@@ -9,12 +9,16 @@ import { Box, useColorModeValue, useToken } from '@chakra-ui/react';
 import dynamic from 'next/dynamic';
 import React from 'react';
 
+import { getFeaturePayload } from 'configs/app/features/types';
+
 import config from 'configs/app';
+import useShards from 'lib/hooks/useShards';
 import ContentLoader from 'ui/shared/ContentLoader';
 
 import 'swagger-ui-react/swagger-ui.css';
 
 const feature = config.features.restApiDocs;
+const shardsConfig = getFeaturePayload(config.features.shards);
 
 const DEFAULT_SERVER = 'blockscout.com/poa/core';
 
@@ -29,6 +33,7 @@ const NeverShowInfoPlugin = () => {
 };
 
 const SwaggerUI = () => {
+  const { shardId } = useShards();
   const mainColor = useColorModeValue('blackAlpha.800', 'whiteAlpha.800');
   const borderColor = useToken('colors', 'divider');
   const mainBgColor = useColorModeValue('blackAlpha.100', 'whiteAlpha.200');
@@ -44,9 +49,10 @@ const SwaggerUI = () => {
       outline: 'none',
     },
     // eslint-disable-next-line max-len
-    '.swagger-ui .opblock .opblock-summary-path, .swagger-ui .opblock .opblock-summary-description, .swagger-ui div, .swagger-ui p, .swagger-ui h5, .swagger-ui .response-col_links, .swagger-ui h4, .swagger-ui table thead tr th, .swagger-ui table thead tr td, .swagger-ui .parameter__name, .swagger-ui .parameter__type, .swagger-ui .response-col_status, .swagger-ui .tab li, .swagger-ui .opblock .opblock-section-header h4': {
-      color: 'unset',
-    },
+    '.swagger-ui .opblock .opblock-summary-path, .swagger-ui .opblock .opblock-summary-description, .swagger-ui div, .swagger-ui p, .swagger-ui h5, .swagger-ui .response-col_links, .swagger-ui h4, .swagger-ui table thead tr th, .swagger-ui table thead tr td, .swagger-ui .parameter__name, .swagger-ui .parameter__type, .swagger-ui .response-col_status, .swagger-ui .tab li, .swagger-ui .opblock .opblock-section-header h4':
+      {
+        color: 'unset',
+      },
     '.swagger-ui input': {
       color: 'blackAlpha.800',
     },
@@ -111,21 +117,30 @@ const SwaggerUI = () => {
     },
   };
 
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  const reqInterceptor = React.useCallback((req: any) => {
-    if (!req.loadSpec) {
-      const newUrl = new URL(req.url.replace(DEFAULT_SERVER, config.api.host));
+  const reqInterceptor = React.useCallback(
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    (req: any) => {
+      if (!req.loadSpec) {
+        let newHost = config.api.host;
 
-      newUrl.protocol = config.api.protocol + ':';
+        if (shardsConfig?.proxyUrl && shardId) {
+          newHost = shardsConfig.shards[shardId].apiHost;
+        }
 
-      if (config.api.port) {
-        newUrl.port = config.api.port;
+        const newUrl = new URL(req.url.replace(DEFAULT_SERVER, newHost));
+
+        newUrl.protocol = config.api.protocol + ':';
+
+        if (config.api.port) {
+          newUrl.port = config.api.port;
+        }
+
+        req.url = newUrl.toString();
       }
-
-      req.url = newUrl.toString();
-    }
-    return req;
-  }, []);
+      return req;
+    },
+    [ shardId ],
+  );
 
   if (!feature.isEnabled) {
     return null;
@@ -133,11 +148,7 @@ const SwaggerUI = () => {
 
   return (
     <Box sx={ swaggerStyle }>
-      <SwaggerUIReact
-        url={ feature.specUrl }
-        plugins={ [ NeverShowInfoPlugin ] }
-        requestInterceptor={ reqInterceptor }
-      />
+      <SwaggerUIReact url={ feature.specUrl } plugins={ [ NeverShowInfoPlugin ] } requestInterceptor={ reqInterceptor }/>
     </Box>
   );
 };

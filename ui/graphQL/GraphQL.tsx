@@ -3,12 +3,16 @@ import { createGraphiQLFetcher } from '@graphiql/toolkit';
 import { GraphiQL } from 'graphiql';
 import React from 'react';
 
+import { getFeaturePayload } from 'configs/app/features/types';
+
 import config from 'configs/app';
 import buildUrl from 'lib/api/buildUrl';
 import 'graphiql/graphiql.css';
+import useShards from 'lib/hooks/useShards';
 import isBrowser from 'lib/isBrowser';
 
 const feature = config.features.graphqlApiDocs;
+const shardsConfig = getFeaturePayload(config.features.shards);
 
 const graphQLStyle = {
   '.graphiql-container': {
@@ -17,7 +21,7 @@ const graphQLStyle = {
 };
 
 const GraphQL = () => {
-
+  const { shardId } = useShards();
   const { colorMode } = useColorMode();
 
   const graphqlTheme = window.localStorage.getItem('graphiql:theme');
@@ -49,10 +53,18 @@ const GraphQL = () => {
     }
   }`;
 
-  const graphqlUrl = buildUrl('graphql');
+  const graphqlUrl = (): string => {
+    let url = buildUrl('graphql');
+    if (shardsConfig?.proxyUrl && shardId) {
+      const newHost = shardsConfig.shards[shardId].apiHost;
+      url = url.replace(config.api.host || '', newHost);
+    }
+
+    return url;
+  };
 
   const fetcher = createGraphiQLFetcher({
-    url: graphqlUrl,
+    url: graphqlUrl(),
     // graphql ws implementation with absinthe plugin is incompatible with graphiql-ws protocol
     // or the older one subscriptions-transport-ws
     // so we (isstuev & vbaranov) decided to configure playground without subscriptions
