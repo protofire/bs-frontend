@@ -11,6 +11,7 @@ import RoutedTabs from 'ui/shared/Tabs/RoutedTabs';
 import TabsSkeleton from 'ui/shared/Tabs/TabsSkeleton';
 import useTabIndexFromQuery from 'ui/shared/Tabs/useTabIndexFromQuery';
 import StakingTxDetails from 'ui/stakingTx/StakingTxDetails';
+import StakingTxDetailsDegraded from 'ui/stakingTx/StakingTxDetailsDegraded';
 import StakingTxLogs from 'ui/stakingTx/StakingTxLogs';
 
 const StakingTransactionPageContent = () => {
@@ -23,19 +24,18 @@ const StakingTransactionPageContent = () => {
   });
   const { isError, isPlaceholderData, error } = queryResult;
 
-  // TODO: Add degraded component after harmony rpc client will be implemented
-  // const showDegradedView = publicClient && (isError || isPlaceholderData) && errorUpdateCount > 0;
+  const showDegradedView = isError || isPlaceholderData;
 
   const tabs: Array<RoutedTab> = (() => {
-    // const detailsComponent = showDegradedView ?
-    // <StakingTxDetailsDegraded hash={ hash } txQuery={ txQuery }/> :
-    // <StakingTxDetails txQuery={ txQuery }/>;
+    const detailsComponent = showDegradedView ?
+      <StakingTxDetailsDegraded hash={ hash } query={ queryResult }/> :
+      <StakingTxDetails query={ queryResult }/>;
 
     return [
       {
         id: 'index',
         title: 'Details',
-        component: <StakingTxDetails query={ queryResult }/>,
+        component: detailsComponent,
       },
       { id: 'logs', title: 'Logs', component: <StakingTxLogs txQuery={ queryResult }/> },
     ].filter(Boolean);

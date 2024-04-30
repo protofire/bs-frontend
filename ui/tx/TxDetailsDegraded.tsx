@@ -112,6 +112,9 @@ const TxDetailsDegraded = ({ hash, txQuery }: Props) => {
         tx_types: [],
         tx_tag: null,
         actions: [],
+        eth_hash: tx.ethHash,
+        shard_id: tx?.shardID.toString(),
+        to_shard_id: tx?.toShardID.toString(),
       };
     },
     placeholderData: [

@@ -1,0 +1,437 @@
+diff --git a/node_modules/viem/_cjs/actions/public/getTransaction.js b/node_modules/viem/_cjs/actions/public/getTransaction.js
+index 4bb09c6..5b30baf 100644
+--- a/node_modules/viem/_cjs/actions/public/getTransaction.js
++++ b/node_modules/viem/_cjs/actions/public/getTransaction.js
+@@ -10,7 +10,7 @@ async function getTransaction(client, { blockHash, blockNumber, blockTag: blockT
+     let transaction = null;
+     if (hash) {
+         transaction = await client.request({
+-            method: 'eth_getTransactionByHash',
++            method: 'hmy_getTransactionByHash',
+             params: [hash],
+         });
+     }
+diff --git a/node_modules/viem/_cjs/actions/public/getTransactionReceipt.js b/node_modules/viem/_cjs/actions/public/getTransactionReceipt.js
+index 2f34c5a..b8e520e 100644
+--- a/node_modules/viem/_cjs/actions/public/getTransactionReceipt.js
++++ b/node_modules/viem/_cjs/actions/public/getTransactionReceipt.js
+@@ -5,7 +5,7 @@ const transaction_js_1 = require("../../errors/transaction.js");
+ const transactionReceipt_js_1 = require("../../utils/formatters/transactionReceipt.js");
+ async function getTransactionReceipt(client, { hash }) {
+     const receipt = await client.request({
+-        method: 'eth_getTransactionReceipt',
++        method: 'hmy_getTransactionReceipt',
+         params: [hash],
+     });
+     if (!receipt)
+diff --git a/node_modules/viem/_esm/actions/public/getTransaction.js b/node_modules/viem/_esm/actions/public/getTransaction.js
+index 062e368..bd081b8 100644
+--- a/node_modules/viem/_esm/actions/public/getTransaction.js
++++ b/node_modules/viem/_esm/actions/public/getTransaction.js
+@@ -31,7 +31,7 @@ export async function getTransaction(client, { blockHash, blockNumber, blockTag:
+     let transaction = null;
+     if (hash) {
+         transaction = await client.request({
+-            method: 'eth_getTransactionByHash',
++            method: 'hmy_getTransactionByHash',
+             params: [hash],
+         });
+     }
+diff --git a/node_modules/viem/_esm/actions/public/getTransactionReceipt.js b/node_modules/viem/_esm/actions/public/getTransactionReceipt.js
+index 8050a8e..22709b2 100644
+--- a/node_modules/viem/_esm/actions/public/getTransactionReceipt.js
++++ b/node_modules/viem/_esm/actions/public/getTransactionReceipt.js
+@@ -26,7 +26,7 @@ import { formatTransactionReceipt, } from '../../utils/formatters/transactionRec
+  */
+ export async function getTransactionReceipt(client, { hash }) {
+     const receipt = await client.request({
+-        method: 'eth_getTransactionReceipt',
++        method: 'hmy_getTransactionReceipt',
+         params: [hash],
+     });
+     if (!receipt)
+diff --git a/node_modules/viem/_types/index.d.ts b/node_modules/viem/_types/index.d.ts
+index bacced7..fbf811a 100644
+--- a/node_modules/viem/_types/index.d.ts
++++ b/node_modules/viem/_types/index.d.ts
+@@ -145,7 +145,7 @@ export type { HDKey } from '@scure/bip32';
+ export type { Log } from './types/log.js';
+ export type { MulticallContract, MulticallContracts, MulticallResult, MulticallResults, } from './types/multicall.js';
+ export type { ParseAccount } from './types/account.js';
+-export type { RpcBlock, RpcBlockIdentifier, RpcBlockNumber, RpcFeeHistory, RpcFeeValues, RpcLog, RpcTransaction, RpcTransactionReceipt, RpcTransactionRequest, RpcUncle, } from './types/rpc.js';
++export type { RpcBlock, RpcBlockIdentifier, RpcBlockNumber, RpcFeeHistory, RpcFeeValues, RpcLog, RpcTransaction, RpcTransactionReceipt, RpcTransactionRequest, RpcStakingTransaction, RpcUncle, } from './types/rpc.js';
+ export type { Withdrawal } from './types/withdrawal.js';
+ export { labelhash, type LabelhashErrorType } from './utils/ens/labelhash.js';
+ export { namehash, type NamehashErrorType } from './utils/ens/namehash.js';
+diff --git a/node_modules/viem/_types/types/eip1193.d.ts b/node_modules/viem/_types/types/eip1193.d.ts
+index 5385abc..c7a5aaf 100644
+--- a/node_modules/viem/_types/types/eip1193.d.ts
++++ b/node_modules/viem/_types/types/eip1193.d.ts
+@@ -1,7 +1,7 @@
+ import type { Address } from 'abitype';
+ import type { BlockTag } from './block.js';
+ import type { Hash, Hex, LogTopic } from './misc.js';
+-import type { Quantity, RpcBlock as Block, RpcBlockIdentifier as BlockIdentifier, RpcBlockNumber as BlockNumber, RpcFeeHistory as FeeHistory, RpcLog as Log, RpcProof as Proof, RpcTransaction as Transaction, RpcTransactionReceipt as TransactionReceipt, RpcTransactionRequest as TransactionRequest, RpcUncle as Uncle } from './rpc.js';
++import type { Quantity, RpcBlock as Block, RpcBlockIdentifier as BlockIdentifier, RpcBlockNumber as BlockNumber, RpcFeeHistory as FeeHistory, RpcLog as Log, RpcProof as Proof, RpcTransaction as Transaction, RpcTransactionReceipt as TransactionReceipt, RpcTransactionRequest as TransactionRequest, RpcUncle as Uncle, RpcStakingTransaction as StakingTransaction } from './rpc.js';
+ import type { Prettify } from './utils.js';
+ export type EIP1474Methods = [...PublicRpcSchema, ...WalletRpcSchema];
+ export type EIP1193Provider = EIP1193Events & {
+@@ -472,10 +472,20 @@ export type PublicRpcSchema = [
+      * // => { ... }
+      */
+     {
+-        Method: 'eth_getTransactionByHash';
++        Method: 'hmy_getTransactionByHash';
+         Parameters: [hash: Hash];
+         ReturnType: Transaction | null;
+     },
++    {
++        Method: 'hmy_getTransactionByHash';
++        Parameters: [hash: Hash];
++        ReturnType: Transaction | null;
++    },
++    {
++        Method: 'hmy_getStakingTransactionByHash';
++        Parameters: [hash: Hash];
++        ReturnType: StakingTransaction | null;
++    },
+     /**
+      * @description Returns the number of transactions sent from an address
+      * @link https://eips.ethereum.org/EIPS/eip-1474
+@@ -499,7 +509,7 @@ export type PublicRpcSchema = [
+      * // => { ... }
+      */
+     {
+-        Method: 'eth_getTransactionReceipt';
++        Method: 'hmy_getTransactionReceipt';
+         Parameters: [hash: Hash];
+         ReturnType: TransactionReceipt | null;
+     },
+diff --git a/node_modules/viem/_types/types/rpc.d.ts b/node_modules/viem/_types/types/rpc.d.ts
+index 71e8baa..f31f3b4 100644
+--- a/node_modules/viem/_types/types/rpc.d.ts
++++ b/node_modules/viem/_types/types/rpc.d.ts
+@@ -2,7 +2,7 @@ import type { Block, BlockIdentifier, BlockNumber, BlockTag, Uncle } from './blo
+ import type { FeeHistory, FeeValues } from './fee.js';
+ import type { Log } from './log.js';
+ import type { Proof } from './proof.js';
+-import type { TransactionEIP1559, TransactionEIP2930, TransactionLegacy, TransactionReceipt, TransactionRequestEIP1559, TransactionRequestEIP2930, TransactionRequestLegacy } from './transaction.js';
++import type { TransactionEIP1559, TransactionEIP2930, TransactionLegacy, TransactionReceipt, TransactionRequestEIP1559, TransactionRequestEIP2930, TransactionRequestLegacy, StakingTransactionBase } from './transaction.js';
+ import type { UnionOmit, UnionPartialBy } from './utils.js';
+ export type Index = `0x${string}`;
+ export type Quantity = `0x${string}`;
+@@ -19,4 +19,5 @@ export type RpcProof = Proof<Quantity, Index>;
+ export type RpcTransactionReceipt = TransactionReceipt<Quantity, Index, Status, TransactionType>;
+ export type RpcTransactionRequest = TransactionRequestLegacy<Quantity, Index, '0x0'> | TransactionRequestEIP2930<Quantity, Index, '0x1'> | TransactionRequestEIP1559<Quantity, Index, '0x2'>;
+ export type RpcTransaction<TPending extends boolean = boolean, _optionalProperties extends 'yParity' = 'yParity', _excludedProperties extends string = 'typeHex'> = UnionOmit<UnionPartialBy<TransactionLegacy<Quantity, Index, TPending, '0x0'> | TransactionEIP2930<Quantity, Index, TPending, '0x1'> | TransactionEIP1559<Quantity, Index, TPending, '0x2'>, _optionalProperties>, _excludedProperties>;
++export type RpcStakingTransaction = StakingTransactionBase<Quantity, Index>
+ //# sourceMappingURL=rpc.d.ts.map
+\ No newline at end of file
+diff --git a/node_modules/viem/_types/types/transaction.d.ts b/node_modules/viem/_types/types/transaction.d.ts
+index 95da264..bffb134 100644
+--- a/node_modules/viem/_types/types/transaction.d.ts
++++ b/node_modules/viem/_types/types/transaction.d.ts
+@@ -39,6 +39,58 @@ export type TransactionReceipt<TQuantity = bigint, TIndex = number, TStatus = 's
+     /** Transaction type */
+     type: TType;
+ };
++export type StakingTransactionBase<
++    TQuantity = bigint,
++    TIndex = number,
++    TPending extends boolean = boolean,
++> = {
++    /** Hash of the transaction */
++    hash: Hash
++    /** The number of transactions made by the sender prior to this one */
++    nonce: TIndex
++    /** Hash of the block where this transaction was in. null when it's pending */
++    blockHash: TPending extends true ? null : Hash
++    /** Block number where this transaction was in. null when it's pending */
++    blockNumber: TPending extends true ? null : TQuantity
++    /** Integer of the transaction's index position in the block. null when it's pending */
++    transactionIndex: TPending extends true ? null : TIndex
++    /** Transaction timestamp */
++    timestamp: Hex
++    /** Address of the sender */
++    from: Address
++    /** Gas price provided by the sender */
++    gasPrice: TQuantity
++    /** Gas provided by the sender */
++    gas: TQuantity
++    /** Signature V */
++    v: TQuantity
++    /** Signature R */
++    r: Hex
++    /** Signature S */
++    s: Hex
++    /** Staking transaction type ("CreateValidator", "EditValidator", "CollectRewards", "Undelegate", "Delegate") */
++    type: string
++    /** Staking message */
++    msg: {
++        validatorAddress: string
++        name: string
++        commissionRate: number
++        maxCommissionRate: number
++        maxChangeRate: number
++        minSelfDelegation: number
++        maxTotalDelegation: number
++        amount: number
++        website: string
++        identity: string
++        securityContact: string
++        details: string
++        slotPubKeys: string[]
++        slotPubKeyToAdd: string
++        slotPubKeyToRemove: string
++        delegatorAddress: string
++    }
++}
++
+ export type TransactionBase<TQuantity = bigint, TIndex = number, TPending extends boolean = boolean> = {
+     /** Hash of block containing this transaction or `null` if pending */
+     blockHash: TPending extends true ? null : Hash;
+@@ -50,6 +102,7 @@ export type TransactionBase<TQuantity = bigint, TIndex = number, TPending extend
+     gas: TQuantity;
+     /** Hash of this transaction */
+     hash: Hash;
++    ethHash: Hash;
+     /** Contract code or a hashed method call */
+     input: Hex;
+     /** Unique number identifying this transaction */
+@@ -70,6 +123,8 @@ export type TransactionBase<TQuantity = bigint, TIndex = number, TPending extend
+     value: TQuantity;
+     /** The parity of the y-value of the secp256k1 signature. */
+     yParity: TIndex;
++    shardID: TIndex;
++    toShardID: TIndex;
+ };
+ export type TransactionLegacy<TQuantity = bigint, TIndex = number, TPending extends boolean = boolean, TType = 'legacy'> = Omit<TransactionBase<TQuantity, TIndex, TPending>, 'yParity'> & FeeValuesLegacy<TQuantity> & {
+     /** EIP-2930 Access List. */
+diff --git a/node_modules/viem/actions/public/getBlock.ts b/node_modules/viem/actions/public/getBlock.ts
+index f2cd035..7df2b0b 100644
+--- a/node_modules/viem/actions/public/getBlock.ts
++++ b/node_modules/viem/actions/public/getBlock.ts
+@@ -109,12 +109,12 @@ export async function getBlock<
+   let block: RpcBlock | null = null
+   if (blockHash) {
+     block = await client.request({
+-      method: 'eth_getBlockByHash',
++      method: 'hmy_getBlockByHash',
+       params: [blockHash, includeTransactions],
+     })
+   } else {
+     block = await client.request({
+-      method: 'eth_getBlockByNumber',
++      method: 'hmy_getBlockByNumber',
+       params: [blockNumberHex || blockTag, includeTransactions],
+     })
+   }
+diff --git a/node_modules/viem/actions/public/getTransaction.ts b/node_modules/viem/actions/public/getTransaction.ts
+index 426e2be..ba9386c 100644
+--- a/node_modules/viem/actions/public/getTransaction.ts
++++ b/node_modules/viem/actions/public/getTransaction.ts
+@@ -108,7 +108,7 @@ export async function getTransaction<
+   let transaction: RpcTransaction | null = null
+   if (hash) {
+     transaction = await client.request({
+-      method: 'eth_getTransactionByHash',
++      method: 'hmy_getTransactionByHash',
+       params: [hash],
+     })
+   } else if (blockHash) {
+diff --git a/node_modules/viem/actions/public/getTransactionReceipt.ts b/node_modules/viem/actions/public/getTransactionReceipt.ts
+index c85eb40..6792f16 100644
+--- a/node_modules/viem/actions/public/getTransactionReceipt.ts
++++ b/node_modules/viem/actions/public/getTransactionReceipt.ts
+@@ -56,7 +56,7 @@ export async function getTransactionReceipt<TChain extends Chain | undefined>(
+   { hash }: GetTransactionReceiptParameters,
+ ) {
+   const receipt = await client.request({
+-    method: 'eth_getTransactionReceipt',
++    method: 'hmy_getTransactionReceipt',
+     params: [hash],
+   })
+ 
+diff --git a/node_modules/viem/index.ts b/node_modules/viem/index.ts
+index 5efda92..7e78ca4 100644
+--- a/node_modules/viem/index.ts
++++ b/node_modules/viem/index.ts
+@@ -949,6 +949,7 @@ export type {
+   RpcTransaction,
+   RpcTransactionReceipt,
+   RpcTransactionRequest,
++  RpcStakingTransaction,
+   RpcUncle,
+ } from './types/rpc.js'
+ export type { Withdrawal } from './types/withdrawal.js'
+diff --git a/node_modules/viem/types/eip1193.ts b/node_modules/viem/types/eip1193.ts
+index 6710df1..4177cfa 100644
+--- a/node_modules/viem/types/eip1193.ts
++++ b/node_modules/viem/types/eip1193.ts
+@@ -11,6 +11,7 @@ import type {
+   RpcLog as Log,
+   RpcProof as Proof,
+   RpcTransaction as Transaction,
++  RpcStakingTransaction as StakingTransaction,
+   RpcTransactionReceipt as TransactionReceipt,
+   RpcTransactionRequest as TransactionRequest,
+   RpcUncle as Uncle,
+@@ -338,7 +339,7 @@ export type PublicRpcSchema = [
+    * // }
+    */
+   {
+-    Method: 'eth_getBlockByHash'
++    Method: 'hmy_getBlockByHash'
+     Parameters: [
+       /** hash of a block */
+       hash: Hash,
+@@ -360,7 +361,7 @@ export type PublicRpcSchema = [
+    * // }
+    */
+   {
+-    Method: 'eth_getBlockByNumber'
++    Method: 'hmy_getBlockByNumber'
+     Parameters: [
+       /** block number, or one of "latest", "safe", "finalized", "earliest" or "pending" */
+       block: BlockNumber | BlockTag,
+@@ -528,10 +529,15 @@ export type PublicRpcSchema = [
+    * // => { ... }
+    */
+   {
+-    Method: 'eth_getTransactionByHash'
++    Method: 'hmy_getTransactionByHash'
+     Parameters: [hash: Hash]
+     ReturnType: Transaction | null
+   },
++  {
++    Method: 'hmy_getStakingTransactionByHash'
++    Parameters: [hash: Hash]
++    ReturnType: StakingTransaction | null
++  },
+   /**
+    * @description Returns the number of transactions sent from an address
+    * @link https://eips.ethereum.org/EIPS/eip-1474
+@@ -555,7 +561,7 @@ export type PublicRpcSchema = [
+    * // => { ... }
+    */
+   {
+-    Method: 'eth_getTransactionReceipt'
++    Method: 'hmy_getTransactionReceipt'
+     Parameters: [hash: Hash]
+     ReturnType: TransactionReceipt | null
+   },
+diff --git a/node_modules/viem/types/rpc.ts b/node_modules/viem/types/rpc.ts
+index f34b8f3..f5c16d9 100644
+--- a/node_modules/viem/types/rpc.ts
++++ b/node_modules/viem/types/rpc.ts
+@@ -9,6 +9,7 @@ import type { FeeHistory, FeeValues } from './fee.js'
+ import type { Log } from './log.js'
+ import type { Proof } from './proof.js'
+ import type {
++  StakingTransactionBase,
+   TransactionEIP1559,
+   TransactionEIP2930,
+   TransactionLegacy,
+@@ -61,3 +62,5 @@ export type RpcTransaction<
+   >,
+   _excludedProperties
+ >
++
++export type RpcStakingTransaction = StakingTransactionBase<Quantity, Index>
+\ No newline at end of file
+diff --git a/node_modules/viem/types/transaction.ts b/node_modules/viem/types/transaction.ts
+index 9f0dbb4..70197fa 100644
+--- a/node_modules/viem/types/transaction.ts
++++ b/node_modules/viem/types/transaction.ts
+@@ -47,6 +47,58 @@ export type TransactionReceipt<
+   type: TType
+ }
+ 
++export type StakingTransactionBase<
++  TQuantity = bigint,
++  TIndex = number,
++  TPending extends boolean = boolean,
++> = {
++  /** Hash of the transaction */
++  hash: Hash
++  /** The number of transactions made by the sender prior to this one */
++  nonce: TIndex
++  /** Hash of the block where this transaction was in. null when it's pending */
++  blockHash: TPending extends true ? null : Hash
++  /** Block number where this transaction was in. null when it's pending */
++  blockNumber: TPending extends true ? null : TQuantity
++  /** Integer of the transaction's index position in the block. null when it's pending */
++  transactionIndex: TPending extends true ? null : TIndex
++  /** Transaction timestamp */
++  timestamp: Hex
++  /** Address of the sender */
++  from: Address
++  /** Gas price provided by the sender */
++  gasPrice: TQuantity
++  /** Gas provided by the sender */
++  gas: TQuantity
++  /** Signature V */
++  v: TQuantity
++  /** Signature R */
++  r: Hex
++  /** Signature S */
++  s: Hex
++  /** Staking transaction type ("CreateValidator", "EditValidator", "CollectRewards", "Undelegate", "Delegate") */
++  type: string
++  /** Staking message */
++  msg: {
++    validatorAddress: string
++    name: string
++    commissionRate: number
++    maxCommissionRate: number
++    maxChangeRate: number
++    minSelfDelegation: number
++    maxTotalDelegation: number
++    amount: number
++    website: string
++    identity: string
++    securityContact: string
++    details: string
++    slotPubKeys: string[]
++    slotPubKeyToAdd: string
++    slotPubKeyToRemove: string
++    delegatorAddress: string
++  }
++}
++
+ export type TransactionBase<
+   TQuantity = bigint,
+   TIndex = number,
+@@ -62,6 +114,7 @@ export type TransactionBase<
+   gas: TQuantity
+   /** Hash of this transaction */
+   hash: Hash
++  ethHash: Hash
+   /** Contract code or a hashed method call */
+   input: Hex
+   /** Unique number identifying this transaction */
+@@ -82,6 +135,8 @@ export type TransactionBase<
+   value: TQuantity
+   /** The parity of the y-value of the secp256k1 signature. */
+   yParity: TIndex
++  shardID: TIndex
++  toShardID: TIndex
+ }
+ export type TransactionLegacy<
+   TQuantity = bigint,
+diff --git a/node_modules/viem/utils/formatters/transaction.ts b/node_modules/viem/utils/formatters/transaction.ts
+index 5d3921b..2c43e2a 100644
+--- a/node_modules/viem/utils/formatters/transaction.ts
++++ b/node_modules/viem/utils/formatters/transaction.ts
+@@ -68,6 +68,11 @@ export function formatTransaction(transaction: Partial<RpcTransaction>) {
+     typeHex: transaction.type ? transaction.type : undefined,
+     value: transaction.value ? BigInt(transaction.value) : undefined,
+     v: transaction.v ? BigInt(transaction.v) : undefined,
++    shardID: transaction.shardID ? Number(transaction.shardID) : undefined,
++    toShardID: transaction.toShardID
++      ? Number(transaction.toShardID)
++      : undefined,
++    ethHash: transaction.ethHash ? transaction.ethHash : undefined,
+   } as Transaction
+ 
+   transaction_.yParity = (() => {

@@ -32,6 +32,9 @@ export const GET_TRANSACTION: GetTransactionReturnType<Chain, 'latest'> = {
   s: '0x50938f87c92b9eeb9777507ca8f7397840232d00d1dbac3edac6c115b4656763',
   yParity: 1,
   typeHex: '0x2',
+  ethHash: TX_HASH,
+  shardID: 0,
+  toShardID: 0,
 };
 
 export const GET_TRANSACTION_RECEIPT: TransactionReceipt = {
