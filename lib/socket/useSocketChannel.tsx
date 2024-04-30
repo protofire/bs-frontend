@@ -60,7 +60,11 @@ export default function useSocketChannel({ topic, params, isDisabled, onJoin, on
       CHANNEL_REGISTRY[topic] = ch;
       ch.join()
         .receive('ok', (message) => onJoinRef.current?.(ch, message))
-        .receive('error', () => {
+        .receive('error', (error) => {
+          // eslint-disable-next-line no-console
+          console.log('useSocketChannel', error);
+          // eslint-disable-next-line no-console
+          console.log('channel', ch);
           onSocketError?.();
         });
     }
