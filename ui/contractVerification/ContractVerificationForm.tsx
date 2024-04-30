@@ -5,7 +5,11 @@ import { useForm, FormProvider } from 'react-hook-form';
 
 import type { FormFields } from './types';
 import type { SocketMessage } from 'lib/socket/types';
-import type { SmartContractVerificationMethod, SmartContractVerificationConfig, SmartContract } from 'types/api/contract';
+import type {
+  SmartContractVerificationMethod,
+  SmartContractVerificationConfig,
+  SmartContract,
+} from 'types/api/contract';
 
 import { route } from 'nextjs-routes';
 
@@ -47,76 +51,85 @@ const ContractVerificationForm = ({ method: methodFromQuery, config, hash }: Pro
   const apiFetch = useApiFetch();
   const toast = useToast();
 
-  const onFormSubmit: SubmitHandler<FormFields> = React.useCallback(async(data) => {
-    const body = prepareRequestBody(data);
+  const onFormSubmit: SubmitHandler<FormFields> = React.useCallback(
+    async(data) => {
+      const body = prepareRequestBody(data);
 
-    if (!hash) {
-      try {
-        const response = await apiFetch<'contract', SmartContract>('contract', {
-          pathParams: { hash: data.address.toLowerCase() },
-        });
+      if (!hash) {
+        try {
+          const response = await apiFetch<'contract', SmartContract>('contract', {
+            pathParams: { hash: data.address.toLowerCase() },
+          });
 
-        const isVerifiedContract = 'is_verified' in response && response?.is_verified && !response.is_partially_verified;
-        if (isVerifiedContract) {
-          setError('address', { message: 'Contract has already been verified' });
+          const isVerifiedContract =
+            'is_verified' in response && response?.is_verified && !response.is_partially_verified;
+          if (isVerifiedContract) {
+            setError('address', { message: 'Contract has already been verified' });
+            return Promise.resolve();
+          }
+        } catch (error) {
+          const statusCode = getErrorObjStatusCode(error);
+          const message = statusCode === 404 ? 'Address is not a smart contract' : 'Something went wrong';
+          setError('address', { message });
           return Promise.resolve();
         }
-      } catch (error) {
-        const statusCode = getErrorObjStatusCode(error);
-        const message = statusCode === 404 ? 'Address is not a smart contract' : 'Something went wrong';
-        setError('address', { message });
-        return Promise.resolve();
       }
-    }
 
-    try {
-      await apiFetch('contract_verification_via', {
-        pathParams: { method: data.method.value, hash: data.address.toLowerCase() },
-        fetchParams: {
-          method: 'POST',
-          body,
-        },
+      try {
+        await apiFetch('contract_verification_via', {
+          pathParams: { method: data.method.value, hash: data.address.toLowerCase() },
+          fetchParams: {
+            method: 'POST',
+            body,
+          },
+        });
+      } catch (error) {
+        return;
+      }
+
+      return new Promise((resolve) => {
+        submitPromiseResolver.current = resolve;
       });
-    } catch (error) {
-      return;
-    }
-
-    return new Promise((resolve) => {
-      submitPromiseResolver.current = resolve;
-    });
-  }, [ apiFetch, hash, setError ]);
+    },
+    [ apiFetch, hash, setError ],
+  );
 
   const address = watch('address');
   const addressState = getFieldState('address');
 
-  const handleNewSocketMessage: SocketMessage.ContractVerification['handler'] = React.useCallback(async(payload) => {
-    if (payload.status === 'error') {
-      const errors = formatSocketErrors(payload.errors);
-      errors.filter(Boolean).forEach(([ field, error ]) => setError(field, error));
-      await delay(100); // have to wait a little bit, otherwise isSubmitting status will not be updated
-      submitPromiseResolver.current?.(null);
-      return;
-    }
+  const handleNewSocketMessage: SocketMessage.ContractVerification['handler'] = React.useCallback(
+    async(payload) => {
+      if (payload.status === 'error') {
+        const errors = formatSocketErrors(payload.errors);
+        errors.filter(Boolean).forEach(([ field, error ]) => setError(field, error));
+        await delay(100); // have to wait a little bit, otherwise isSubmitting status will not be updated
+        submitPromiseResolver.current?.(null);
+        return;
+      }
 
-    toast({
-      position: 'top-right',
-      title: 'Success',
-      description: 'Contract is successfully verified.',
-      status: 'success',
-      variant: 'subtle',
-      isClosable: true,
-    });
+      toast({
+        position: 'top-right',
+        title: 'Success',
+        description: 'Contract is successfully verified.',
+        status: 'success',
+        variant: 'subtle',
+        isClosable: true,
+      });
 
-    mixpanel.logEvent(
-      mixpanel.EventTypes.CONTRACT_VERIFICATION,
-      { Status: 'Finished', Method: methodNameRef.current || '' },
-      { send_immediately: true },
-    );
+      mixpanel.logEvent(
+        mixpanel.EventTypes.CONTRACT_VERIFICATION,
+        { Status: 'Finished', Method: methodNameRef.current || '' },
+        { send_immediately: true },
+      );
 
-    window.location.assign(route({ pathname: '/address/[hash]', query: { hash: address, tab: 'contract' } }));
-  }, [ setError, toast, address ]);
+      window.location.assign(route({ pathname: '/address/[hash]', query: { hash: address, tab: 'contract' } }));
+    },
+    [ setError, toast, address ],
+  );
 
   const handleSocketError = React.useCallback(() => {
+    // eslint-disable-next-line no-console
+    console.log('handleSocketError', 'websocket connection error');
     if (!formState.isSubmitting) {
       return;
     }
@@ -124,18 +137,19 @@ const ContractVerificationForm = ({ method: methodFromQuery, config, hash }: Pro
     submitPromiseResolver.current?.(null);
 
     const toastId = 'socket-error';
-    !toast.isActive(toastId) && toast({
-      id: toastId,
-      position: 'top-right',
-      title: 'Error',
-      description: 'There was an error with socket connection. Try again later.',
-      status: 'error',
-      variant: 'subtle',
-      isClosable: true,
-    });
-  // callback should not change when form is submitted
-  // otherwise it will resubscribe to channel, but we don't want that since in that case we might miss verification result message
-  // eslint-disable-next-line react-hooks/exhaustive-deps
+    !toast.isActive(toastId) &&
+      toast({
+        id: toastId,
+        position: 'top-right',
+        title: 'Error',
+        description: 'There was an error with socket connection. Try again later.',
+        status: 'error',
+        variant: 'subtle',
+        isClosable: true,
+      });
+    // callback should not change when form is submitted
+    // otherwise it will resubscribe to channel, but we don't want that since in that case we might miss verification result message
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [ toast ]);
 
   const channel = useSocketChannel({
@@ -174,16 +188,18 @@ const ContractVerificationForm = ({ method: methodFromQuery, config, hash }: Pro
       mixpanel.logEvent(mixpanel.EventTypes.CONTRACT_VERIFICATION, { Status: 'Method selected', Method: methodName });
       methodNameRef.current = methodName;
     }
-  // !!! should run only when method is changed
+    // !!! should run only when method is changed
   }, [ methodValue ]);
 
   return (
     <FormProvider { ...formApi }>
-      <chakra.form
-        noValidate
-        onSubmit={ handleSubmit(onFormSubmit) }
-      >
-        <Grid as="section" columnGap="30px" rowGap={{ base: 2, lg: 5 }} templateColumns={{ base: '1fr', lg: 'minmax(auto, 680px) minmax(0, 340px)' }}>
+      <chakra.form noValidate onSubmit={ handleSubmit(onFormSubmit) }>
+        <Grid
+          as="section"
+          columnGap="30px"
+          rowGap={{ base: 2, lg: 5 }}
+          templateColumns={{ base: '1fr', lg: 'minmax(auto, 680px) minmax(0, 340px)' }}
+        >
           { !hash && <ContractVerificationFieldAddress/> }
           <ContractVerificationFieldLicenseType/>
           <ContractVerificationFieldMethod
