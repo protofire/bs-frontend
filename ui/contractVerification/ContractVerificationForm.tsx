@@ -1,12 +1,12 @@
 import { Button, Grid, chakra, useUpdateEffect } from '@chakra-ui/react';
-import React from 'react';
+import React, { useEffect } from 'react';
 import type { SubmitHandler } from 'react-hook-form';
 import { useForm, FormProvider } from 'react-hook-form';
 
 import type { FormFields } from './types';
-import type { SocketMessage } from 'lib/socket/types';
 import type {
   SmartContractVerificationMethod,
+  SmartContractVerificationError,
   SmartContractVerificationConfig,
   SmartContract,
 } from 'types/api/contract';
@@ -16,10 +16,9 @@ import { route } from 'nextjs-routes';
 import useApiFetch from 'lib/api/useApiFetch';
 import delay from 'lib/delay';
 import getErrorObjStatusCode from 'lib/errors/getErrorObjStatusCode';
+import useShards from 'lib/hooks/useShards';
 import useToast from 'lib/hooks/useToast';
 import * as mixpanel from 'lib/mixpanel/index';
-import useSocketChannel from 'lib/socket/useSocketChannel';
-import useSocketMessage from 'lib/socket/useSocketMessage';
 
 import ContractVerificationFieldAddress from './fields/ContractVerificationFieldAddress';
 import ContractVerificationFieldLicenseType from './fields/ContractVerificationFieldLicenseType';
@@ -44,11 +43,12 @@ const ContractVerificationForm = ({ method: methodFromQuery, config, hash }: Pro
     mode: 'onBlur',
     defaultValues: methodFromQuery ? getDefaultValues(methodFromQuery, config, hash, null) : undefined,
   });
-  const { control, handleSubmit, watch, formState, setError, reset, getFieldState } = formApi;
+  const { control, handleSubmit, watch, formState, setError, reset } = formApi;
   const submitPromiseResolver = React.useRef<(value: unknown) => void>();
   const methodNameRef = React.useRef<string>();
 
   const apiFetch = useApiFetch();
+  const { subscribeOnTopicMessage } = useShards();
   const toast = useToast();
 
   const onFormSubmit: SubmitHandler<FormFields> = React.useCallback(
@@ -95,12 +95,29 @@ const ContractVerificationForm = ({ method: methodFromQuery, config, hash }: Pro
   );
 
   const address = watch('address');
-  const addressState = getFieldState('address');
 
-  const handleNewSocketMessage: SocketMessage.ContractVerification['handler'] = React.useCallback(
-    async(payload) => {
-      if (payload.status === 'error') {
-        const errors = formatSocketErrors(payload.errors);
+  const methods = React.useMemo(() => {
+    return {
+      'flattened-code': <ContractVerificationFlattenSourceCode config={ config }/>,
+      'standard-input': <ContractVerificationStandardInput config={ config }/>,
+      sourcify: <ContractVerificationSourcify/>,
+      'multi-part': <ContractVerificationMultiPartFile/>,
+      'vyper-code': <ContractVerificationVyperContract config={ config }/>,
+      'vyper-multi-part': <ContractVerificationVyperMultiPartFile/>,
+      'vyper-standard-input': <ContractVerificationVyperStandardInput/>,
+    };
+  }, [ config ]);
+  const method = watch('method');
+  const licenseType = watch('license_type');
+  const content = methods[method?.value] || null;
+  const methodValue = method?.value;
+
+  const handleNewVerificationMessage = React.useCallback(
+    async(_shardId: string, message: unknown) => {
+      const payload = message as { status: string; errors?: SmartContractVerificationError };
+
+      if (payload.status === 'error' && payload.errors) {
+        const errors = formatSocketErrors(payload?.errors);
         errors.filter(Boolean).forEach(([ field, error ]) => setError(field, error));
         await delay(100); // have to wait a little bit, otherwise isSubmitting status will not be updated
         submitPromiseResolver.current?.(null);
@@ -127,58 +144,13 @@ const ContractVerificationForm = ({ method: methodFromQuery, config, hash }: Pro
     [ setError, toast, address ],
   );
 
-  const handleSocketError = React.useCallback(() => {
-    // eslint-disable-next-line no-console
-    console.log('handleSocketError', 'websocket connection error');
-    if (!formState.isSubmitting) {
-      return;
-    }
-
-    submitPromiseResolver.current?.(null);
-
-    const toastId = 'socket-error';
-    !toast.isActive(toastId) &&
-      toast({
-        id: toastId,
-        position: 'top-right',
-        title: 'Error',
-        description: 'There was an error with socket connection. Try again later.',
-        status: 'error',
-        variant: 'subtle',
-        isClosable: true,
-      });
-    // callback should not change when form is submitted
-    // otherwise it will resubscribe to channel, but we don't want that since in that case we might miss verification result message
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [ toast ]);
-
-  const channel = useSocketChannel({
-    topic: `addresses:${ address?.toLowerCase() }`,
-    onSocketClose: handleSocketError,
-    onSocketError: handleSocketError,
-    isDisabled: Boolean(address && addressState.error),
-  });
-  useSocketMessage({
-    channel,
-    event: 'verification_result',
-    handler: handleNewSocketMessage,
-  });
-
-  const methods = React.useMemo(() => {
-    return {
-      'flattened-code': <ContractVerificationFlattenSourceCode config={ config }/>,
-      'standard-input': <ContractVerificationStandardInput config={ config }/>,
-      sourcify: <ContractVerificationSourcify/>,
-      'multi-part': <ContractVerificationMultiPartFile/>,
-      'vyper-code': <ContractVerificationVyperContract config={ config }/>,
-      'vyper-multi-part': <ContractVerificationVyperMultiPartFile/>,
-      'vyper-standard-input': <ContractVerificationVyperStandardInput/>,
-    };
-  }, [ config ]);
-  const method = watch('method');
-  const licenseType = watch('license_type');
-  const content = methods[method?.value] || null;
-  const methodValue = method?.value;
+  useEffect(() => {
+    subscribeOnTopicMessage({
+      channelTopic: `addresses:${ address?.toLowerCase() }`,
+      event: 'verification_result',
+      onMessage: handleNewVerificationMessage,
+    });
+  }, [ address, subscribeOnTopicMessage, handleNewVerificationMessage ]);
 
   useUpdateEffect(() => {
     if (methodValue) {
