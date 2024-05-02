@@ -1,3 +1,13 @@
-<svg fill="none" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 30 30">
-  <path fill-rule="evenodd" clip-rule="evenodd" d="M12.703 5.6a1.6 1.6 0 0 0-1.6-1.6H9.575a1.6 1.6 0 0 0-1.6 1.6v1.383a1.6 1.6 0 0 1-1.6 1.6H5.6a1.6 1.6 0 0 0-1.6 1.6V24.4A1.6 1.6 0 0 0 5.6 26h1.528a1.6 1.6 0 0 0 1.6-1.6V10.183a1.6 1.6 0 0 1 1.6-1.6h.775a1.6 1.6 0 0 0 1.6-1.6V5.6Zm9.487 0a1.6 1.6 0 0 0-1.6-1.6h-1.528a1.6 1.6 0 0 0-1.6 1.6v1.383a1.6 1.6 0 0 0 1.6 1.6h.61a1.6 1.6 0 0 1 1.6 1.6V24.4a1.6 1.6 0 0 0 1.6 1.6H24.4a1.6 1.6 0 0 0 1.6-1.6V10.183a1.6 1.6 0 0 0-1.6-1.6h-.61a1.6 1.6 0 0 1-1.6-1.6V5.6Zm-4.793 8.774a1.6 1.6 0 0 0-1.6-1.6h-1.528a1.6 1.6 0 0 0-1.6 1.6v5.705a1.6 1.6 0 0 0 1.6 1.6h1.528a1.6 1.6 0 0 0 1.6-1.6v-5.705Z" fill="currentColor"/>
+<svg data-name="Layer 1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" viewBox="0 0 89.73 111.49">
+  <defs>
+    <linearGradient id="a" data-name="harmony gradient" x1="24.06" y1="58.19" x2="73.04" y2="58.19" gradientUnits="userSpaceOnUse">
+      <stop offset="0" stop-color="#00aee9"/>
+      <stop offset="1" stop-color="#69fabd"/>
+    </linearGradient>
+    <linearGradient id="b" data-name="harmony gradient" x1="67.45" y1="10.11" x2="89.73" y2="10.11" xlink:href="#a"/>
+    <linearGradient id="c" data-name="harmony gradient" x1="0" y1="101.38" x2="22.28" y2="101.38" xlink:href="#a"/>
+  </defs>
+  <path d="M25.92 90.8c-1.24-1.24-1.86-3-1.86-5.28V30.87c0-2.28.62-4.04 1.86-5.28s3-1.86 5.28-1.86h34.61c4.82 0 7.23 1.96 7.23 5.87s-2.41 5.96-7.23 5.96H38.92v16.13h24.93c4.82 0 7.23 1.99 7.23 5.96s-2.41 5.87-7.23 5.87H38.92v17.3h26.89c4.82 0 7.23 1.99 7.23 5.96s-2.41 5.87-7.23 5.87H31.2c-2.28 0-4.04-.62-5.28-1.86Z" style="fill:url(#a);stroke-width:0"/>
+  <path style="stroke:url(#b);fill:none;opacity:.91;stroke-linecap:round;stroke-linejoin:round;stroke-width:6px" d="M70.45 3h16.28v14.22"/>
+  <path style="fill:none;opacity:.91;stroke-linecap:round;stroke-linejoin:round;stroke-width:6px;stroke:url(#c)" d="M19.28 108.49H3V94.27"/>
 </svg>
