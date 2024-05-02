@@ -9,8 +9,10 @@ RUN apk add --no-cache libc6-compat
 # Install dependencies
 WORKDIR /app
 COPY package.json yarn.lock ./
+COPY ./patches/* ./patches/
 RUN apk add git
 RUN yarn --frozen-lockfile
+RUN yarn patch-package
 
 
 ### FEATURE REPORTER
@@ -45,6 +47,7 @@ ENV NODE_ENV production
 # Copy dependencies and source code
 WORKDIR /app
 COPY --from=deps /app/node_modules ./node_modules
+COPY ./patches/* ./patches/
 COPY . .
 
 # Generate .env.registry with ENVs list and save build args into .env file
@@ -57,6 +60,7 @@ RUN ./collect_envs.sh ./docs/ENVS.md
 # ENV NEXT_TELEMETRY_DISABLED 1
 
 # Build app for production
+RUN yarn postinstall
 RUN yarn build
 RUN yarn svg:build-sprite
 
