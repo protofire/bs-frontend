@@ -114,6 +114,8 @@ const ContractVerificationForm = ({ method: methodFromQuery, config, hash }: Pro
 
   const handleNewVerificationMessage = React.useCallback(
     async(_shardId: string, message: unknown) => {
+      // eslint-disable-next-line no-console
+      console.log('verification_result message received', message);
       const payload = message as { status: string; errors?: SmartContractVerificationError };
 
       if (payload.status === 'error' && payload.errors) {
