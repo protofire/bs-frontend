@@ -9,7 +9,6 @@ import {
 } from '@chakra-ui/react';
 import BigNumber from 'bignumber.js';
 import React from 'react';
-import { scroller, Element } from 'react-scroll';
 
 import type { StakingTransaction } from 'types/api/stakingTransaction';
 
@@ -38,17 +37,7 @@ interface Props {
 }
 
 const StakingTxInfo = ({ data, isLoading }: Props) => {
-  const [ isExpanded, setIsExpanded ] = React.useState(false);
-
   const { shardId } = useShards();
-
-  const handleCutClick = React.useCallback(() => {
-    setIsExpanded((flag) => !flag);
-    scroller.scrollTo('TxInfo__cutLink', {
-      duration: 500,
-      smooth: true,
-    });
-  }, []);
 
   if (!data) {
     return null;
@@ -183,206 +172,189 @@ const StakingTxInfo = ({ data, isLoading }: Props) => {
         <Utilization ml={ 4 } value={ BigNumber(data.gas_used || 0).dividedBy(BigNumber(data.gas || 0)).toNumber() } isLoading={ isLoading }/>
       </DetailsInfoItem>
 
-      <GridItem colSpan={{ base: undefined, lg: 2 }}>
-        <Element name="TxInfo__cutLink">
-          <Skeleton isLoaded={ !isLoading } mt={ 6 } display="inline-block">
-            <Link
-              display="inline-block"
-              fontSize="sm"
-              textDecorationLine="underline"
-              textDecorationStyle="dashed"
-              onClick={ handleCutClick }
-            >
-              { isExpanded ? 'Hide details' : 'View details' }
-            </Link>
-          </Skeleton>
-        </Element>
-      </GridItem>
-      { isExpanded && (
-        <>
-          <GridItem
-            colSpan={{ base: undefined, lg: 2 }}
-            mt={{ base: 1, lg: 4 }}
+      <GridItem
+        colSpan={{ base: undefined, lg: 2 }}
+        mt={{ base: 1, lg: 4 }}
+      />
+
+      <DetailsInfoItemDivider/>
+
+      { data.msg_validator_address && (
+        <DetailsInfoItem
+          title="Validator address"
+          hint="Address of the validator"
+          isLoading={ isLoading }
+        >
+          <AddressEntity
+            address={{
+              hash: data.msg_validator_address,
+            }}
+            isLoading={ isLoading }
           />
+        </DetailsInfoItem>
+      ) }
 
-          { data.msg_validator_address && (
-            <DetailsInfoItem
-              title="Validator address"
-              hint="Address of the validator"
-              isLoading={ isLoading }
-            >
-              <AddressEntity
-                address={{
-                  hash: data.msg_validator_address,
-                }}
-                isLoading={ isLoading }
-              />
-            </DetailsInfoItem>
-          ) }
+      { data.msg_name && (
+        <DetailsInfoItem
+          title="Name"
+          hint="Name of the validator"
+          isLoading={ isLoading }
+        >
+          <Text>{ data.msg_name }</Text>
+        </DetailsInfoItem>
+      ) }
 
-          { data.msg_name && (
-            <DetailsInfoItem
-              title="Name"
-              hint="Name of the validator"
-              isLoading={ isLoading }
-            >
-              <Text>{ data.msg_name }</Text>
-            </DetailsInfoItem>
-          ) }
+      { data.msg_commission_rate && (
+        <DetailWeiConverter
+          title="Commission rate"
+          hint="Commission rate of the validator"
+          value={ data.msg_commission_rate }
+          isLoading={ isLoading }
+        />
+      ) }
 
-          { data.msg_commission_rate && (
-            <DetailWeiConverter
-              title="Commission rate"
-              hint="Commission rate of the validator"
-              value={ data.msg_commission_rate }
-              isLoading={ isLoading }
-            />
-          ) }
+      { data.msg_max_commission_rate && (
+        <DetailWeiConverter
+          title="Max commission rate"
+          hint="Max commission rate of the validator"
+          value={ data.msg_max_commission_rate }
+          isLoading={ isLoading }
+        />
+      ) }
 
-          { data.msg_max_commission_rate && (
-            <DetailWeiConverter
-              title="Max commission rate"
-              hint="Max commission rate of the validator"
-              value={ data.msg_max_commission_rate }
-              isLoading={ isLoading }
-            />
-          ) }
+      { data.msg_max_change_rate && (
+        <DetailWeiConverter
+          title="Max change rate"
+          hint="Max change rate of the validator"
+          value={ data.msg_max_change_rate }
+          isLoading={ isLoading }
+        />
+      ) }
 
-          { data.msg_max_change_rate && (
-            <DetailWeiConverter
-              title="Max change rate"
-              hint="Max change rate of the validator"
-              value={ data.msg_max_change_rate }
-              isLoading={ isLoading }
-            />
-          ) }
+      { data.msg_min_self_delegation && (
+        <DetailWeiConverter
+          title="Min self delegation"
+          hint="Minimum self delegation of the validator"
+          value={ data.msg_min_self_delegation }
+          isLoading={ isLoading }
+        />
+      ) }
 
-          { data.msg_min_self_delegation && (
-            <DetailWeiConverter
-              title="Min self delegation"
-              hint="Minimum self delegation of the validator"
-              value={ data.msg_min_self_delegation }
-              isLoading={ isLoading }
-            />
-          ) }
+      { data.msg_max_total_delegation && (
+        <DetailWeiConverter
+          title="Max total delegation"
+          hint="Maximum total delegation of the validator"
+          value={ data.msg_max_total_delegation }
+          isLoading={ isLoading }
+        />
+      ) }
 
-          { data.msg_max_total_delegation && (
-            <DetailWeiConverter
-              title="Max total delegation"
-              hint="Maximum total delegation of the validator"
-              value={ data.msg_max_total_delegation }
-              isLoading={ isLoading }
-            />
-          ) }
+      { data.msg_amount && (
+        <DetailWeiConverter
+          title="Amount"
+          hint="Amount of the transaction"
+          value={ data.msg_amount }
+          isLoading={ isLoading }
+        />
+      ) }
 
-          { data.msg_amount && (
-            <DetailWeiConverter
-              title="Amount"
-              hint="Amount of the transaction"
-              value={ data.msg_amount }
-              isLoading={ isLoading }
-            />
-          ) }
+      { data.msg_website && (
+        <DetailsInfoItem
+          title="Website"
+          hint="Website of the validator"
+          isLoading={ isLoading }
+        >
+          <Link href={ data.msg_website } target="_blank">
+            { data.msg_website }
+          </Link>
+        </DetailsInfoItem>
+      ) }
 
-          { data.msg_website && (
-            <DetailsInfoItem
-              title="Website"
-              hint="Website of the validator"
-              isLoading={ isLoading }
-            >
-              <Link href={ data.msg_website } target="_blank">
-                { data.msg_website }
-              </Link>
-            </DetailsInfoItem>
-          ) }
+      { data.msg_identity && (
+        <DetailsInfoItem
+          title="Identity"
+          hint="Identity of the validator"
+          isLoading={ isLoading }
+        >
+          <Text>{ data.msg_identity }</Text>
+        </DetailsInfoItem>
+      ) }
 
-          { data.msg_identity && (
-            <DetailsInfoItem
-              title="Identity"
-              hint="Identity of the validator"
-              isLoading={ isLoading }
-            >
-              <Text>{ data.msg_identity }</Text>
-            </DetailsInfoItem>
-          ) }
+      { data.msg_security_contact && (
+        <DetailsInfoItem
+          title="Security contact"
+          hint="Security contact of the validator"
+          isLoading={ isLoading }
+        >
+          <Text>{ data.msg_security_contact }</Text>
+        </DetailsInfoItem>
+      ) }
 
-          { data.msg_security_contact && (
-            <DetailsInfoItem
-              title="Security contact"
-              hint="Security contact of the validator"
-              isLoading={ isLoading }
-            >
-              <Text>{ data.msg_security_contact }</Text>
-            </DetailsInfoItem>
-          ) }
+      { data.msg_details && (
+        <DetailsInfoItem
+          title="Details"
+          hint="Details of the validator"
+          isLoading={ isLoading }
+        >
+          <Text>{ data.msg_details }</Text>
+        </DetailsInfoItem>
+      ) }
 
-          { data.msg_details && (
-            <DetailsInfoItem
-              title="Details"
-              hint="Details of the validator"
-              isLoading={ isLoading }
-            >
-              <Text>{ data.msg_details }</Text>
-            </DetailsInfoItem>
-          ) }
-
-          { data.msg_slot_pub_keys && data.msg_slot_pub_keys.length > 0 && (
-            <DetailsInfoItem
-              title="Slot public keys"
-              hint="Slot public keys of the validator"
-              isLoading={ isLoading }
-            >
-              <Flex direction="column" columnGap={ 3 }>
-                { data.msg_slot_pub_keys.map((key) => (
-                  <Flex
-                    key={ key }
-                  >
-                    <HashStringShorten
-                      hash={ key }
-                      type="long"
-                    />
-                    <Copy text={ key }/>
-                  </Flex>
-                )) }
+      { data.msg_slot_pub_keys && data.msg_slot_pub_keys.length > 0 && (
+        <DetailsInfoItem
+          title="Slot public keys"
+          hint="Slot public keys of the validator"
+          isLoading={ isLoading }
+        >
+          <Flex direction="column" columnGap={ 3 }>
+            { data.msg_slot_pub_keys.map((key) => (
+              <Flex
+                key={ key }
+              >
+                <HashStringShorten
+                  hash={ key }
+                  type="long"
+                />
+                <Copy text={ key }/>
               </Flex>
-            </DetailsInfoItem>
-          ) }
+            )) }
+          </Flex>
+        </DetailsInfoItem>
+      ) }
 
-          { data.msg_delegator_address && (
-            <DetailsInfoItem
-              title="Delegator address"
-              hint="Address of the delegator"
-              isLoading={ isLoading }
-            >
-              <AddressEntity
-                address={{
-                  hash: data.msg_delegator_address,
-                }}
-                isLoading={ isLoading }
-              />
-            </DetailsInfoItem>
-          ) }
+      { data.msg_delegator_address && (
+        <DetailsInfoItem
+          title="Delegator address"
+          hint="Address of the delegator"
+          isLoading={ isLoading }
+        >
+          <AddressEntity
+            address={{
+              hash: data.msg_delegator_address,
+            }}
+            isLoading={ isLoading }
+          />
+        </DetailsInfoItem>
+      ) }
 
-          { data.msg_slot_pub_key_to_add && (
-            <DetailsInfoItem
-              title="Slot public key to add"
-              hint="Slot public key to add"
-              isLoading={ isLoading }
-            >
-              <Text>{ data.msg_slot_pub_key_to_add }</Text>
-            </DetailsInfoItem>
-          ) }
+      { data.msg_slot_pub_key_to_add && (
+        <DetailsInfoItem
+          title="Slot public key to add"
+          hint="Slot public key to add"
+          isLoading={ isLoading }
+        >
+          <Text>{ data.msg_slot_pub_key_to_add }</Text>
+        </DetailsInfoItem>
+      ) }
 
-          { data.msg_slot_pub_key_to_remove && (
-            <DetailsInfoItem
-              title="Slot public key to remove"
-              hint="Slot public key to remove"
-              isLoading={ isLoading }
-            >
-              <Text>{ data.msg_slot_pub_key_to_remove }</Text>
-            </DetailsInfoItem>
-          ) }
-        </>
+      { data.msg_slot_pub_key_to_remove && (
+        <DetailsInfoItem
+          title="Slot public key to remove"
+          hint="Slot public key to remove"
+          isLoading={ isLoading }
+        >
+          <Text>{ data.msg_slot_pub_key_to_remove }</Text>
+        </DetailsInfoItem>
       ) }
     </Grid>
   );
