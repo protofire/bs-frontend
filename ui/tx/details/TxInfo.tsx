@@ -56,6 +56,8 @@ import TxRevertReason from 'ui/tx/details/TxRevertReason';
 import TxAllowedPeekers from 'ui/tx/TxAllowedPeekers';
 import TxSocketAlert from 'ui/tx/TxSocketAlert';
 
+import useTxMethod from '../useTxMethod';
+
 const rollupFeature = config.features.rollup;
 
 interface Props {
@@ -66,6 +68,8 @@ interface Props {
 
 const TxInfo = ({ data, isLoading, socketStatus }: Props) => {
   const [ isExpanded, setIsExpanded ] = React.useState(false);
+
+  const method = useTxMethod(data);
 
   const handleCutClick = React.useCallback(() => {
     setIsExpanded((flag) => !flag);
@@ -177,9 +181,9 @@ const TxInfo = ({ data, isLoading, socketStatus }: Props) => {
         isLoading={ isLoading }
       >
         <TxStatus status={ data.status } errorText={ data.status === 'error' ? data.result : undefined } isLoading={ isLoading }/>
-        { data.method && (
-          <Tag colorScheme={ data.method === 'Multicall' ? 'teal' : 'gray' } isLoading={ isLoading } isTruncated ml={ 3 }>
-            { data.method }
+        { method && (
+          <Tag colorScheme={ method === 'Multicall' ? 'teal' : 'gray' } isLoading={ isLoading } isTruncated ml={ 3 }>
+            { method }
           </Tag>
         ) }
       </DetailsInfoItem>

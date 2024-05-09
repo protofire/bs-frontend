@@ -20,6 +20,7 @@ import ShardInfo from 'ui/shared/ShardInfo';
 import TxStatus from 'ui/shared/statusTag/TxStatus';
 import TxFeeStability from 'ui/shared/tx/TxFeeStability';
 import TxWatchListTags from 'ui/shared/tx/TxWatchListTags';
+import useTxMethod from 'ui/tx/useTxMethod';
 import TxAdditionalInfo from 'ui/txs/TxAdditionalInfo';
 import TxType from 'ui/txs/TxType';
 
@@ -33,6 +34,8 @@ type Props = {
 
 const TxsListItem = ({ tx, isLoading, showBlockInfo, currentAddress, enableTimeIncrement }: Props) => {
   const dataTo = tx.to ? tx.to : tx.created_contract;
+
+  const method = useTxMethod(tx);
 
   const timeAgo = useTimeAgoIncrement(tx.timestamp, enableTimeIncrement);
 
@@ -65,7 +68,7 @@ const TxsListItem = ({ tx, isLoading, showBlockInfo, currentAddress, enableTimeI
           <Skeleton isLoaded={ !isLoading } display="inline-block" whiteSpace="pre"><ShardInfo shardId={ tx.shard_id } toShardId={ tx.to_shard_id }/></Skeleton>
         </Flex>
       </Flex>
-      { tx.method && (
+      { method && (
         <Flex mt={ 3 }>
           <Skeleton isLoaded={ !isLoading } display="inline-block" whiteSpace="pre">Method </Skeleton>
           <Skeleton
@@ -75,7 +78,7 @@ const TxsListItem = ({ tx, isLoading, showBlockInfo, currentAddress, enableTimeI
             whiteSpace="nowrap"
             textOverflow="ellipsis"
           >
-            <span>{ tx.method }</span>
+            <span>{ method }</span>
           </Skeleton>
         </Flex>
       ) }
