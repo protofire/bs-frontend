@@ -20,6 +20,7 @@ import ShardInfo from 'ui/shared/ShardInfo';
 import TxStatus from 'ui/shared/statusTag/TxStatus';
 import TxFeeStability from 'ui/shared/tx/TxFeeStability';
 import TxWatchListTags from 'ui/shared/tx/TxWatchListTags';
+import useTxMethod from 'ui/tx/useTxMethod';
 import TxAdditionalInfo from 'ui/txs/TxAdditionalInfo';
 
 import TxType from './TxType';
@@ -35,6 +36,8 @@ type Props = {
 const TxsTableItem = ({ tx, showBlockInfo, currentAddress, enableTimeIncrement, isLoading }: Props) => {
   const dataTo = tx.to ? tx.to : tx.created_contract;
   const timeAgo = useTimeAgoIncrement(tx.timestamp, enableTimeIncrement);
+
+  const method = useTxMethod(tx);
 
   return (
     <Tr
@@ -74,9 +77,9 @@ const TxsTableItem = ({ tx, showBlockInfo, currentAddress, enableTimeIncrement, 
         </VStack>
       </Td>
       <Td whiteSpace="nowrap">
-        { tx.method && (
-          <Tag colorScheme={ tx.method === 'Multicall' ? 'teal' : 'gray' } isLoading={ isLoading } isTruncated>
-            { tx.method }
+        { method && (
+          <Tag colorScheme={ method === 'Multicall' ? 'teal' : 'gray' } isLoading={ isLoading } isTruncated>
+            { method }
           </Tag>
         ) }
       </Td>
