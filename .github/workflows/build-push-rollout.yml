@@ -52,5 +52,4 @@ jobs:
 
       - name: Restart deployment
         run: |
-          kubectl rollout restart deployment/bs-frontend-s1-frontend
           kubectl rollout restart deployment/bs-frontend-frontend
