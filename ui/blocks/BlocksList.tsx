@@ -16,7 +16,7 @@ const BlocksList = ({ data, isLoading, page }: Props) => {
   return (
     <Box>
       <AnimatePresence initial={ false }>
-        { data.map((item, index) => (
+        { data.filter((block) => block.tx_count > 0).map((item, index) => (
           <BlocksListItem
             key={ item.height + (isLoading ? String(index) : '') }
             data={ item }

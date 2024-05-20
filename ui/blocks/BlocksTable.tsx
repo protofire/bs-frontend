@@ -66,7 +66,7 @@ const BlocksTable = ({ data, isLoading, top, page, showSocketInfo, socketInfoNum
             />
           ) }
           <AnimatePresence initial={ false }>
-            { data.map((item, index) => (
+            { data.filter((block) => block.tx_count > 0).map((item, index) => (
               <BlocksTableItem
                 key={ item.height + (isLoading ? `${ index }_${ page }` : '') }
                 data={ item }
