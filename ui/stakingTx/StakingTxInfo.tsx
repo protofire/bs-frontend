@@ -296,7 +296,7 @@ const StakingTxInfo = ({ data, isLoading }: Props) => {
           hint="Details of the validator"
           isLoading={ isLoading }
         >
-          <Text>{ data.msg_details }</Text>
+          <Text whiteSpace="pre-wrap" wordBreak="break-word">{ data.msg_details }</Text>
         </DetailsInfoItem>
       ) }
 
