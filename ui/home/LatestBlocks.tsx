@@ -11,6 +11,7 @@ import { route } from 'nextjs-routes';
 
 import config from 'configs/app';
 import useApiQuery, { getResourceKey } from 'lib/api/useApiQuery';
+import dayjs from 'lib/date/dayjs';
 import useIsMobile from 'lib/hooks/useIsMobile';
 import useShards from 'lib/hooks/useShards';
 import { nbsp } from 'lib/html-entities';
@@ -56,7 +57,11 @@ const LatestBlocks = () => {
         return newData;
       }
 
-      return [ data.block, ...newData ].sort((b1, b2) => b2.height - b1.height).slice(0, blocksMaxCount);
+      return [ data.block, ...newData ].sort((b1, b2) => {
+        const b1Time = dayjs(b1.timestamp).unix();
+        const b2Time = dayjs(b2.timestamp).unix();
+        return b2Time - b1Time;
+      }).slice(0, blocksMaxCount);
     });
   }, [ queryClient, blocksMaxCount ]);
 
