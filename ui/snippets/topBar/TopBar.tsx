@@ -26,7 +26,7 @@ const AddressSwitcher = () => {
   return (
     <>
       <Text fontSize="sm" mr={ 2 }>
-        ETH
+        ONE / ETH address
       </Text>
       <Switch
         isChecked={ isEthFormat }
