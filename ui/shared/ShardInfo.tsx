@@ -16,7 +16,7 @@ const ShardInfo: React.FC<ShardInfoProps> = ({ shardId, toShardId }) => {
         return;
       }
 
-      await router.push(
+      await router.replace(
         {
           pathname: '/txs',
           query: { shard: shardId },
