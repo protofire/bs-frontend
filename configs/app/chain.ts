@@ -5,6 +5,7 @@ const DEFAULT_CURRENCY_DECIMALS = 18;
 const chain = Object.freeze({
   id: getEnvValue('NEXT_PUBLIC_NETWORK_ID'),
   name: getEnvValue('NEXT_PUBLIC_NETWORK_NAME'),
+  showBanner: getEnvValue('NEXT_PUBLIC_SHOW_BANNER'),
   shortName: getEnvValue('NEXT_PUBLIC_NETWORK_SHORT_NAME'),
   currency: {
     name: getEnvValue('NEXT_PUBLIC_NETWORK_CURRENCY_NAME'),

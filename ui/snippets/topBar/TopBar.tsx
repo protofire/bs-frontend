@@ -1,3 +1,4 @@
+/* eslint-disable react/jsx-no-bind */
 import {
   Flex,
   Divider,
@@ -41,38 +42,79 @@ const AddressSwitcher = () => {
 
 const TopBar = () => {
   const bgColor = useColorModeValue('gray.50', 'whiteAlpha.100');
+  const bgColorWarning = useColorModeValue('gray.100', 'whiteAlpha.300');
+
+  const [ showBanner, setShowBanner ] = React.useState(false);
+
+  React.useEffect(() => {
+    const isBannerClosed = localStorage.getItem('isBannerClosed');
+    if (isBannerClosed === 'true') {
+      setShowBanner(false);
+    } else {
+      setShowBanner(true);
+    }
+  }, []);
+
+  const handleClose = () => {
+    setShowBanner(false);
+    localStorage.setItem('isBannerClosed', 'true');
+  };
 
   return (
-    <Flex
-      py={ 2 }
-      px={ 6 }
-      bgColor={ bgColor }
-      justifyContent="space-between"
-      alignItems="center"
-    >
-      <TopBarStats/>
-      <Flex alignItems="center">
-        <AddressSwitcher/>
-        <Divider
-          mr={ 3 }
-          ml={{ base: 2, sm: 3 }}
-          height={ 4 }
-          orientation="vertical"
-        />
-        { feature.isEnabled && (
-          <>
-            <SwapButton/>
-            <Divider
-              mr={ 3 }
-              ml={{ base: 2, sm: 3 }}
-              height={ 4 }
-              orientation="vertical"
-            />
-          </>
-        ) }
-        <ColorModeSwitch/>
+    <>
+      <Flex
+        py={ 2 }
+        px={ 6 }
+        bgColor={ bgColor }
+        justifyContent="space-between"
+        alignItems="center"
+      >
+        <TopBarStats/>
+        <Flex alignItems="center">
+          <AddressSwitcher/>
+          <Divider
+            mr={ 3 }
+            ml={{ base: 2, sm: 3 }}
+            height={ 4 }
+            orientation="vertical"
+          />
+          { feature.isEnabled && (
+            <>
+              <SwapButton/>
+              <Divider
+                mr={ 3 }
+                ml={{ base: 2, sm: 3 }}
+                height={ 4 }
+                orientation="vertical"
+              />
+            </>
+          ) }
+          <ColorModeSwitch/>
+        </Flex>
       </Flex>
-    </Flex>
+      { config.chain.showBanner && showBanner && (
+        <Flex
+          py={ 2 }
+          px={ 6 }
+          bgColor={ bgColorWarning }
+          justifyContent="center"
+          alignItems="center"
+        >
+          <Text fontSize="sm" mr={ 3 }>
+            The chain is currently being indexed. Some data may be temporarily
+            unavailable, and you may experience degraded performance.
+          </Text>
+          <Text
+            fontSize="sm"
+            cursor="pointer"
+            decoration="underline"
+            onClick={ handleClose }
+          >
+            Dismiss
+          </Text>
+        </Flex>
+      ) }
+    </>
   );
 };
 

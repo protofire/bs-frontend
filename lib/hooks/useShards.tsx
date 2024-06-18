@@ -37,8 +37,7 @@ export default function useShards(): UseShardsResult {
       return;
     }
 
-    await router.push({ pathname: router.pathname, query: { ...router.query, shard: shardId } });
-    router.reload();
+    await router.push({ pathname: router.pathname, query: { ...router.query, shard: shardId } }, undefined, { shallow: true });
   }, [ router ]);
 
   const getUrlWithShardId = useCallback((url: string) => {
