@@ -216,6 +216,29 @@ export default function useQueryWithPages<Resource extends PaginatedResources>({
   }, [ resourceName ]);
 
   React.useEffect(() => {
+    const handleRouteChange = (urlString: string) => {
+      const query = urlString.split('?')[1];
+      const params = new URLSearchParams(query);
+      const shard = params.get('shard');
+      if (shard) {
+        setTimeout(() => {
+          setPage(1);
+          setPageParams(INITIAL_PAGE_PARAMS);
+          queryClient.removeQueries({ queryKey: [ resourceName ] });
+        }, 200);
+      }
+    };
+
+    router.events.on('routeChangeStart', handleRouteChange);
+
+    // Clean up the event listener
+    return () => {
+      router.events.off('routeChangeStart', handleRouteChange);
+    };
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
+  React.useEffect(() => {
     window.setTimeout(() => {
       isMounted.current = true;
     }, 0);
