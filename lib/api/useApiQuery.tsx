@@ -1,5 +1,7 @@
 import type { UseQueryOptions } from '@tanstack/react-query';
 import { useQuery } from '@tanstack/react-query';
+import { useRouter } from 'next/router';
+import React from 'react';
 
 import type { ResourceError, ResourceName, ResourcePayload } from './resources';
 import type { Params as ApiFetchParams } from './useApiFetch';
@@ -22,8 +24,8 @@ export default function useApiQuery<R extends ResourceName, E = unknown>(
   { queryOptions, pathParams, queryParams, fetchParams }: Params<R, E> = {},
 ) {
   const apiFetch = useApiFetch();
-
-  return useQuery<ResourcePayload<R>, ResourceError<E>, ResourcePayload<R>>({
+  const router = useRouter();
+  const queryClient = useQuery<ResourcePayload<R>, ResourceError<E>, ResourcePayload<R>>({
     // eslint-disable-next-line @tanstack/query/exhaustive-deps
     queryKey: getResourceKey(resource, { pathParams, queryParams }),
     queryFn: async() => {
@@ -34,4 +36,27 @@ export default function useApiQuery<R extends ResourceName, E = unknown>(
     },
     ...queryOptions,
   });
+
+  React.useEffect(() => {
+    const handleRouteChange = (urlString: string) => {
+      const query = urlString.split('?')[1];
+      const params = new URLSearchParams(query);
+      const shard = params.get('shard');
+      if (shard) {
+        setTimeout(() => {
+          queryClient.refetch();
+        }, 200);
+      }
+    };
+
+    router.events.on('routeChangeStart', handleRouteChange);
+
+    // Clean up the event listener
+    return () => {
+      router.events.off('routeChangeStart', handleRouteChange);
+    };
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
+  return queryClient;
 }
