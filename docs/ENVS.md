@@ -274,6 +274,7 @@ Settings for meta tags and OG tags
 | NEXT_PUBLIC_MAINTENANCE_ALERT_MESSAGE | `string` | Used for displaying custom announcements or alerts in the header of the site. Could be a regular string or a HTML code. | - | - | `Hello world! 🤪` |
 | NEXT_PUBLIC_MULTI_SHARDS_PROXY_URL | `string` | Url to multishard proxy | - | `` | `https://multishard-proxy-example.com` |
 | NEXT_PUBLIC_SHARDS | `string` | Used for set shards instances that will used for show shard specific data | - | - | `[{'id': '0', 'title': 'Shard 0', 'apiHost': 's0.example.io'}, {'id': '1', 'title': 'Shard 1', 'apiHost': 's1.example.io'}]` |
+| NEXT_PUBLIC_SHOW_BANNER | `boolean` | Set to `false` to hide banner | - | `false` | `true` |
 #### Network explorer configuration properties
 
 | Variable | Type| Description | Compulsoriness  | Default value | Example value |
