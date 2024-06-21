@@ -16,11 +16,14 @@ const ShardInfo: React.FC<ShardInfoProps> = ({ shardId, toShardId }) => {
         return;
       }
 
-      await router.push({
-        pathname: '/txs',
-        query: { shard: shardId },
-      });
-      router.reload();
+      await router.replace(
+        {
+          pathname: '/txs',
+          query: { shard: shardId },
+        },
+        undefined,
+        { shallow: true },
+      );
     },
     [ router ],
   );
@@ -29,7 +32,7 @@ const ShardInfo: React.FC<ShardInfoProps> = ({ shardId, toShardId }) => {
     <Flex>
       <Text>
         <Link onClick={ setActiveShardId(shardId) }>{ shardId }</Link>
-         &nbsp;&gt;&nbsp;
+        &nbsp;&gt;&nbsp;
         <Link onClick={ setActiveShardId(toShardId) }>{ toShardId }</Link>
       </Text>
     </Flex>

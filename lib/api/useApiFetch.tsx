@@ -30,7 +30,7 @@ export interface Params<R extends ResourceName> {
 export default function useApiFetch() {
   const fetch = useFetch();
   const queryClient = useQueryClient();
-  const { shard } = useShards();
+  const { shards, defaultShardId } = useShards();
 
   const { token: csrfToken } = queryClient.getQueryData<CsrfData>(getResourceKey('csrf')) || {};
 
@@ -39,7 +39,9 @@ export default function useApiFetch() {
     { pathParams, queryParams, fetchParams }: Params<R> = {},
   ) => {
     const apiToken = cookies.get(cookies.NAMES.API_TOKEN);
-
+    const _queryParams = new URLSearchParams(window.location.search);
+    const shardId = _queryParams.get('shard') || defaultShardId as ShardId;
+    const shard = shards[shardId];
     const resource: ApiResource = RESOURCES[resourceName];
     let url = buildUrl(resourceName, pathParams, queryParams);
     const withBody = isBodyAllowed(fetchParams?.method);
@@ -76,7 +78,6 @@ export default function useApiFetch() {
         url = shardUrl.toString();
       }
     }
-
     let response = await fetch<SuccessType, ErrorType>(
       url,
       {
@@ -126,5 +127,5 @@ export default function useApiFetch() {
     }
 
     return response;
-  }, [ csrfToken, fetch, shard ]);
+  }, [ csrfToken, fetch, shards, defaultShardId ]);
 }

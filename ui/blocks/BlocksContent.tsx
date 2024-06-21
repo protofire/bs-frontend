@@ -32,6 +32,9 @@ const BlocksContent = ({ type, query }: Props) => {
   const [ newItemsCount, setNewItemsCount ] = React.useState(0);
 
   const handleNewBlockMessage: SocketMessage.NewBlock['handler'] = React.useCallback((payload) => {
+    if (payload.block.tx_count === 0) {
+      return;
+    }
     const queryKey = getResourceKey('blocks', { queryParams: { type } });
 
     queryClient.setQueryData(queryKey, (prevData: BlocksResponse | undefined) => {

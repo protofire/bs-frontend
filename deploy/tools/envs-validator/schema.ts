@@ -530,6 +530,7 @@ const schema = yup
 
     // Misc
     NEXT_PUBLIC_USE_NEXT_JS_PROXY: yup.boolean(),
+    NEXT_PUBLIC_SHOW_BANNER: yup.boolean(),
   })
   .concat(accountSchema)
   .concat(adsBannerSchema)

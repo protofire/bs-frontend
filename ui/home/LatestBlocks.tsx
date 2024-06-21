@@ -1,4 +1,4 @@
-import { Box, Heading, Flex, Text, VStack, Skeleton } from '@chakra-ui/react';
+import { Box, Heading, Flex, Text, VStack } from '@chakra-ui/react';
 import { useQueryClient } from '@tanstack/react-query';
 import { AnimatePresence } from 'framer-motion';
 import React, { useEffect } from 'react';
@@ -14,11 +14,9 @@ import useApiQuery, { getResourceKey } from 'lib/api/useApiQuery';
 import dayjs from 'lib/date/dayjs';
 import useIsMobile from 'lib/hooks/useIsMobile';
 import useShards from 'lib/hooks/useShards';
-import { nbsp } from 'lib/html-entities';
 // import useSocketChannel from 'lib/socket/useSocketChannel';
 // import useSocketMessage from 'lib/socket/useSocketMessage';
 import { BLOCK } from 'stubs/block';
-import { HOMEPAGE_STATS } from 'stubs/stats';
 import LinkInternal from 'ui/shared/LinkInternal';
 
 import LatestBlocksItem from './LatestBlocksItem';
@@ -40,12 +38,6 @@ const LatestBlocks = () => {
   });
 
   const queryClient = useQueryClient();
-  const statsQueryResult = useApiQuery('stats', {
-    queryOptions: {
-      refetchOnMount: false,
-      placeholderData: HOMEPAGE_STATS,
-    },
-  });
 
   const handleNewBlockMessage = React.useCallback((shardId: ShardId, payload: unknown) => {
     queryClient.setQueryData(getResourceKey('homepage_blocks'), (prevData: Array<Block> | undefined) => {
@@ -107,7 +99,7 @@ const LatestBlocks = () => {
 
     content = (
       <>
-        { statsQueryResult.data?.network_utilization_percentage !== undefined && (
+        { /* { statsQueryResult.data?.network_utilization_percentage !== undefined && (
           <Skeleton isLoaded={ !statsQueryResult.isPlaceholderData } mb={{ base: 6, lg: 3 }} display="inline-block">
             <Text as="span" fontSize="sm">
               Network utilization:{ nbsp }
@@ -116,7 +108,7 @@ const LatestBlocks = () => {
               { statsQueryResult.data?.network_utilization_percentage.toFixed(2) }%
             </Text>
           </Skeleton>
-        ) }
+        ) } */ }
         <VStack spacing={ 3 } mb={ 4 } overflow="hidden" alignItems="stretch">
           <AnimatePresence initial={ false } >
             { dataToShow.map(((block, index) => (

@@ -30,15 +30,14 @@ export default function useShards(): UseShardsResult {
   const shards = React.useMemo(() => getFeaturePayload(config.features.shards)?.shards || {}, [ ]);
   const defaultShardId = Object.keys(shards)[0];
 
-  const shardId = queryStringParams.get('shard') as ShardId || defaultShardId;
+  const [ shardId, setCurrentShardId ] = React.useState<ShardId>(queryStringParams.get('shard') as ShardId || defaultShardId);
 
-  const setActiveShardId = useCallback(async(shardId: ShardId) => {
-    if (!shardId) {
+  const setActiveShardId = useCallback(async(_shardId: ShardId) => {
+    if (!_shardId) {
       return;
     }
-
-    await router.push({ pathname: router.pathname, query: { ...router.query, shard: shardId } });
-    router.reload();
+    setCurrentShardId(_shardId);
+    await router.replace({ pathname: router.pathname, query: { ...router.query, shard: _shardId } }, undefined, { shallow: true });
   }, [ router ]);
 
   const getUrlWithShardId = useCallback((url: string) => {
@@ -68,9 +67,9 @@ export default function useShards(): UseShardsResult {
   const subscribeOnTopicMessage = useCallback(({ channelTopic, event, params, onMessage }: SubscriptionParams) => {
     // Init sockets if they are not initialized
     if (!sockets.length) {
-      const sockets: Array<Socket> = Object.keys(shards).map((shardId: ShardId) => {
+      const sockets: Array<Socket> = Object.keys(shards).map((_shardId: ShardId) => {
         const wsUrl = new URL(`${ config.api.socket }${ config.api.basePath }/socket/v2`);
-        const shard = shards[shardId];
+        const shard = shards[_shardId];
         const shardHost = shard?.apiHost;
         if (shardHost) {
           // Replace host
