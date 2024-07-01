@@ -27,12 +27,12 @@ const HOMEPAGE_PLATE_BACKGROUND_DEFAULT = 'radial-gradient(103.03% 103.03% at 0%
 const UI = Object.freeze({
   sidebar: {
     logo: {
-      'default': getExternalAssetFilePath('NEXT_PUBLIC_NETWORK_LOGO'),
-      dark: getExternalAssetFilePath('NEXT_PUBLIC_NETWORK_LOGO_DARK'),
+      'default': getEnvValue('NEXT_PUBLIC_NETWORK_LOGO'),
+      dark: getEnvValue('NEXT_PUBLIC_NETWORK_LOGO_DARK'),
     },
     icon: {
-      'default': getExternalAssetFilePath('NEXT_PUBLIC_NETWORK_ICON'),
-      dark: getExternalAssetFilePath('NEXT_PUBLIC_NETWORK_ICON_DARK'),
+      'default': getEnvValue('NEXT_PUBLIC_NETWORK_ICON'),
+      dark: getEnvValue('NEXT_PUBLIC_NETWORK_ICON_DARK'),
     },
     hiddenLinks,
     otherLinks: parseEnvJson<Array<NavItemExternal>>(getEnvValue('NEXT_PUBLIC_OTHER_LINKS')) || [],
