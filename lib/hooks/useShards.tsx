@@ -37,7 +37,7 @@ export default function useShards(): UseShardsResult {
       return;
     }
     setCurrentShardId(_shardId);
-    await router.replace({ pathname: router.pathname, query: { ...router.query, shard: _shardId } }, undefined, { shallow: true });
+    await router.replace({ pathname: router.pathname, query: { shard: _shardId } }, undefined, { shallow: true });
   }, [ router ]);
 
   const getUrlWithShardId = useCallback((url: string) => {
