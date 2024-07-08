@@ -69,6 +69,10 @@ export default function useQueryWithPages<Resource extends PaginatedResources>({
     [page]: getPaginationParamsFromQuery(router.query.next_page_params),
   });
   const [ hasPages, setHasPages ] = React.useState(page > 1);
+  const query = window.location.href.split('?')[1];
+  const params = new URLSearchParams(query);
+  const shard = params.get('shard') || '0';
+  const [ currentShard, setCurrentShard ] = React.useState(shard);
 
   const isMounted = React.useRef(false);
   const queryParams = { ...pageParams[page], ...filters, ...sorting };
@@ -219,8 +223,9 @@ export default function useQueryWithPages<Resource extends PaginatedResources>({
     const handleRouteChange = (urlString: string) => {
       const query = urlString.split('?')[1];
       const params = new URLSearchParams(query);
-      const shard = params.get('shard');
-      if (shard) {
+      const shard = params.get('shard') || '0';
+      if (shard !== currentShard) {
+        setCurrentShard(shard);
         setTimeout(() => {
           setPage(1);
           setPageParams(INITIAL_PAGE_PARAMS);
@@ -236,7 +241,7 @@ export default function useQueryWithPages<Resource extends PaginatedResources>({
       router.events.off('routeChangeStart', handleRouteChange);
     };
   // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+  }, [ currentShard ]);
 
   React.useEffect(() => {
     window.setTimeout(() => {
