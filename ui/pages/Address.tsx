@@ -39,7 +39,6 @@ import EntityTags from 'ui/shared/EntityTags';
 import IconSvg from 'ui/shared/IconSvg';
 import NetworkExplorers from 'ui/shared/NetworkExplorers';
 import PageTitle from 'ui/shared/Page/PageTitle';
-import ShardSwitcher from 'ui/shared/shardSwitcher/ShardSwitcher';
 import RoutedTabs from 'ui/shared/Tabs/RoutedTabs';
 import TabsSkeleton from 'ui/shared/Tabs/TabsSkeleton';
 
@@ -54,7 +53,7 @@ const AddressPageContent = () => {
 
   const addressQuery = useAddressQuery({ hash });
 
-  const { shardId, shards } = useShards();
+  const { shardId } = useShards();
 
   const addressTabsCountersQuery = useApiQuery('address_tabs_counters', {
     pathParams: { hash },
@@ -250,7 +249,6 @@ const AddressPageContent = () => {
             isLoading={ isLoading }
           />
         </Box>
-        <ShardSwitcher shardId={ shardId } shards={ shards }/>
       </Flex>
 
       { config.features.metasuites.isEnabled && <Box display="none" id="meta-suites__address" data-ready={ !isLoading }/> }
