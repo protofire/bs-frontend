@@ -62,6 +62,17 @@ function MyApp({ Component, pageProps }: AppPropsWithLayout) {
   const getLayout = Component.getLayout ?? ((page) => <Layout>{ page }</Layout>);
 
   React.useEffect(() => {
+    const hashRoute = window.location.hash;
+    if (hashRoute && hashRoute.startsWith('#')) {
+      const routeWithoutHash = hashRoute.substring(1);
+      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+      // @ts-ignore
+      router.push(routeWithoutHash);
+    }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
+  React.useEffect(() => {
     const handleRouteChange = (urlString: string) => {
       const query = urlString.split('?')[1];
       const params = new URLSearchParams(query);
