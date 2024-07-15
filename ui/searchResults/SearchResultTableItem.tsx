@@ -6,6 +6,7 @@ import type { SearchResultItem } from 'types/api/search';
 
 import { route } from 'nextjs-routes';
 
+import { useAddressFormatContext } from 'lib/contexts/addressFormat';
 import dayjs from 'lib/date/dayjs';
 import highlightText from 'lib/highlightText';
 import * as mixpanel from 'lib/mixpanel/index';
@@ -30,7 +31,7 @@ interface Props {
 }
 
 const SearchResultTableItem = ({ data, searchTerm, isLoading }: Props) => {
-
+  const { formatAddress } = useAddressFormatContext();
   const isUseHash = React.useMemo(() => {
     if (data.type === 'transaction') {
       return data.tx_hash.toLowerCase().includes(searchTerm.toLowerCase());
@@ -103,9 +104,10 @@ const SearchResultTableItem = ({ data, searchTerm, isLoading }: Props) => {
       case 'contract':
       case 'address': {
         const shouldHighlightHash = ADDRESS_REGEXP.test(searchTerm);
+        const formattedAddress = formatAddress(data.address);
         const addressName = data.name || data.ens_info?.name;
         const address = {
-          hash: data.address,
+          hash: formattedAddress,
           is_contract: data.type === 'contract',
           is_verified: data.is_smart_contract_verified,
           name: null,
@@ -151,13 +153,14 @@ const SearchResultTableItem = ({ data, searchTerm, isLoading }: Props) => {
       }
 
       case 'label': {
+        const formattedAddress = formatAddress(data.address);
         return (
           <>
             <Td fontSize="sm">
               <Flex alignItems="center">
                 <IconSvg name="publictags_slim" boxSize={ 6 } mr={ 2 } color="gray.500"/>
                 <LinkInternal
-                  href={ route({ pathname: '/address/[hash]', query: { hash: data.address } }) }
+                  href={ route({ pathname: '/address/[hash]', query: { hash: formattedAddress } }) }
                   fontWeight={ 700 }
                   wordBreak="break-all"
                   isLoading={ isLoading }

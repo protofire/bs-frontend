@@ -3,6 +3,7 @@ import React from 'react';
 
 import type { SearchResultAddressOrContract } from 'types/api/search';
 
+import { useAddressFormatContext } from 'lib/contexts/addressFormat';
 import dayjs from 'lib/date/dayjs';
 import highlightText from 'lib/highlightText';
 import { ADDRESS_REGEXP } from 'lib/validations/address';
@@ -18,10 +19,13 @@ interface Props {
 const SearchBarSuggestAddress = ({ data, isMobile, searchTerm }: Props) => {
   const shouldHighlightHash = ADDRESS_REGEXP.test(searchTerm);
 
+  const { formatAddress } = useAddressFormatContext();
+  const formattedAddress = formatAddress(data.address);
+
   const icon = (
     <AddressEntity.Icon
       address={{
-        hash: data.address,
+        hash: formattedAddress,
         is_contract: data.type === 'contract',
         name: '',
         is_verified: data.is_smart_contract_verified,
@@ -50,7 +54,7 @@ const SearchBarSuggestAddress = ({ data, isMobile, searchTerm }: Props) => {
       }
     </Text>
   );
-  const addressEl = <HashStringShortenDynamic hash={ data.address } isTooltipDisabled/>;
+  const addressEl = <HashStringShortenDynamic hash={ formattedAddress } isTooltipDisabled/>;
 
   if (isMobile) {
     return (

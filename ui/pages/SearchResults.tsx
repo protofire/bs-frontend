@@ -4,6 +4,7 @@ import type { FormEvent } from 'react';
 import React from 'react';
 
 import config from 'configs/app';
+import { useAddressFormatContext } from 'lib/contexts/addressFormat';
 import useMarketplaceApps from 'ui/marketplace/useMarketplaceApps';
 import SearchResultListItem from 'ui/searchResults/SearchResultListItem';
 import SearchResultsInput from 'ui/searchResults/SearchResultsInput';
@@ -29,6 +30,8 @@ const SearchResultsPageContent = () => {
 
   const marketplaceApps = useMarketplaceApps(debouncedSearchTerm);
 
+  const { formatAddress } = useAddressFormatContext();
+
   React.useEffect(() => {
     if (showContent) {
       return;
@@ -46,7 +49,8 @@ const SearchResultsPageContent = () => {
           return;
         }
         case 'address': {
-          router.replace({ pathname: '/address/[hash]', query: { hash: redirectCheckQuery.data.parameter } });
+          const formattedAddress = formatAddress(redirectCheckQuery.data.parameter);
+          router.replace({ pathname: '/address/[hash]', query: { hash: formattedAddress } });
           return;
         }
         case 'transaction': {
@@ -68,7 +72,7 @@ const SearchResultsPageContent = () => {
     }
 
     !redirectCheckQuery.isPending && setShowContent(true);
-  }, [ redirectCheckQuery, router, debouncedSearchTerm, showContent ]);
+  }, [ redirectCheckQuery, router, debouncedSearchTerm, showContent, formatAddress ]);
 
   const handleSubmit = React.useCallback((event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();

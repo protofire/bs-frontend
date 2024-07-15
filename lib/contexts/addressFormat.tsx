@@ -23,7 +23,7 @@ export const AddressFormatContext = React.createContext<TAddressFormatContext>({
 export function AddressFormatProvider({
   children,
 }: AddressFormatProviderProps) {
-  const [ format, _setFormat ] = React.useState<TAddressFormat>('eth');
+  const [ format, _setFormat ] = React.useState<TAddressFormat>('one1');
 
   const isEthFormat = React.useMemo(() => format === 'eth', [ format ]);
 
