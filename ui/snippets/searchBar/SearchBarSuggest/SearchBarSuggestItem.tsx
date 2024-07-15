@@ -7,6 +7,7 @@ import type { SearchResultItem } from 'types/api/search';
 
 import { route } from 'nextjs-routes';
 
+import { useAddressFormatContext } from 'lib/contexts/addressFormat';
 import useShards from 'lib/hooks/useShards';
 
 import SearchBarSuggestAddress from './SearchBarSuggestAddress';
@@ -32,6 +33,7 @@ const SearchBarSuggestItem = ({
   onClick,
 }: Props) => {
   const { shards } = useShards();
+  const { formatAddress } = useAddressFormatContext();
 
   const url = (() => {
     switch (data.type) {
@@ -44,9 +46,10 @@ const SearchBarSuggestItem = ({
       case 'contract':
       case 'address':
       case 'label': {
+        const formattedAddress = formatAddress(data.address);
         return route({
           pathname: '/address/[hash]',
-          query: { hash: data.address, shard: data.shard_id },
+          query: { hash: formattedAddress, shard: data.shard_id },
         });
       }
       case 'transaction': {
