@@ -12,11 +12,13 @@ interface TAddressFormatContext {
   setFormat: (format: TAddressFormat) => void;
   formatAddress: (address: string) => string;
   isEthFormat: boolean;
+  toOne: (address: string) => string;
 }
 
 export const AddressFormatContext = React.createContext<TAddressFormatContext>({
   setFormat: () => {},
   formatAddress: (address: string) => address,
+  toOne: (address: string) => address,
   isEthFormat: true,
 });
 
@@ -40,6 +42,16 @@ export function AddressFormatProvider({
     [ format ],
   );
 
+  const toOne = React.useCallback(
+    (address: string) => {
+      if (address.startsWith('0x')) {
+        return toBech32(address);
+      }
+      return address;
+    },
+    [ ],
+  );
+
   const setFormat = React.useCallback((format: TAddressFormat) => {
     _setFormat(format);
   }, []);
@@ -50,6 +62,7 @@ export function AddressFormatProvider({
         setFormat,
         formatAddress,
         isEthFormat,
+        toOne,
       }}
     >
       { children }
@@ -63,6 +76,7 @@ export function useAddressFormatContext() {
     return {
       setFormat: () => {},
       formatAddress: (address: string) => address,
+      toOne: (address: string) => address,
       isEthFormat: true,
     };
   }

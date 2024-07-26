@@ -17,6 +17,7 @@ const chain = Object.freeze({
     symbol: getEnvValue('NEXT_PUBLIC_NETWORK_GOVERNANCE_TOKEN_SYMBOL'),
   },
   rpcUrl: getEnvValue('NEXT_PUBLIC_NETWORK_RPC_URL'),
+  stakingOverviewUrl: getEnvValue('NEXT_PUBLIC_STAKING_OVERVIEW_URL'),
   isTestnet: getEnvValue('NEXT_PUBLIC_IS_TESTNET') === 'true',
   verificationType: getEnvValue('NEXT_PUBLIC_NETWORK_VERIFICATION_TYPE') || 'mining',
 });

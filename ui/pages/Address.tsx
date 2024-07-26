@@ -6,6 +6,7 @@ import type { RoutedTab } from 'ui/shared/Tabs/types';
 
 import config from 'configs/app';
 import useApiQuery from 'lib/api/useApiQuery';
+import { useAddressFormatContext } from 'lib/contexts/addressFormat';
 import { useAppContext } from 'lib/contexts/app';
 import useContractTabs from 'lib/hooks/useContractTabs';
 import useIsSafeAddress from 'lib/hooks/useIsSafeAddress';
@@ -34,6 +35,7 @@ import AccountActionsMenu from 'ui/shared/AccountActionsMenu/AccountActionsMenu'
 import TextAd from 'ui/shared/ad/TextAd';
 import AddressAddToWallet from 'ui/shared/address/AddressAddToWallet';
 import AddressEntity from 'ui/shared/entities/address/AddressEntity';
+import * as EntityBase from 'ui/shared/entities/base/components';
 import EnsEntity from 'ui/shared/entities/ens/EnsEntity';
 import EntityTags from 'ui/shared/EntityTags';
 import IconSvg from 'ui/shared/IconSvg';
@@ -52,6 +54,8 @@ const AddressPageContent = () => {
   const hash = getQueryParamString(router.query.hash);
 
   const addressQuery = useAddressQuery({ hash });
+
+  const { toOne } = useAddressFormatContext();
 
   const { shardId } = useShards();
 
@@ -248,6 +252,18 @@ const AddressPageContent = () => {
       />
 
       { config.features.metasuites.isEnabled && <Box display="none" id="meta-suites__address" data-ready={ !isLoading }/> }
+      { !isLoading && !addressQuery.data?.is_contract && (
+        <Box
+          mb={ 4 }
+        >
+          <EntityBase.Link
+            isExternal
+            href={ config.chain.stakingOverviewUrl?.replace('{address}', toOne(hash)) }
+          >
+            Staking Overview
+          </EntityBase.Link>
+        </Box>
+      ) }
       <AddressDetails key={ shardId } addressQuery={ addressQuery } scrollRef={ tabsScrollRef }/>
       { /* should stay before tabs to scroll up with pagination */ }
       <Box ref={ tabsScrollRef }></Box>
