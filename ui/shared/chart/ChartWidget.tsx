@@ -134,7 +134,7 @@ const ChartWidget = ({ items, title, description, isLoading, className, isError,
     if (!hasItems) {
       return (
         <Center flexGrow={ 1 }>
-          <Text variant="secondary" fontSize="sm">No data</Text>
+          <Text variant="secondary" fontSize="sm">Insufficient data for the past 10 days</Text>
         </Center>
       );
     }
