@@ -252,7 +252,7 @@ const AddressPageContent = () => {
       />
 
       { config.features.metasuites.isEnabled && <Box display="none" id="meta-suites__address" data-ready={ !isLoading }/> }
-      { !isLoading && !addressQuery.data?.is_contract && (
+      { !isLoading && !addressQuery.data?.is_contract && config.chain.stakingOverviewUrl && (
         <Box
           mb={ 4 }
         >
