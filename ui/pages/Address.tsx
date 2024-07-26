@@ -199,7 +199,7 @@ const AddressPageContent = () => {
   }, [ appProps.referrer ]);
 
   const titleSecondRow = (
-    <Flex alignItems="center" w="100%" columnGap={ 2 } rowGap={ 2 } flexWrap={{ base: 'wrap', lg: 'nowrap' }}>
+    <Flex alignItems="center" w="100%" minW={ 0 } columnGap={ 2 } rowGap={ 2 } flexWrap={{ base: 'wrap', lg: 'nowrap' }}>
       { addressQuery.data?.ens_domain_name && (
         <EnsEntity
           name={ addressQuery.data?.ens_domain_name }
@@ -239,17 +239,13 @@ const AddressPageContent = () => {
   return (
     <>
       <TextAd mb={ 6 }/>
-      <Flex>
-        <Box flex={ 1 }>
-          <PageTitle
-            title={ `${ addressQuery.data?.is_contract ? 'Contract' : 'Address' } details` }
-            backLink={ backLink }
-            contentAfter={ tags }
-            secondRow={ titleSecondRow }
-            isLoading={ isLoading }
-          />
-        </Box>
-      </Flex>
+      <PageTitle
+        title={ `${ addressQuery.data?.is_contract ? 'Contract' : 'Address' } details` }
+        backLink={ backLink }
+        contentAfter={ tags }
+        secondRow={ titleSecondRow }
+        isLoading={ isLoading }
+      />
 
       { config.features.metasuites.isEnabled && <Box display="none" id="meta-suites__address" data-ready={ !isLoading }/> }
       <AddressDetails key={ shardId } addressQuery={ addressQuery } scrollRef={ tabsScrollRef }/>
