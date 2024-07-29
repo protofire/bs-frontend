@@ -4,6 +4,7 @@ import { GraphiQL } from 'graphiql';
 import React from 'react';
 
 import { getFeaturePayload } from 'configs/app/features/types';
+import type { ShardId } from 'types/shards';
 
 import config from 'configs/app';
 import buildUrl from 'lib/api/buildUrl';
@@ -21,7 +22,7 @@ const graphQLStyle = {
 };
 
 const GraphQL = () => {
-  const { shardId } = useShards();
+  const { defaultShardId } = useShards();
   const { colorMode } = useColorMode();
 
   const graphqlTheme = window.localStorage.getItem('graphiql:theme');
@@ -38,6 +39,18 @@ const GraphQL = () => {
     }
   }, [ colorMode, graphqlTheme ]);
 
+  const graphqlUrl = React.useCallback((): string => {
+    let url = buildUrl('graphql');
+    const query = window.location.href.split('?')[1];
+    const params = new URLSearchParams(query);
+    const shardId = (params.get('shard') as ShardId) || defaultShardId;
+    if (shardsConfig?.proxyUrl && shardId) {
+      const newHost = shardsConfig.shards[shardId].apiHost;
+      url = url.replace(config.api.host || '', newHost);
+    }
+    return url;
+  }, [ defaultShardId ]);
+
   if (!feature.isEnabled) {
     return null;
   }
@@ -52,16 +65,6 @@ const GraphQL = () => {
       gasUsed
     }
   }`;
-
-  const graphqlUrl = (): string => {
-    let url = buildUrl('graphql');
-    if (shardsConfig?.proxyUrl && shardId) {
-      const newHost = shardsConfig.shards[shardId].apiHost;
-      url = url.replace(config.api.host || '', newHost);
-    }
-
-    return url;
-  };
 
   const fetcher = createGraphiQLFetcher({
     url: graphqlUrl(),

@@ -10,6 +10,7 @@ import dynamic from 'next/dynamic';
 import React from 'react';
 
 import { getFeaturePayload } from 'configs/app/features/types';
+import type { ShardId } from 'types/shards';
 
 import config from 'configs/app';
 import useShards from 'lib/hooks/useShards';
@@ -33,7 +34,7 @@ const NeverShowInfoPlugin = () => {
 };
 
 const SwaggerUI = () => {
-  const { shardId } = useShards();
+  const { defaultShardId } = useShards();
   const mainColor = useColorModeValue('blackAlpha.800', 'whiteAlpha.800');
   const borderColor = useToken('colors', 'divider');
   const mainBgColor = useColorModeValue('blackAlpha.100', 'whiteAlpha.200');
@@ -121,6 +122,9 @@ const SwaggerUI = () => {
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     (req: any) => {
       if (!req.loadSpec) {
+        const query = window.location.href.split('?')[1];
+        const params = new URLSearchParams(query);
+        const shardId = (params.get('shard') as ShardId) || defaultShardId;
         let newHost = config.api.host;
 
         if (shardsConfig?.proxyUrl && shardId) {
@@ -139,7 +143,7 @@ const SwaggerUI = () => {
       }
       return req;
     },
-    [ shardId ],
+    [ defaultShardId ],
   );
 
   if (!feature.isEnabled) {
