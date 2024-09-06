@@ -45,7 +45,7 @@ const Stats = () => {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
-          'Access-Control-Allow-Origin': '*',
+          'Content-Security-Policy': 'default-src \'self\'; connect-src \'self\' api.s0.b.hmny.io;',
         },
         body: JSON.stringify({
           jsonrpc: '2.0',
