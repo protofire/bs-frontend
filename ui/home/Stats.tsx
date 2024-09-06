@@ -43,6 +43,9 @@ const Stats = () => {
       const rpcUrl = shards[shardId].chain.rpcUrl;
       const requestOptions = {
         method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
         body: JSON.stringify({
           jsonrpc: '2.0',
           method: 'hmy_getEpoch',
