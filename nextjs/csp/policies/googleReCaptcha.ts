@@ -9,7 +9,6 @@ export function googleReCaptcha(): CspDev.DirectiveDescriptor {
 
   return {
     'script-src': [
-      '\'unsafe-eval\'',
       'https://www.google.com/recaptcha/api.js',
       'https://www.gstatic.com',
       'https://translate.google.com',

@@ -35,6 +35,9 @@ const Stats = () => {
   });
   const rpcUrl = config.chain.rpcUrl;
   useEffect(() => {
+    if (!rpcUrl) {
+      return;
+    }
     const getEpochNumber = async() => {
       const response = await fetch(rpcUrl, {
         method: 'POST',
