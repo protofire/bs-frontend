@@ -5,6 +5,7 @@ import React, { useEffect, useState } from 'react';
 import { route } from 'nextjs-routes';
 
 import config from 'configs/app';
+import { getEnvValue } from 'configs/app/utils';
 import useApiQuery from 'lib/api/useApiQuery';
 import { WEI } from 'lib/consts';
 import { HOMEPAGE_STATS } from 'stubs/stats';
@@ -33,7 +34,7 @@ const Stats = () => {
       enabled: rollupFeature.isEnabled && rollupFeature.type === 'zkEvm',
     },
   });
-  const rpcUrl = config.chain.rpcUrl;
+  const rpcUrl = getEnvValue('NEXT_PUBLIC_NETWORK_RPC_URL');
   useEffect(() => {
     if (!rpcUrl) {
       return;
