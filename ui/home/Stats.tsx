@@ -1,6 +1,6 @@
 import { Grid } from '@chakra-ui/react';
 import BigNumber from 'bignumber.js';
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 
 import { route } from 'nextjs-routes';
 
@@ -19,6 +19,7 @@ const hasAvgBlockTime = config.UI.homepage.showAvgBlockTime;
 const rollupFeature = config.features.rollup;
 
 const Stats = () => {
+  const [ epochNumber, setEpochNumber ] = useState<number | null>();
   const { data, isPlaceholderData, isError, dataUpdatedAt } = useApiQuery('stats', {
     queryOptions: {
       refetchOnMount: false,
@@ -32,6 +33,32 @@ const Stats = () => {
       enabled: rollupFeature.isEnabled && rollupFeature.type === 'zkEvm',
     },
   });
+
+  useEffect(() => {
+    const getEpochNumber = async() => {
+      if (!config.chain.rpcUrl) {
+        return;
+      }
+      const response = await fetch(config.chain.rpcUrl!, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          jsonrpc: '2.0',
+          method: 'hmy_getEpoch',
+          params: [],
+          id: 1,
+        }),
+      });
+      if (response.ok) {
+        const data = await response.json();
+        setEpochNumber(Number((data as { result: string}).result));
+      }
+    };
+
+    getEpochNumber();
+  }, []);
 
   if (isError || zkEvmLatestBatchQuery.isError) {
     return null;
@@ -89,6 +116,14 @@ const Stats = () => {
             icon="clock-light"
             title="Average block time"
             value={ `${ (data.average_block_time / 1000).toFixed(1) }s` }
+            isLoading={ isPlaceholderData }
+          />
+        ) }
+        { epochNumber && (
+          <StatsItem
+            icon="info"
+            title="Epoch"
+            value={ epochNumber }
             isLoading={ isPlaceholderData }
           />
         ) }
