@@ -41,7 +41,7 @@ const Stats = () => {
     }
     const getEpochNumber = async() => {
       const rpcUrl = shards[shardId].chain.rpcUrl;
-      const response = await fetch(rpcUrl, {
+      fetch(rpcUrl, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -52,11 +52,13 @@ const Stats = () => {
           params: [],
           id: 1,
         }),
+      }).then(response => {
+        if (response.ok) {
+          response.json().then(data => {
+            setEpochNumber(Number((data as { result: string }).result));
+          });
+        }
       });
-      if (response.ok) {
-        const data = await response.json();
-        setEpochNumber(Number((data as { result: string}).result));
-      }
     };
 
     getEpochNumber();
