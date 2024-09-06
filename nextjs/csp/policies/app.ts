@@ -74,6 +74,7 @@ export function app(): CspDev.DirectiveDescriptor {
     ].filter(Boolean),
 
     'script-src': [
+      '\'unsafe-eval\'',
       KEY_WORDS.SELF,
       ...MAIN_DOMAINS,
 

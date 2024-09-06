@@ -25,6 +25,7 @@ export function ad(): CspDev.DirectiveDescriptor {
       'https://request-global.czilladx.com',
     ],
     'script-src': [
+      '\'unsafe-eval\'',
       // coinzilla
       'coinzillatag.com',
 

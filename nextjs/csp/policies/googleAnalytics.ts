@@ -15,6 +15,7 @@ export function googleAnalytics(): CspDev.DirectiveDescriptor {
       'https://stats.g.doubleclick.net',
     ],
     'script-src': [
+      '\'unsafe-eval\'',
       // inline script hash, see ui/shared/GoogleAnalytics.tsx
       '\'sha256-WXRwCtfSfMoCPzPUIOUAosSaADdGgct0/Lhmnbm7MCA=\'',
       'https://www.googletagmanager.com',

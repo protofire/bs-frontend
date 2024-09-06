@@ -33,13 +33,10 @@ const Stats = () => {
       enabled: rollupFeature.isEnabled && rollupFeature.type === 'zkEvm',
     },
   });
-
+  const rpcUrl = config.chain.rpcUrl;
   useEffect(() => {
     const getEpochNumber = async() => {
-      if (!config.chain.rpcUrl) {
-        return;
-      }
-      const response = await fetch(config.chain.rpcUrl!, {
+      const response = await fetch(rpcUrl, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -58,7 +55,7 @@ const Stats = () => {
     };
 
     getEpochNumber();
-  }, []);
+  }, [ rpcUrl ]);
 
   if (isError || zkEvmLatestBatchQuery.isError) {
     return null;

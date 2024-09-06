@@ -6,6 +6,7 @@ import { KEY_WORDS } from '../utils';
 export function cloudFlare(): CspDev.DirectiveDescriptor {
   return {
     'script-src': [
+      '\'unsafe-eval\'',
       'static.cloudflareinsights.com',
     ],
     'style-src': [
