@@ -5,9 +5,9 @@ import React, { useEffect, useState } from 'react';
 import { route } from 'nextjs-routes';
 
 import config from 'configs/app';
-import { getEnvValue } from 'configs/app/utils';
 import useApiQuery from 'lib/api/useApiQuery';
 import { WEI } from 'lib/consts';
+import useShards from 'lib/hooks/useShards';
 import { HOMEPAGE_STATS } from 'stubs/stats';
 import GasInfoTooltip from 'ui/shared/gas/GasInfoTooltip';
 import GasPrice from 'ui/shared/gas/GasPrice';
@@ -21,6 +21,7 @@ const rollupFeature = config.features.rollup;
 
 const Stats = () => {
   const [ epochNumber, setEpochNumber ] = useState<number | null>();
+  const { shardId, shards } = useShards();
   const { data, isPlaceholderData, isError, dataUpdatedAt } = useApiQuery('stats', {
     queryOptions: {
       refetchOnMount: false,
@@ -34,12 +35,12 @@ const Stats = () => {
       enabled: rollupFeature.isEnabled && rollupFeature.type === 'zkEvm',
     },
   });
-  const rpcUrl = getEnvValue('NEXT_PUBLIC_NETWORK_RPC_URL');
   useEffect(() => {
-    if (!rpcUrl) {
+    if (!shardId) {
       return;
     }
     const getEpochNumber = async() => {
+      const rpcUrl = shards[shardId].chain.rpcUrl;
       const response = await fetch(rpcUrl, {
         method: 'POST',
         headers: {
@@ -59,7 +60,7 @@ const Stats = () => {
     };
 
     getEpochNumber();
-  }, [ rpcUrl ]);
+  }, [ shardId, shards ]);
 
   if (isError || zkEvmLatestBatchQuery.isError) {
     return null;
