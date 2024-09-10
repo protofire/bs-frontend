@@ -12,7 +12,7 @@ import IconSvg from 'ui/shared/IconSvg';
 import LinkInternal from 'ui/shared/LinkInternal';
 
 interface Props {
-  address: string;
+  address?: string;
   params: CsvExportParams;
   className?: string;
   isLoading?: boolean;
@@ -44,7 +44,7 @@ const AddressCsvExportLink = ({ className, address, params, isLoading }: Props) 
         display="inline-flex"
         alignItems="center"
         whiteSpace="nowrap"
-        href={ route({ pathname: '/csv-export', query: { ...params, address } }) }
+        href={ route({ pathname: '/csv-export', query: { ...params, ...(address ? { address } : {}) } }) }
         flexShrink={ 0 }
       >
         <IconSvg name="files/csv" boxSize={{ base: '30px', lg: 6 }}/>
