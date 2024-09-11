@@ -16,7 +16,7 @@ import CsvExportFormField from './CsvExportFormField';
 import CsvExportFormReCaptcha from './CsvExportFormReCaptcha';
 
 interface Props {
-  hash: string;
+  hash?: string;
   resource: ResourceName;
   filterType?: CsvExportParams['filterType'] | null;
   filterValue?: CsvExportParams['filterValue'] | null;
@@ -58,7 +58,7 @@ const CsvExportForm = ({ hash, resource, filterType, filterValue, fileNameTempla
       const blob = await response.blob();
       downloadBlob(
         blob,
-        `${ fileNameTemplate }_${ hash }_${ data.from }_${ data.to }
+        `${ fileNameTemplate }${ hash ? `_${ hash }` : '' }_${ data.from }_${ data.to }
         ${ filterType && filterValue ? '_with_filter_type_' + filterType + '_value_' + filterValue : '' }.csv`,
       );
 

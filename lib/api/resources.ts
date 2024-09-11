@@ -870,6 +870,9 @@ export const RESOURCES = {
   csv_export_logs: {
     path: '/api/v1/logs-csv',
   },
+  csv_export_contracts: {
+    path: '/api/v1/smart-contracts-csv',
+  },
   graphql: {
     path: '/api/v1/graphql',
   },
