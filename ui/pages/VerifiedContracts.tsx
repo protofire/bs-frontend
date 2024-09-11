@@ -108,7 +108,7 @@ const VerifiedContracts = () => {
   const csvExportLink = (
     <AddressCsvExportLink
       params={{ type: 'contracts' }}
-      ml="auto"
+      className=""
       isLoading={ isPlaceholderData }
     />
   );
@@ -126,8 +126,10 @@ const VerifiedContracts = () => {
             { typeFilter }
             { filterInput }
           </HStack>
-          { showCSVDownload && csvExportLink }
-          <Pagination ml="auto" { ...pagination }/>
+          <HStack spacing={ 3 } display={{ base: 'none', lg: 'flex' }}>
+            { showCSVDownload && csvExportLink }
+            <Pagination ml="auto" { ...pagination }/>
+          </HStack>
         </ActionBar>
       ) }
     </>
