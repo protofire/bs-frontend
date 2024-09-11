@@ -53,9 +53,15 @@ const EXPORT_TYPES: Record<CsvExportParams['type'], ExportTypeEntity> = {
     fileNameTemplate: 'logs',
     filterType: 'topic',
   },
+  contracts: {
+    text: 'Contracts',
+    resource: 'csv_export_contracts',
+    fileNameTemplate: 'contracts',
+  },
 };
 
-const isCorrectExportType = (type: string): type is CsvExportParams['type'] => Object.keys(EXPORT_TYPES).includes(type);
+const isCorrectExportType = (type: string): type is CsvExportParams['type'] =>
+  Object.keys(EXPORT_TYPES).includes(type);
 
 const CsvExport = () => {
   const router = useRouter();
@@ -64,7 +70,9 @@ const CsvExport = () => {
 
   const addressHash = router.query.address?.toString() || '';
   const exportTypeParam = router.query.type?.toString() || '';
-  const exportType = isCorrectExportType(exportTypeParam) ? EXPORT_TYPES[exportTypeParam] : null;
+  const exportType = isCorrectExportType(exportTypeParam) ?
+    EXPORT_TYPES[exportTypeParam] :
+    null;
   const filterTypeFromQuery = router.query.filterType?.toString() || null;
   const filterValueFromQuery = router.query.filterValue?.toString();
 
@@ -76,7 +84,8 @@ const CsvExport = () => {
   });
 
   const backLink = React.useMemo(() => {
-    const hasGoBackLink = appProps.referrer && appProps.referrer.includes('/address');
+    const hasGoBackLink =
+      appProps.referrer && appProps.referrer.includes('/address');
 
     if (!hasGoBackLink) {
       return;
@@ -88,20 +97,24 @@ const CsvExport = () => {
     };
   }, [ appProps.referrer ]);
 
-  throwOnAbsentParamError(addressHash);
   throwOnAbsentParamError(exportType);
+  exportTypeParam !== 'contracts' && throwOnAbsentParamError(addressHash);
 
   if (!exportType) {
     return null;
   }
 
-  const filterType = filterTypeFromQuery === exportType.filterType ? filterTypeFromQuery : null;
+  const filterType =
+    filterTypeFromQuery === exportType.filterType ? filterTypeFromQuery : null;
   const filterValue = (() => {
     if (!filterType || !filterValueFromQuery) {
       return null;
     }
 
-    if (exportType.filterValues && !exportType.filterValues?.includes(filterValueFromQuery)) {
+    if (
+      exportType.filterValues &&
+      !exportType.filterValues?.includes(filterValueFromQuery)
+    ) {
       return null;
     }
 
@@ -109,9 +122,9 @@ const CsvExport = () => {
   })();
 
   const content = (() => {
-    throwOnResourceLoadError(addressQuery);
+    exportTypeParam !== 'contracts' && throwOnResourceLoadError(addressQuery);
 
-    if (addressQuery.isPending) {
+    if (exportTypeParam !== 'contracts' && addressQuery.isPending) {
       return <ContentLoader/>;
     }
 
@@ -126,24 +139,43 @@ const CsvExport = () => {
     );
   })();
 
-  return (
-    <>
-      <PageTitle
-        title="Export data to CSV file"
-        backLink={ backLink }
-      />
+  const header = (() => {
+    if (exportTypeParam === 'contracts') {
+      return (
+        <Flex mb={ 10 } whiteSpace="pre-wrap" flexWrap="wrap">
+          <span>Export { exportType.text } to CSV file.</span>
+        </Flex>
+      );
+    }
+
+    return (
       <Flex mb={ 10 } whiteSpace="pre-wrap" flexWrap="wrap">
         <span>Export { exportType.text } for address </span>
         <AddressEntity
-          address={{ hash: addressHash, is_contract: true, implementation_name: null }}
+          address={{
+            hash: addressHash,
+            is_contract: true,
+            implementation_name: null,
+          }}
           truncation={ isMobile ? 'constant' : 'dynamic' }
           noCopy
         />
         <span>{ nbsp }</span>
-        { filterType && filterValue && <span>with applied filter by { filterType } ({ filterValue }) </span> }
+        { filterType && filterValue && (
+          <span>
+            with applied filter by { filterType } ({ filterValue }){ ' ' }
+          </span>
+        ) }
         <span>to CSV file. </span>
         <span>Exports are limited to the last 10K { exportType.text }.</span>
       </Flex>
+    );
+  })();
+
+  return (
+    <>
+      <PageTitle title="Export data to CSV file" backLink={ backLink }/>
+      { header }
       { content }
     </>
   );

@@ -12,6 +12,7 @@ import { apos } from 'lib/html-entities';
 import getQueryParamString from 'lib/router/getQueryParamString';
 import { VERIFIED_CONTRACT_INFO } from 'stubs/contract';
 import { generateListStub } from 'stubs/utils';
+import AddressCsvExportLink from 'ui/address/AddressCsvExportLink';
 import ActionBar from 'ui/shared/ActionBar';
 import DataListDisplay from 'ui/shared/DataListDisplay';
 import FilterInput from 'ui/shared/filters/FilterInput';
@@ -92,11 +93,23 @@ const VerifiedContracts = () => {
     />
   );
 
+  const showCSVDownload = React.useMemo(() => {
+    return localStorage.getItem('showCSVdownload') === 'true';
+  }, []);
+
   const sortButton = (
     <Sort
       options={ SORT_OPTIONS }
       sort={ sort }
       setSort={ handleSortChange }
+    />
+  );
+
+  const csvExportLink = (
+    <AddressCsvExportLink
+      params={{ type: 'contracts' }}
+      className=""
+      isLoading={ isPlaceholderData }
     />
   );
 
@@ -113,7 +126,10 @@ const VerifiedContracts = () => {
             { typeFilter }
             { filterInput }
           </HStack>
-          <Pagination ml="auto" { ...pagination }/>
+          <HStack spacing={ 3 } display={{ base: 'none', lg: 'flex' }}>
+            { showCSVDownload && csvExportLink }
+            <Pagination ml="auto" { ...pagination }/>
+          </HStack>
         </ActionBar>
       ) }
     </>
