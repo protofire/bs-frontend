@@ -93,10 +93,6 @@ const VerifiedContracts = () => {
     />
   );
 
-  const showCSVDownload = React.useMemo(() => {
-    return localStorage.getItem('showCSVdownload') === 'true';
-  }, []);
-
   const sortButton = (
     <Sort
       options={ SORT_OPTIONS }
@@ -127,7 +123,7 @@ const VerifiedContracts = () => {
             { filterInput }
           </HStack>
           <HStack spacing={ 3 } display={{ base: 'none', lg: 'flex' }}>
-            { showCSVDownload && csvExportLink }
+            { csvExportLink }
             <Pagination ml="auto" { ...pagination }/>
           </HStack>
         </ActionBar>
