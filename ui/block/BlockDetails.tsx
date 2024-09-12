@@ -10,6 +10,7 @@ import { route } from 'nextjs-routes';
 import config from 'configs/app';
 import getBlockReward from 'lib/block/getBlockReward';
 import { GWEI, WEI, WEI_IN_GWEI, ZERO } from 'lib/consts';
+import useShards from 'lib/hooks/useShards';
 import { space } from 'lib/html-entities';
 import getNetworkValidatorTitle from 'lib/networks/getNetworkValidatorTitle';
 import getQueryParamString from 'lib/router/getQueryParamString';
@@ -38,6 +39,7 @@ interface Props {
 const rollupFeature = config.features.rollup;
 
 const BlockDetails = ({ query }: Props) => {
+  const { shard } = useShards();
   const [ isExpanded, setIsExpanded ] = React.useState(false);
   const router = useRouter();
   const heightOrHash = getQueryParamString(router.query.height_or_hash);
@@ -62,8 +64,8 @@ const BlockDetails = ({ query }: Props) => {
     const increment = direction === 'next' ? +1 : -1;
     const nextId = String(data.height + increment);
 
-    router.push({ pathname: '/block/[height_or_hash]', query: { height_or_hash: nextId } }, undefined);
-  }, [ data, router ]);
+    router.push({ pathname: '/block/[height_or_hash]', query: { height_or_hash: nextId, shard: shard?.id ?? '0' } }, undefined);
+  }, [ data, router, shard ]);
 
   if (!data) {
     return null;
