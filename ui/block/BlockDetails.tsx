@@ -185,6 +185,15 @@ const BlockDetails = ({ query }: Props) => {
           { data.size.toLocaleString() }
         </Skeleton>
       </DetailsInfoItem>
+      { data.epoch && (
+        <DetailsInfoItem
+          title="Epoch"
+          hint="The epoch of the block"
+          isLoading={ isPlaceholderData }
+        >
+          { data.epoch }
+        </DetailsInfoItem>
+      ) }
       <DetailsInfoItem
         title="Timestamp"
         hint="Date & time at which block was produced."
