@@ -60,7 +60,7 @@ export const GET_BALANCE = BigInt(42_000_000_000_000);
 
 export const GET_TRANSACTIONS_COUNT = 42;
 
-export const GET_BLOCK: GetBlockReturnType<Chain, false, 'latest'> = {
+export const GET_BLOCK: GetBlockReturnType<Chain, false, 'latest'> & { epoch: number } = {
   baseFeePerGas: BigInt(11),
   difficulty: BigInt(111),
   extraData: '0xd8830',
@@ -76,6 +76,7 @@ export const GET_BLOCK: GetBlockReturnType<Chain, false, 'latest'> = {
   receiptsRoot: BLOCK_HASH,
   sha3Uncles: BLOCK_HASH,
   size: BigInt(88),
+  epoch: 1,
   stateRoot: BLOCK_HASH,
   timestamp: BigInt(1628580000),
   totalDifficulty: BigInt(10361367),

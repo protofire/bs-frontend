@@ -15,7 +15,7 @@ import { BLOCK } from 'stubs/block';
 import { GET_BLOCK } from 'stubs/RPC';
 import { unknownAddress } from 'ui/shared/address/utils';
 
-type RpcResponseType = GetBlockReturnType<Chain, false, 'latest'> | null;
+type RpcResponseType = GetBlockReturnType<Chain, false, 'latest'> & { epoch: number } | null;
 
 export type BlockQuery = UseQueryResult<Block, ResourceError<{ status: number }>> & {
   isDegradedData: boolean;
@@ -55,7 +55,7 @@ export default function useBlockQuery({ heightOrHash }: Params): BlockQuery {
       }
 
       const blockParams = heightOrHash.startsWith('0x') ? { blockHash: heightOrHash as `0x${ string }` } : { blockNumber: BigInt(heightOrHash) };
-      return publicClient.getBlock(blockParams).catch(() => null);
+      return publicClient.getBlock(blockParams).catch(() => null) as Promise<GetBlockReturnType<Chain, false, 'latest'> & { epoch: number } | null>;
     },
     select: (block) => {
       if (!block) {
@@ -68,6 +68,7 @@ export default function useBlockQuery({ heightOrHash }: Params): BlockQuery {
         tx_count: block.transactions.length,
         miner: { ...unknownAddress, hash: block.miner },
         size: Number(block.size),
+        epoch: Number(block.epoch),
         hash: block.hash,
         parent_hash: block.parentHash,
         difficulty: block.difficulty.toString(),

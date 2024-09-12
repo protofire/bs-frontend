@@ -12,6 +12,7 @@ export interface Block {
   tx_count: number;
   miner: AddressParam;
   size: number;
+  epoch: number;
   hash: string;
   parent_hash: string;
   difficulty: string;
