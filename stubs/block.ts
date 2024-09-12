@@ -8,6 +8,7 @@ export const BLOCK: Block = {
   base_fee_per_gas: '14',
   burnt_fees: '92834504000000000',
   burnt_fees_percentage: 42.2,
+  epoch: 1,
   difficulty: '340282366920938463463374607431768211451',
   extra_data: 'TODO',
   gas_limit: '30000000',
