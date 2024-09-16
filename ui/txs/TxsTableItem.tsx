@@ -39,8 +39,10 @@ const CopyIcon = ({
 }) => {
   const handleClick = React.useCallback(() => {
     navigator.clipboard.writeText(
-      `${ toBech32(tx.hash) },${ tx.hash },${ tx.block },${ tx.timestamp },${ tx.from.hash },${
+      `${ tx.hash },${ tx.block },${ tx.timestamp },${ tx.from.hash },${ toBech32(tx.from.hash) },${
         tx.to?.hash || tx.created_contract?.hash
+      },${
+        toBech32((tx.to?.hash || tx.created_contract?.hash) as string)
       },${ tx.type },${ tx.value },${ tx.fee.value },${ tx.status },${
         tx.revert_reason || 'N/A'
       },${ tx.exchange_rate }`,
