@@ -1,6 +1,6 @@
 import { InputGroup, Input, InputLeftElement, chakra, useColorModeValue, forwardRef, InputRightElement } from '@chakra-ui/react';
 import throttle from 'lodash/throttle';
-import React, { useEffect, useRef } from 'react';
+import React, { useRef } from 'react';
 import type { ChangeEvent, FormEvent, FocusEvent } from 'react';
 
 import { useScrollDirection } from 'lib/contexts/scrollDirection';
@@ -26,12 +26,6 @@ const SearchBarInput = ({ onChange, onSubmit, isHomepage, onFocus, onBlur, onHid
   const scrollDirection = useScrollDirection();
   const isMobile = useIsMobile();
   const inputRef = useRef<HTMLInputElement>(null);
-
-  useEffect(() => {
-    if (inputRef && inputRef.current) {
-      inputRef.current.focus();
-    }
-  }, [ ]);
 
   const handleScroll = React.useCallback(() => {
     const TOP_BAR_HEIGHT = 36;
