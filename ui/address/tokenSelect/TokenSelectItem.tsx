@@ -62,7 +62,7 @@ const TokenSelectItem = ({ data }: Props) => {
       _hover={{
         bgColor: useColorModeValue('blue.50', 'gray.800'),
       }}
-      color="initial"
+      color={ useColorModeValue('gray.900', 'gray.50') }
       fontSize="sm"
       href={ url }
     >
