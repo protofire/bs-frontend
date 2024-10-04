@@ -215,6 +215,11 @@ export default function useNavItems(): ReturnType {
         icon: 'gear',
         subItems: [
           {
+            text: 'Swap',
+            nextRoute: { pathname: '/swap' as const },
+            isActive: pathname.startsWith('/swap'),
+          },
+          {
             text: 'Verify contract',
             nextRoute: { pathname: '/contract-verification' as const },
             isActive: pathname.startsWith('/contract-verification'),
