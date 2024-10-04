@@ -16,7 +16,6 @@ import IntTxsIndexingStatus from './IntTxsIndexingStatus';
 const MAX_LINKS_COLUMNS = 4;
 
 const Footer = () => {
-
   const BLOCKSCOUT_LINKS = [
     {
       icon: 'edit' as const,
@@ -40,31 +39,43 @@ const Footer = () => {
 
   const fetch = useFetch();
 
-  const { isPlaceholderData, data: linksData } = useQuery<unknown, ResourceError<unknown>, Array<CustomLinksGroup>>({
+  const { isPlaceholderData, data: linksData } = useQuery<
+  unknown,
+  ResourceError<unknown>,
+  Array<CustomLinksGroup>
+  >({
     queryKey: [ 'footer-links' ],
-    queryFn: async() => fetch(config.UI.footer.links || '', undefined, { resource: 'footer-links' }),
+    queryFn: async() =>
+      fetch(config.UI.footer.links || '', undefined, {
+        resource: 'footer-links',
+      }),
     enabled: Boolean(config.UI.footer.links),
     staleTime: Infinity,
     placeholderData: [],
   });
 
-  const colNum = isPlaceholderData ? 1 : Math.min(linksData?.length || Infinity, MAX_LINKS_COLUMNS) + 1;
+  const colNum = isPlaceholderData ?
+    1 :
+    Math.min(linksData?.length || Infinity, MAX_LINKS_COLUMNS) + 1;
 
-  const renderNetworkInfo = React.useCallback((gridArea?: GridProps['gridArea']) => {
-    return (
-      <Flex
-        gridArea={ gridArea }
-        flexWrap="wrap"
-        columnGap={ 8 }
-        rowGap={ 6 }
-        mb={{ base: 5, lg: 0 }}
-        _empty={{ display: 'none' }}
-      >
-        { !config.UI.indexingAlert.intTxs.isHidden && <IntTxsIndexingStatus/> }
-        <NetworkAddToWallet/>
-      </Flex>
-    );
-  }, []);
+  const renderNetworkInfo = React.useCallback(
+    (gridArea?: GridProps['gridArea']) => {
+      return (
+        <Flex
+          gridArea={ gridArea }
+          flexWrap="wrap"
+          columnGap={ 8 }
+          rowGap={ 6 }
+          mb={{ base: 5, lg: 0 }}
+          _empty={{ display: 'none' }}
+        >
+          { !config.UI.indexingAlert.intTxs.isHidden && <IntTxsIndexingStatus/> }
+          <NetworkAddToWallet/>
+        </Flex>
+      );
+    },
+    [],
+  );
 
   const containerProps: GridProps = {
     as: 'footer',
@@ -78,33 +89,46 @@ const Footer = () => {
   if (config.UI.footer.links) {
     return (
       <Grid { ...containerProps }>
-        <div>
-          { renderNetworkInfo() }
-        </div>
+        <div>{ renderNetworkInfo() }</div>
 
         <Grid
-          gap={{ base: 6, lg: colNum === MAX_LINKS_COLUMNS + 1 ? 2 : 8, xl: 12 }}
+          gap={{
+            base: 6,
+            lg: colNum === MAX_LINKS_COLUMNS + 1 ? 2 : 8,
+            xl: 12,
+          }}
           gridTemplateColumns={{
             base: 'repeat(auto-fill, 160px)',
           }}
           justifyContent={{ lg: 'flex-end' }}
           mt={{ base: 8, lg: 0 }}
         >
-          {
-            ([
-              { title: 'Blockscout', links: BLOCKSCOUT_LINKS },
-              ...(linksData || []),
-            ])
-              .slice(0, colNum)
-              .map(linkGroup => (
-                <Box key={ linkGroup.title }>
-                  <Skeleton fontWeight={ 500 } mb={ 3 } display="inline-block" isLoaded={ !isPlaceholderData }>{ linkGroup.title }</Skeleton>
-                  <VStack spacing={ 1 } alignItems="start">
-                    { linkGroup.links.map(link => <FooterLinkItem { ...link } key={ link.text } isLoading={ isPlaceholderData }/>) }
-                  </VStack>
-                </Box>
-              ))
-          }
+          { [
+            { title: 'Blockscout', links: BLOCKSCOUT_LINKS },
+            ...(linksData || []),
+          ]
+            .slice(0, colNum)
+            .map((linkGroup) => (
+              <Box key={ linkGroup.title }>
+                <Skeleton
+                  fontWeight={ 500 }
+                  mb={ 3 }
+                  display="inline-block"
+                  isLoaded={ !isPlaceholderData }
+                >
+                  { linkGroup.title }
+                </Skeleton>
+                <VStack spacing={ 1 } alignItems="start">
+                  { linkGroup.links.map((link) => (
+                    <FooterLinkItem
+                      { ...link }
+                      key={ link.text }
+                      isLoading={ isPlaceholderData }
+                    />
+                  )) }
+                </VStack>
+              </Box>
+            )) }
         </Grid>
       </Grid>
     );
@@ -119,7 +143,6 @@ const Footer = () => {
         `,
       }}
     >
-
       { renderNetworkInfo({ lg: 'network' }) }
 
       <Grid
@@ -137,7 +160,9 @@ const Footer = () => {
         justifySelf={{ lg: 'end' }}
         mt={{ base: 2, lg: 0 }}
       >
-        { BLOCKSCOUT_LINKS.map(link => <FooterLinkItem { ...link } key={ link.text }/>) }
+        { BLOCKSCOUT_LINKS.map((link) => (
+          <FooterLinkItem { ...link } key={ link.text }/>
+        )) }
       </Grid>
     </Grid>
   );
