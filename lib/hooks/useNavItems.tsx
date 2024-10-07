@@ -215,7 +215,7 @@ export default function useNavItems(): ReturnType {
         icon: 'gear',
         subItems: [
           {
-            text: 'Swap',
+            text: 'Get ONE',
             nextRoute: { pathname: '/swap' as const },
             isActive: pathname.startsWith('/swap'),
           },
