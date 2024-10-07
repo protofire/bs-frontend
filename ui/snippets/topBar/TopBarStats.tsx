@@ -51,11 +51,13 @@ const TopBarStats = () => {
       { data?.coin_price && (
         <Flex columnGap={ 1 }>
           <Skeleton isLoaded={ !isPlaceholderData }>
-            <chakra.span color="text_secondary">{ config.chain.governanceToken.symbol || config.chain.currency.symbol } </chakra.span>
-            <span>${ Number(data.coin_price).toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 6 }) }</span>
+            <chakra.span color="text_secondary" mr={ 1 } display={{ base: 'none', md: 'initial' }}>
+              { config.chain.governanceToken.symbol || config.chain.currency.symbol }
+            </chakra.span>
+            <span>${ Number(data.coin_price).toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 4 }) }</span>
           </Skeleton>
           { data.coin_price_change_percentage && (
-            <Skeleton isLoaded={ !isPlaceholderData }>
+            <Skeleton isLoaded={ !isPlaceholderData } display={{ base: 'none', md: 'initial' }}>
               <chakra.span color={ Number(data.coin_price_change_percentage) >= 0 ? 'green.500' : 'red.500' }>
                 { Number(data.coin_price_change_percentage).toFixed(2) }%
               </chakra.span>
@@ -63,7 +65,7 @@ const TopBarStats = () => {
           ) }
         </Flex>
       ) }
-      { data?.coin_price && config.features.gasTracker.isEnabled && <TextSeparator color="divider"/> }
+      { data?.coin_price && config.features.gasTracker.isEnabled && <TextSeparator mx={{ base: 1, md: 3 }} color="divider"/> }
       { data?.gas_prices && data.gas_prices.average !== null && config.features.gasTracker.isEnabled && (
         <Skeleton isLoaded={ !isPlaceholderData }>
           <chakra.span color="text_secondary">Gas </chakra.span>

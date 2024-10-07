@@ -15,8 +15,6 @@ import ColorModeSwitch from './ColorModeSwitch';
 import SwapButton from './SwapButton';
 import TopBarStats from './TopBarStats';
 
-const feature = config.features.swapButton;
-
 const AddressSwitcher = () => {
   const { setFormat, isEthFormat } = useAddressFormatContext();
 
@@ -26,15 +24,14 @@ const AddressSwitcher = () => {
 
   return (
     <>
-      <Text fontSize="sm" mr={ 2 }>
-        ONE / ETH address
+      <Text fontSize="xs" mr={ 2 } color="text_secondary">
+        ONE/ETH
       </Text>
       <Switch
         isChecked={ isEthFormat }
         onChange={ handleSwitchChange }
         colorScheme="teal"
-        size="md"
-        mr={ 3 }
+        size={{ base: 'sm', sm: 'md' }}
       />
     </>
   );
@@ -71,24 +68,24 @@ const TopBar = () => {
       >
         <TopBarStats/>
         <Flex alignItems="center">
-          <AddressSwitcher/>
-          <Divider
-            mr={ 3 }
-            ml={{ base: 2, sm: 3 }}
-            height={ 4 }
-            orientation="vertical"
-          />
-          { feature.isEnabled && (
-            <>
-              <SwapButton/>
-              <Divider
-                mr={ 3 }
-                ml={{ base: 2, sm: 3 }}
-                height={ 4 }
-                orientation="vertical"
-              />
-            </>
-          ) }
+          <>
+            <AddressSwitcher/>
+            <Divider
+              mr={ 3 }
+              ml={{ base: 2, sm: 3 }}
+              height={ 4 }
+              orientation="vertical"
+            />
+          </>
+          <>
+            <SwapButton/>
+            <Divider
+              mr={ 3 }
+              ml={{ base: 2, sm: 3 }}
+              height={ 4 }
+              orientation="vertical"
+            />
+          </>
           <ColorModeSwitch/>
         </Flex>
       </Flex>
