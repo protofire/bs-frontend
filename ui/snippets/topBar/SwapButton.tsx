@@ -1,8 +1,6 @@
 import { Button, Box } from '@chakra-ui/react';
 import React from 'react';
 
-import IconSvg from 'ui/shared/IconSvg';
-
 const SwapButton = () => {
   return (
     <Button
@@ -14,8 +12,9 @@ const SwapButton = () => {
       borderRadius="sm"
       height={ 5 }
       px={ 1.5 }
+      bgColor="var(--chakra-colors-blue-300)"
+      _hover={{ bgColor: 'var(--chakra-colors-blue-300)' }}
     >
-      <IconSvg name="swap" boxSize={ 3 } mr={{ base: 0, sm: 1 }}/>
       <Box display={{ base: 'none', md: 'inline' }}>
         Get ONE
       </Box>
