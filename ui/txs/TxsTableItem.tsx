@@ -1,10 +1,11 @@
-import { Tr, Td, VStack, Skeleton, Button } from '@chakra-ui/react';
+import { Tr, Td, VStack, Skeleton, Button, Tooltip, Box } from '@chakra-ui/react';
 import { motion } from 'framer-motion';
-import React from 'react';
+import React, { useMemo } from 'react';
 
 import type { Transaction } from 'types/api/transaction';
 
 import config from 'configs/app';
+import dayjs from 'lib/date/dayjs';
 import { toBech32 } from 'lib/formatting/formatAddress';
 import useTimeAgoIncrement from 'lib/hooks/useTimeAgoIncrement';
 import AddressFromTo from 'ui/shared/address/AddressFromTo';
@@ -20,6 +21,8 @@ import TxWatchListTags from 'ui/shared/tx/TxWatchListTags';
 import useTxMethod from 'ui/tx/useTxMethod';
 import TxAdditionalInfo from 'ui/txs/TxAdditionalInfo';
 
+import { useTokenPrice } from '../../lib/contexts/tokenPrice';
+import getCurrencyValue from '../../lib/getCurrencyValue';
 import TxType from './TxType';
 
 type Props = {
@@ -88,6 +91,20 @@ const TxsTableItem = ({
   const timeAgo = useTimeAgoIncrement(tx.timestamp, enableTimeIncrement);
 
   const method = useTxMethod(tx);
+  const { getPriceByTimestamp } = useTokenPrice();
+
+  const currentTxValue = useMemo(() => {
+    const exchangeRate = getPriceByTimestamp(Date.now());
+    if (exchangeRate) {
+      const value = getCurrencyValue({
+        value: tx.value,
+        accuracy: 4,
+        exchangeRate: exchangeRate.toString(),
+      });
+      return value.usd;
+    }
+    return null;
+  }, [ getPriceByTimestamp, tx.value ]);
 
   return (
     <Tr
@@ -180,7 +197,18 @@ const TxsTableItem = ({
       </Td>
       { !config.UI.views.tx.hiddenFields?.value && (
         <Td isNumeric>
-          <CurrencyValue value={ tx.value } accuracy={ 8 } isLoading={ isLoading }/>
+          <Tooltip label={ `Displaying value on ${
+            dayjs(tx.timestamp).format('DD MMM YYYY')
+          }. Current value: ${ currentTxValue }` }>
+            <Box>
+              <CurrencyValue
+                value={ tx.value }
+                accuracy={ 4 }
+                exchangeRate={ getPriceByTimestamp(tx.timestamp) }
+                isLoading={ isLoading }
+              />
+            </Box>
+          </Tooltip>
         </Td>
       ) }
       { !config.UI.views.tx.hiddenFields?.tx_fee && (

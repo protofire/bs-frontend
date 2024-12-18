@@ -27,6 +27,7 @@ import Layout from 'ui/shared/layout/Layout';
 import Web3ModalProvider from 'ui/shared/Web3ModalProvider';
 
 import 'lib/setLocale';
+import { TokenPriceProvider } from '../lib/contexts/tokenPrice';
 // import 'focus-visible/dist/focus-visible';
 
 type AppPropsWithLayout = AppProps & {
@@ -104,17 +105,19 @@ function MyApp({ Component, pageProps }: AppPropsWithLayout) {
         <Web3ModalProvider>
           <AppContextProvider pageProps={ pageProps }>
             <AddressFormatProvider>
-              <QueryClientProvider client={ queryClient }>
-                <GrowthBookProvider growthbook={ growthBook }>
-                  <ScrollDirectionProvider>
-                    <SocketProvider url={ wsUrl }>
-                      { getLayout(<Component { ...pageProps }/>) }
-                    </SocketProvider>
-                  </ScrollDirectionProvider>
-                </GrowthBookProvider>
-                <ReactQueryDevtools buttonPosition="bottom-left" position="left"/>
-                <GoogleAnalytics/>
-              </QueryClientProvider>
+              <TokenPriceProvider>
+                <QueryClientProvider client={ queryClient }>
+                  <GrowthBookProvider growthbook={ growthBook }>
+                    <ScrollDirectionProvider>
+                      <SocketProvider url={ wsUrl }>
+                        { getLayout(<Component { ...pageProps }/>) }
+                      </SocketProvider>
+                    </ScrollDirectionProvider>
+                  </GrowthBookProvider>
+                  <ReactQueryDevtools buttonPosition="bottom-left" position="left"/>
+                  <GoogleAnalytics/>
+                </QueryClientProvider>
+              </TokenPriceProvider>
             </AddressFormatProvider>
           </AppContextProvider>
         </Web3ModalProvider>
