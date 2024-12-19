@@ -197,23 +197,23 @@ const TxsTableItem = ({
       </Td>
       { !config.UI.views.tx.hiddenFields?.value && (
         <Td isNumeric>
-          { dayjs().diff(dayjs(tx.timestamp), 'day') < 1 ?
+          { (dayjs().diff(dayjs(tx.timestamp), 'day') < 1 || Number(tx.value) === 0) ?
             (
               <CurrencyValue
                 value={ tx.value }
                 accuracy={ 4 }
-                exchangeRate={ getPriceByTimestamp(tx.timestamp) }
+                exchangeRate={ Number(tx.value) > 0 ? getPriceByTimestamp(tx.timestamp) : null }
                 isLoading={ isLoading }
               />
             ) : (
               <Tooltip label={ `Displaying value on ${
                 dayjs(tx.timestamp).format('DD MMM YYYY')
               }. Current value: $${ currentTxValue }` }>
-                <Box>
+                <Box style={{ cursor: 'pointer' }}>
                   <CurrencyValue
                     value={ tx.value }
                     accuracy={ 4 }
-                    exchangeRate={ getPriceByTimestamp(tx.timestamp) }
+                    exchangeRate={ Number(tx.value) > 0 ? getPriceByTimestamp(tx.timestamp) : null }
                     isLoading={ isLoading }
                   />
                 </Box>
