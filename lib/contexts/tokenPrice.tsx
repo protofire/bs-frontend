@@ -18,7 +18,7 @@ interface ProviderProps {
 
 type TimestampValue = number | string | null
 
-interface TAddressFormatContext {
+interface ITokenPriceContext {
   getPriceByTimestamp: (timestamp: TimestampValue) => number | null;
 }
 
@@ -36,7 +36,7 @@ const saveValuesToLs = (values: Array<TokenPrice>) => {
   localStorage.setItem(TOKEN_PRICE_LS_KEY, JSON.stringify(values));
 };
 
-export const TokenPriceContext = React.createContext<TAddressFormatContext>({
+export const TokenPriceContext = React.createContext<ITokenPriceContext>({
   getPriceByTimestamp: () => {
     return null;
   },
@@ -58,12 +58,12 @@ export function TokenPriceProvider({ children }: ProviderProps) {
           !lastValueFromLS ||
           (Date.now() - lastValueFromLS.timestamp > DayMs)
         ) {
-          const result = await fetch<Array<Array<number>>, unknown>(BinanceRatesUrl);
+          const result = await fetch<Array<[number, string]>, unknown>(BinanceRatesUrl);
           if (Array.isArray(result)) {
             const newValues: Array<TokenPrice> = result.map(([ timestamp, price ]) => {
               return {
                 timestamp,
-                price,
+                price: Number(price),
               };
             });
             setValues(newValues);
