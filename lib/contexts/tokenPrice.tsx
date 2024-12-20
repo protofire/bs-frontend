@@ -73,7 +73,9 @@ export function TokenPriceProvider({ children }: ProviderProps) {
           // Restore values from LS
           setValues(valuesFromLS);
         }
-      } catch (e) {}
+      } catch (e) {
+        setValues([]);
+      }
     };
 
     if (browser) {
