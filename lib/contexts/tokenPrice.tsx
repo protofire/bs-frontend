@@ -17,6 +17,20 @@ interface ProviderProps {
 }
 
 type TimestampValue = number | string | null
+type BinanceKline = [
+  number,
+  string,
+  string,
+  string,
+  string,
+  string,
+  number,
+  string,
+  number,
+  string,
+  string,
+  string
+];
 
 interface ITokenPriceContext {
   getPriceByTimestamp: (timestamp: TimestampValue) => number | null;
@@ -58,7 +72,7 @@ export function TokenPriceProvider({ children }: ProviderProps) {
           !lastValueFromLS ||
           (Date.now() - lastValueFromLS.timestamp > DayMs)
         ) {
-          const result = await fetch<Array<[number, string]>, unknown>(BinanceRatesUrl);
+          const result = await fetch<Array<BinanceKline>, unknown>(BinanceRatesUrl);
           if (Array.isArray(result)) {
             const newValues: Array<TokenPrice> = result.map(([ timestamp, price ]) => {
               return {
