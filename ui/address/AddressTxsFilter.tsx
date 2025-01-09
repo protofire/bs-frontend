@@ -1,11 +1,4 @@
-import {
-  Menu,
-  MenuButton,
-  MenuList,
-  MenuOptionGroup,
-  MenuItemOption,
-  useDisclosure,
-} from '@chakra-ui/react';
+import { Menu, MenuButton, MenuList, MenuOptionGroup, MenuItemOption, useDisclosure } from '@chakra-ui/react';
 import React from 'react';
 
 import type { AddressFromToFilter } from 'types/api/address';
@@ -40,6 +33,7 @@ const AddressTxsFilter = ({ onFilterChange, defaultFilter, isActive, isLoading }
           <MenuItemOption value="all">All</MenuItemOption>
           <MenuItemOption value="from">Outgoing transactions</MenuItemOption>
           <MenuItemOption value="to">Incoming transactions</MenuItemOption>
+          <MenuItemOption value="staking_transactions">Staking transactions</MenuItemOption>
         </MenuOptionGroup>
       </MenuList>
     </Menu>
