@@ -159,8 +159,13 @@ const TxsTableItem = ({ tx, showBlockInfo, currentAddress, enableTimeIncrement, 
       </Td>
       { !config.UI.views.tx.hiddenFields?.value && (
         <Td isNumeric>
+          { /* eslint-disable no-nested-ternary */ }
           { tx.claimed_reward ? (
             <CurrencyValue value={ tx.claimed_reward } accuracy={ 8 } isLoading={ isLoading }/>
+          ) : tx.delegated_amount ? (
+            <CurrencyValue value={ tx.delegated_amount } accuracy={ 8 } isLoading={ isLoading }/>
+          ) : tx.undelegated_amount ? (
+            <CurrencyValue value={ tx.undelegated_amount } accuracy={ 8 } isLoading={ isLoading }/>
           ) : (
             <CurrencyValue value={ tx.value } accuracy={ 8 } isLoading={ isLoading }/>
           ) }
@@ -168,7 +173,7 @@ const TxsTableItem = ({ tx, showBlockInfo, currentAddress, enableTimeIncrement, 
       ) }
       { !config.UI.views.tx.hiddenFields?.tx_fee && (
         <Td isNumeric>
-          { /* eslint-disable-next-line no-nested-ternary */ }
+          { /* eslint-disable no-nested-ternary */ }
           { tx.stability_fee ? (
             <TxFeeStability data={ tx.stability_fee } isLoading={ isLoading } accuracy={ 8 } justifyContent="end" hideUsd/>
           ) : tx.fee.value ? (
