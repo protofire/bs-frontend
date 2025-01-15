@@ -103,6 +103,8 @@ export type Transaction = {
   shard_id?: string;
   to_shard_id?: string;
   claimed_reward?: string;
+  delegated_amount?: string;
+  undelegated_amount?: string;
 };
 
 export const ZKEVM_L2_TX_STATUSES = [ 'Confirmed by Sequencer', 'L1 Confirmed' ];
