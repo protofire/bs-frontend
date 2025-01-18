@@ -1,4 +1,4 @@
-import { Tr, Td, VStack, Skeleton, Button, Tooltip, Box } from '@chakra-ui/react';
+import { Tr, Td, VStack, Skeleton, Button, Box, Tooltip } from '@chakra-ui/react';
 import { motion } from 'framer-motion';
 import React, { useMemo } from 'react';
 
@@ -33,24 +33,29 @@ type Props = {
   isLoading?: boolean;
 };
 
-const CopyIcon = ({
-  tx,
-  isLoading,
-}: {
-  tx: Transaction;
-  isLoading?: boolean;
-}) => {
+const CopyIcon = ({ tx, isLoading }: { tx: Transaction; isLoading?: boolean }) => {
   const handleClick = React.useCallback(() => {
     navigator.clipboard.writeText(
       `${ tx.hash },${ tx.block },${ tx.timestamp },${ tx.from.hash },${ toBech32(tx.from.hash) },${
         tx.to?.hash || tx.created_contract?.hash
-      },${
-        toBech32((tx.to?.hash || tx.created_contract?.hash) as string)
-      },${ tx.type },${ tx.value },${ tx.fee.value },${ tx.status },${
-        tx.revert_reason || 'N/A'
-      },${ tx.exchange_rate }`,
+      },${ toBech32((tx.to?.hash || tx.created_contract?.hash) as string) },${ tx.type },${ tx.value },${ tx.fee.value },${
+        tx.status
+      },${ tx.revert_reason || 'N/A' },${ tx.exchange_rate }`,
     );
-  }, [ tx.block, tx.created_contract, tx.exchange_rate, tx.fee, tx.from, tx.hash, tx.revert_reason, tx.status, tx.timestamp, tx.to, tx.type, tx.value ]);
+  }, [
+    tx.block,
+    tx.created_contract,
+    tx.exchange_rate,
+    tx.fee,
+    tx.from,
+    tx.hash,
+    tx.revert_reason,
+    tx.status,
+    tx.timestamp,
+    tx.to,
+    tx.type,
+    tx.value,
+  ]);
 
   if (isLoading) {
     return <Skeleton boxSize={ 6 } borderRadius="sm" flexShrink={ 0 }/>;
@@ -70,41 +75,42 @@ const CopyIcon = ({
       flexShrink={ 0 }
       aria-label="Transaction info"
     >
-      <IconSvg
-        name="copy"
-        boxSize={ 5 }
-        color="link"
-        _hover={{ color: 'link_hovered' }}
-      />
+      <IconSvg name="copy" boxSize={ 5 } color="link" _hover={{ color: 'link_hovered' }}/>
     </Button>
   );
 };
 
-const TxsTableItem = ({
-  tx,
-  showBlockInfo,
-  currentAddress,
-  enableTimeIncrement,
-  isLoading,
-}: Props) => {
+const TxsTableItem = ({ tx, showBlockInfo, currentAddress, enableTimeIncrement, isLoading }: Props) => {
   const dataTo = tx.to ? tx.to : tx.created_contract;
   const timeAgo = useTimeAgoIncrement(tx.timestamp, enableTimeIncrement);
 
   const method = useTxMethod(tx);
   const { getPriceByTimestamp } = useTokenPrice();
 
+  const txValue = useMemo(() => {
+    if (tx.claimed_reward) {
+      return tx.claimed_reward;
+    } else if (tx.delegated_amount) {
+      return tx.delegated_amount;
+    } else if (tx.undelegated_amount) {
+      return tx.undelegated_amount;
+    } else {
+      return tx.value;
+    }
+  }, [ tx ]);
+
   const currentTxValue = useMemo(() => {
     const exchangeRate = getPriceByTimestamp(Date.now());
     if (exchangeRate) {
       const value = getCurrencyValue({
-        value: tx.value,
+        value: txValue,
         accuracy: 4,
         exchangeRate: exchangeRate.toString(),
       });
       return value.usd;
     }
     return null;
-  }, [ getPriceByTimestamp, tx.value ]);
+  }, [ getPriceByTimestamp, txValue ]);
 
   return (
     <Tr
@@ -139,11 +145,7 @@ const TxsTableItem = ({
             truncation="constant_long"
           />
           { tx.timestamp && (
-            <Skeleton
-              color="text_secondary"
-              fontWeight="400"
-              isLoaded={ !isLoading }
-            >
+            <Skeleton color="text_secondary" fontWeight="400" isLoaded={ !isLoading }>
               <span>{ timeAgo }</span>
             </Skeleton>
           ) }
@@ -162,11 +164,7 @@ const TxsTableItem = ({
       </Td>
       <Td whiteSpace="nowrap">
         { method && (
-          <Tag
-            colorScheme={ method === 'Multicall' ? 'teal' : 'gray' }
-            isLoading={ isLoading }
-            isTruncated
-          >
+          <Tag colorScheme={ method === 'Multicall' ? 'teal' : 'gray' } isLoading={ isLoading } isTruncated>
             { method }
           </Tag>
         ) }
@@ -174,14 +172,7 @@ const TxsTableItem = ({
       { showBlockInfo && (
         <Td>
           { tx.block && (
-            <BlockEntity
-              isLoading={ isLoading }
-              number={ tx.block }
-              noIcon
-              fontSize="sm"
-              lineHeight={ 6 }
-              fontWeight={ 500 }
-            />
+            <BlockEntity isLoading={ isLoading } number={ tx.block } noIcon fontSize="sm" lineHeight={ 6 } fontWeight={ 500 }/>
           ) }
         </Td>
       ) }
@@ -197,12 +188,12 @@ const TxsTableItem = ({
       </Td>
       { !config.UI.views.tx.hiddenFields?.value && (
         <Td isNumeric>
-          { (dayjs().diff(dayjs(tx.timestamp), 'day') < 1 || Number(tx.value) === 0) ?
+          { (dayjs().diff(dayjs(tx.timestamp), 'day') < 1 || Number(txValue) === 0) ?
             (
               <CurrencyValue
-                value={ tx.value }
+                value={ txValue }
                 accuracy={ 4 }
-                exchangeRate={ Number(tx.value) > 0 ? getPriceByTimestamp(tx.timestamp) : null }
+                exchangeRate={ Number(txValue) > 0 ? getPriceByTimestamp(tx.timestamp) : null }
                 isLoading={ isLoading }
               />
             ) : (
@@ -211,9 +202,9 @@ const TxsTableItem = ({
               }. Current value: $${ currentTxValue }` }>
                 <Box style={{ cursor: 'pointer' }}>
                   <CurrencyValue
-                    value={ tx.value }
+                    value={ txValue }
                     accuracy={ 4 }
-                    exchangeRate={ Number(tx.value) > 0 ? getPriceByTimestamp(tx.timestamp) : null }
+                    exchangeRate={ Number(txValue) > 0 ? getPriceByTimestamp(tx.timestamp) : null }
                     isLoading={ isLoading }
                   />
                 </Box>
@@ -224,21 +215,11 @@ const TxsTableItem = ({
       ) }
       { !config.UI.views.tx.hiddenFields?.tx_fee && (
         <Td isNumeric>
-          { /* eslint-disable-next-line no-nested-ternary */ }
+          { /* eslint-disable no-nested-ternary */ }
           { tx.stability_fee ? (
-            <TxFeeStability
-              data={ tx.stability_fee }
-              isLoading={ isLoading }
-              accuracy={ 8 }
-              justifyContent="end"
-              hideUsd
-            />
+            <TxFeeStability data={ tx.stability_fee } isLoading={ isLoading } accuracy={ 8 } justifyContent="end" hideUsd/>
           ) : tx.fee.value ? (
-            <CurrencyValue
-              value={ tx.fee.value }
-              accuracy={ 8 }
-              isLoading={ isLoading }
-            />
+            <CurrencyValue value={ tx.fee.value } accuracy={ 8 } isLoading={ isLoading }/>
           ) : (
             '-'
           ) }
