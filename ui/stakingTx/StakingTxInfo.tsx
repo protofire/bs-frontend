@@ -1,4 +1,12 @@
-import { Box, Grid, GridItem, Text, Link, Flex, Skeleton } from '@chakra-ui/react';
+import {
+  Box,
+  Grid,
+  GridItem,
+  Text,
+  Link,
+  Flex,
+  Skeleton,
+} from '@chakra-ui/react';
 import BigNumber from 'bignumber.js';
 import React from 'react';
 
@@ -6,10 +14,8 @@ import type { StakingTransaction } from 'types/api/stakingTransaction';
 
 import config from 'configs/app';
 import useShards from 'lib/hooks/useShards';
-import { currencyUnits } from 'lib/units';
 import Tag from 'ui/shared/chakra/Tag';
 import CopyToClipboard from 'ui/shared/CopyToClipboard';
-import CurrencyValue from 'ui/shared/CurrencyValue';
 import DetailsInfoItem from 'ui/shared/DetailsInfoItem';
 import DetailsInfoItemDivider from 'ui/shared/DetailsInfoItemDivider';
 import DetailsTimestamp from 'ui/shared/DetailsTimestamp';
@@ -65,45 +71,66 @@ const StakingTxInfo = ({ data, isLoading }: Props) => {
 
         { config.features.metasuites.isEnabled && (
           <>
-            <TextSeparator color="gray.500" flexShrink={ 0 } display="none" id="meta-suites__tx-explorer-separator"/>
-            <Box display="none" flexShrink={ 0 } id="meta-suites__tx-explorer-link"/>
+            <TextSeparator
+              color="gray.500"
+              flexShrink={ 0 }
+              display="none"
+              id="meta-suites__tx-explorer-separator"
+            />
+            <Box
+              display="none"
+              flexShrink={ 0 }
+              id="meta-suites__tx-explorer-link"
+            />
           </>
         ) }
       </DetailsInfoItem>
-      <DetailsInfoItem title="Block" hint="Block number containing the transaction" isLoading={ isLoading }>
-        { data.block === null ? <Text>Pending</Text> : <BlockEntity isLoading={ isLoading } number={ data.block } noIcon/> }
+      <DetailsInfoItem
+        title="Block"
+        hint="Block number containing the transaction"
+        isLoading={ isLoading }
+      >
+        { data.block === null ? (
+          <Text>Pending</Text>
+        ) : (
+          <BlockEntity isLoading={ isLoading } number={ data.block } noIcon/>
+        ) }
       </DetailsInfoItem>
-      <DetailsInfoItem title="Shard" hint="Shard number where the transaction was included" isLoading={ isLoading }>
+      <DetailsInfoItem
+        title="Shard"
+        hint="Shard number where the transaction was included"
+        isLoading={ isLoading }
+      >
         <Text>{ shardId ?? '0' }</Text>
       </DetailsInfoItem>
       { data.status && (
-        <DetailsInfoItem title="Status" hint="Current transaction state" isLoading={ isLoading }>
+        <DetailsInfoItem
+          title="Status"
+          hint="Current transaction state"
+          isLoading={ isLoading }
+        >
           <TxStatus status={ data.status } isLoading={ isLoading }/>
         </DetailsInfoItem>
       ) }
-      <DetailsInfoItem title="Type" hint="Type of staking transaction" isLoading={ isLoading }>
+      <DetailsInfoItem
+        title="Type"
+        hint="Type of staking transaction"
+        isLoading={ isLoading }
+      >
         <StakingTxType data={ data.type } isLoading={ isLoading }/>
       </DetailsInfoItem>
-      { data.claimed_reward && (
-        <DetailsInfoItem
-          title="Claimed Reward"
-          hint="Reward claimed from this staking transaction"
-          isLoading={ isLoading }
-        >
-          <CurrencyValue
-            value={ data.claimed_reward }
-            currency={ currencyUnits.ether }
-            accuracyUsd={ 2 }
-            accuracy={ 8 }
-            isLoading={ isLoading }
-            flexWrap="wrap"
-          />
-        </DetailsInfoItem>
-      ) }
-      <DetailsInfoItem title="Nonce" hint="Nonce of the transaction" isLoading={ isLoading }>
+      <DetailsInfoItem
+        title="Nonce"
+        hint="Nonce of the transaction"
+        isLoading={ isLoading }
+      >
         <Text>{ data.nonce }</Text>
       </DetailsInfoItem>
-      <DetailsInfoItem title="Index" hint="Transaction index" isLoading={ isLoading }>
+      <DetailsInfoItem
+        title="Index"
+        hint="Transaction index"
+        isLoading={ isLoading }
+      >
         <Text>{ data.transaction_index }</Text>
       </DetailsInfoItem>
       { data.timestamp && (
@@ -126,7 +153,9 @@ const StakingTxInfo = ({ data, isLoading }: Props) => {
       >
         <AddressEntity address={ data.from } isLoading={ isLoading }/>
         { data.from.name && <Text>{ data.from.name }</Text> }
-        { addressFromTags.length > 0 && <Flex columnGap={ 3 }>{ addressFromTags }</Flex> }
+        { addressFromTags.length > 0 && (
+          <Flex columnGap={ 3 }>{ addressFromTags }</Flex>
+        ) }
       </DetailsInfoItem>
       <DetailsInfoItemDivider/>
 
@@ -140,21 +169,22 @@ const StakingTxInfo = ({ data, isLoading }: Props) => {
         <Skeleton isLoaded={ !isLoading }>{ BigNumber(data.gas_used || 0).toFormat() }</Skeleton>
         <TextSeparator/>
         <Skeleton isLoaded={ !isLoading }>{ BigNumber(data.gas || 0).toFormat() }</Skeleton>
-        <Utilization
-          ml={ 4 }
-          value={ BigNumber(data.gas_used || 0)
-            .dividedBy(BigNumber(data.gas || 0))
-            .toNumber() }
-          isLoading={ isLoading }
-        />
+        <Utilization ml={ 4 } value={ BigNumber(data.gas_used || 0).dividedBy(BigNumber(data.gas || 0)).toNumber() } isLoading={ isLoading }/>
       </DetailsInfoItem>
 
-      <GridItem colSpan={{ base: undefined, lg: 2 }} mt={{ base: 1, lg: 4 }}/>
+      <GridItem
+        colSpan={{ base: undefined, lg: 2 }}
+        mt={{ base: 1, lg: 4 }}
+      />
 
       <DetailsInfoItemDivider/>
 
       { data.msg_validator_address && (
-        <DetailsInfoItem title="Validator address" hint="Address of the validator" isLoading={ isLoading }>
+        <DetailsInfoItem
+          title="Validator address"
+          hint="Address of the validator"
+          isLoading={ isLoading }
+        >
           <AddressEntity
             address={{
               hash: data.msg_validator_address,
@@ -165,7 +195,11 @@ const StakingTxInfo = ({ data, isLoading }: Props) => {
       ) }
 
       { data.msg_name && (
-        <DetailsInfoItem title="Name" hint="Name of the validator" isLoading={ isLoading }>
+        <DetailsInfoItem
+          title="Name"
+          hint="Name of the validator"
+          isLoading={ isLoading }
+        >
           <Text>{ data.msg_name }</Text>
         </DetailsInfoItem>
       ) }
@@ -225,7 +259,11 @@ const StakingTxInfo = ({ data, isLoading }: Props) => {
       ) }
 
       { data.msg_website && (
-        <DetailsInfoItem title="Website" hint="Website of the validator" isLoading={ isLoading }>
+        <DetailsInfoItem
+          title="Website"
+          hint="Website of the validator"
+          isLoading={ isLoading }
+        >
           <Link href={ data.msg_website } target="_blank">
             { data.msg_website }
           </Link>
@@ -233,31 +271,50 @@ const StakingTxInfo = ({ data, isLoading }: Props) => {
       ) }
 
       { data.msg_identity && (
-        <DetailsInfoItem title="Identity" hint="Identity of the validator" isLoading={ isLoading }>
+        <DetailsInfoItem
+          title="Identity"
+          hint="Identity of the validator"
+          isLoading={ isLoading }
+        >
           <Text>{ data.msg_identity }</Text>
         </DetailsInfoItem>
       ) }
 
       { data.msg_security_contact && (
-        <DetailsInfoItem title="Security contact" hint="Security contact of the validator" isLoading={ isLoading }>
+        <DetailsInfoItem
+          title="Security contact"
+          hint="Security contact of the validator"
+          isLoading={ isLoading }
+        >
           <Text>{ data.msg_security_contact }</Text>
         </DetailsInfoItem>
       ) }
 
       { data.msg_details && (
-        <DetailsInfoItem title="Details" hint="Details of the validator" isLoading={ isLoading }>
-          <Text whiteSpace="pre-wrap" wordBreak="break-word">
-            { data.msg_details }
-          </Text>
+        <DetailsInfoItem
+          title="Details"
+          hint="Details of the validator"
+          isLoading={ isLoading }
+        >
+          <Text whiteSpace="pre-wrap" wordBreak="break-word">{ data.msg_details }</Text>
         </DetailsInfoItem>
       ) }
 
       { data.msg_slot_pub_keys && data.msg_slot_pub_keys.length > 0 && (
-        <DetailsInfoItem title="Slot public keys" hint="Slot public keys of the validator" isLoading={ isLoading }>
+        <DetailsInfoItem
+          title="Slot public keys"
+          hint="Slot public keys of the validator"
+          isLoading={ isLoading }
+        >
           <Flex direction="column" columnGap={ 3 }>
             { data.msg_slot_pub_keys.map((key) => (
-              <Flex key={ key }>
-                <HashStringShorten hash={ key } type="long"/>
+              <Flex
+                key={ key }
+              >
+                <HashStringShorten
+                  hash={ key }
+                  type="long"
+                />
                 <Copy text={ key }/>
               </Flex>
             )) }
@@ -266,7 +323,11 @@ const StakingTxInfo = ({ data, isLoading }: Props) => {
       ) }
 
       { data.msg_delegator_address && (
-        <DetailsInfoItem title="Delegator address" hint="Address of the delegator" isLoading={ isLoading }>
+        <DetailsInfoItem
+          title="Delegator address"
+          hint="Address of the delegator"
+          isLoading={ isLoading }
+        >
           <AddressEntity
             address={{
               hash: data.msg_delegator_address,
@@ -277,13 +338,21 @@ const StakingTxInfo = ({ data, isLoading }: Props) => {
       ) }
 
       { data.msg_slot_pub_key_to_add && (
-        <DetailsInfoItem title="Slot public key to add" hint="Slot public key to add" isLoading={ isLoading }>
+        <DetailsInfoItem
+          title="Slot public key to add"
+          hint="Slot public key to add"
+          isLoading={ isLoading }
+        >
           <Text>{ data.msg_slot_pub_key_to_add }</Text>
         </DetailsInfoItem>
       ) }
 
       { data.msg_slot_pub_key_to_remove && (
-        <DetailsInfoItem title="Slot public key to remove" hint="Slot public key to remove" isLoading={ isLoading }>
+        <DetailsInfoItem
+          title="Slot public key to remove"
+          hint="Slot public key to remove"
+          isLoading={ isLoading }
+        >
           <Text>{ data.msg_slot_pub_key_to_remove }</Text>
         </DetailsInfoItem>
       ) }

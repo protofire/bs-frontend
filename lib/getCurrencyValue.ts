@@ -22,9 +22,9 @@ export default function getCurrencyValue({ value, accuracy, accuracyUsd, decimal
     usdBn = valueCurr.times(exchangeRateBn);
     if (accuracyUsd && !usdBn.isEqualTo(0)) {
       const usdBnDp = usdBn.dp(accuracyUsd);
-      usdResult = usdBnDp.isEqualTo(0) ? usdBn.precision(accuracyUsd).toFormat() : usdBnDp.toFormat();
+      usdResult = usdBnDp.isEqualTo(0) ? usdBn.precision(accuracyUsd).toFormat(2) : usdBnDp.toFormat(2);
     } else {
-      usdResult = usdBn.toFormat();
+      usdResult = usdBn.toFormat(2);
     }
   }
 
