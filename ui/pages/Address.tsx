@@ -31,6 +31,7 @@ import AddressQrCode from 'ui/address/details/AddressQrCode';
 import AddressEnsDomains from 'ui/address/ensDomains/AddressEnsDomains';
 import SolidityscanReport from 'ui/address/SolidityscanReport';
 import useAddressQuery from 'ui/address/utils/useAddressQuery';
+import { useStakingQuery } from 'ui/address/utils/useStakingQuery';
 import AccountActionsMenu from 'ui/shared/AccountActionsMenu/AccountActionsMenu';
 import TextAd from 'ui/shared/ad/TextAd';
 import AddressAddToWallet from 'ui/shared/address/AddressAddToWallet';
@@ -54,6 +55,7 @@ const AddressPageContent = () => {
   const hash = getQueryParamString(router.query.hash);
 
   const addressQuery = useAddressQuery({ hash });
+  const stakingQuery = useStakingQuery({ hash });
 
   const { toOne } = useAddressFormatContext();
 
@@ -75,7 +77,9 @@ const AddressPageContent = () => {
     },
   });
 
-  const isSafeAddress = useIsSafeAddress(!addressQuery.isPlaceholderData && addressQuery.data?.is_contract ? hash : undefined);
+  const isSafeAddress = useIsSafeAddress(
+    !addressQuery.isPlaceholderData && addressQuery.data?.is_contract ? hash : undefined,
+  );
   const safeIconColor = useColorModeValue('black', 'white');
 
   const contractTabs = useContractTabs(addressQuery.data);
@@ -150,27 +154,30 @@ const AddressPageContent = () => {
           component: <AddressLogs scrollRef={ tabsScrollRef }/>,
         } :
         undefined,
-      addressQuery.data?.is_contract ? {
-        id: 'contract',
-        title: () => {
-          if (addressQuery.data.is_verified) {
-            return (
-              <>
-                <span>Contract</span>
-                <IconSvg name="status/success" boxSize="14px" color="green.500" ml={ 1 }/>
-              </>
-            );
-          }
+      addressQuery.data?.is_contract ?
+        {
+          id: 'contract',
+          title: () => {
+            if (addressQuery.data.is_verified) {
+              return (
+                <>
+                  <span>Contract</span>
+                  <IconSvg name="status/success" boxSize="14px" color="green.500" ml={ 1 }/>
+                </>
+              );
+            }
 
-          return 'Contract';
-        },
-        component: <AddressContract tabs={ contractTabs }/>,
-        subTabs: contractTabs.map(tab => tab.id),
-      } : undefined,
+            return 'Contract';
+          },
+          component: <AddressContract tabs={ contractTabs }/>,
+          subTabs: contractTabs.map((tab) => tab.id),
+        } :
+        undefined,
     ].filter(Boolean);
   }, [ addressQuery.data, contractTabs, addressTabsCountersQuery.data, userOpsAccountQuery.data ]);
 
-  const isLoading = addressQuery.isPlaceholderData || (config.features.userOps.isEnabled && userOpsAccountQuery.isPlaceholderData);
+  const isLoading =
+    addressQuery.isPlaceholderData || (config.features.userOps.isEnabled && userOpsAccountQuery.isPlaceholderData);
 
   const tags = (
     <EntityTags
@@ -178,16 +185,21 @@ const AddressPageContent = () => {
       isLoading={ isLoading }
       tagsBefore={ [
         !addressQuery.data?.is_contract ? { label: 'eoa', display_name: 'EOA' } : undefined,
-        config.features.validators.isEnabled && addressQuery.data?.has_validated_blocks ? { label: 'validator', display_name: 'Validator' } : undefined,
+        config.features.validators.isEnabled && addressQuery.data?.has_validated_blocks ?
+          { label: 'validator', display_name: 'Validator' } :
+          undefined,
         addressQuery.data?.implementation_address ? { label: 'proxy', display_name: 'Proxy' } : undefined,
         addressQuery.data?.token ? { label: 'token', display_name: 'Token' } : undefined,
         isSafeAddress ? { label: 'safe', display_name: 'Multisig: Safe' } : undefined,
-        config.features.userOps.isEnabled && userOpsAccountQuery.data ? { label: 'user_ops_acc', display_name: 'Smart contract wallet' } : undefined,
+        config.features.userOps.isEnabled && userOpsAccountQuery.data ?
+          { label: 'user_ops_acc', display_name: 'Smart contract wallet' } :
+          undefined,
       ] }
     />
   );
 
-  const content = (addressQuery.isError || addressQuery.isDegradedData) ? null : <RoutedTabs tabs={ tabs } tabListProps={{ mt: 8 }}/>;
+  const content =
+    addressQuery.isError || addressQuery.isDegradedData ? null : <RoutedTabs tabs={ tabs } tabListProps={{ mt: 8 }}/>;
 
   const backLink = React.useMemo(() => {
     const hasGoBackLink = appProps.referrer && appProps.referrer.includes('/accounts');
@@ -225,17 +237,21 @@ const AddressPageContent = () => {
         iconColor={ isSafeAddress ? safeIconColor : undefined }
         mr={ 4 }
       />
-      { !isLoading && addressQuery.data?.is_contract && addressQuery.data.token &&
-        <AddressAddToWallet token={ addressQuery.data.token } variant="button"/> }
+      { !isLoading && addressQuery.data?.is_contract && addressQuery.data.token && (
+        <AddressAddToWallet token={ addressQuery.data.token } variant="button"/>
+      ) }
       { !isLoading && !addressQuery.data?.is_contract && config.features.account.isEnabled && (
         <AddressFavoriteButton hash={ hash } watchListId={ addressQuery.data?.watchlist_address_id }/>
       ) }
       <AddressQrCode address={{ hash }} isLoading={ isLoading }/>
       <AccountActionsMenu isLoading={ isLoading }/>
       <HStack ml="auto" gap={ 2 }/>
-      { addressQuery.data?.is_contract && addressQuery.data?.is_verified && config.UI.views.address.solidityscanEnabled && <SolidityscanReport hash={ hash }/> }
-      { !isLoading && addressQuery.data && config.features.nameService.isEnabled &&
-        <AddressEnsDomains addressHash={ hash } mainDomainName={ addressQuery.data.ens_domain_name }/> }
+      { addressQuery.data?.is_contract &&
+        addressQuery.data?.is_verified &&
+        config.UI.views.address.solidityscanEnabled && <SolidityscanReport hash={ hash }/> }
+      { !isLoading && addressQuery.data && config.features.nameService.isEnabled && (
+        <AddressEnsDomains addressHash={ hash } mainDomainName={ addressQuery.data.ens_domain_name }/>
+      ) }
       <NetworkExplorers type="address" pathParam={ hash }/>
     </Flex>
   );
@@ -253,24 +269,16 @@ const AddressPageContent = () => {
 
       { config.features.metasuites.isEnabled && <Box display="none" id="meta-suites__address" data-ready={ !isLoading }/> }
       { !isLoading && !addressQuery.data?.is_contract && config.chain.stakingOverviewUrl && (
-        <Box
-          mb={ 4 }
-        >
-          <EntityBase.Link
-            isExternal
-            href={ config.chain.stakingOverviewUrl?.replace('{address}', toOne(hash)) }
-          >
+        <Box mb={ 4 }>
+          <EntityBase.Link isExternal href={ config.chain.stakingOverviewUrl?.replace('{address}', toOne(hash)) }>
             Staking Overview
           </EntityBase.Link>
         </Box>
       ) }
-      <AddressDetails key={ shardId } addressQuery={ addressQuery } scrollRef={ tabsScrollRef }/>
+      <AddressDetails key={ shardId } addressQuery={ addressQuery } stakingQuery={ stakingQuery } scrollRef={ tabsScrollRef }/>
       { /* should stay before tabs to scroll up with pagination */ }
       <Box ref={ tabsScrollRef }></Box>
-      { (isLoading || addressTabsCountersQuery.isPlaceholderData) ?
-        <TabsSkeleton tabs={ tabs }/> :
-        content
-      }
+      { isLoading || addressTabsCountersQuery.isPlaceholderData ? <TabsSkeleton tabs={ tabs }/> : content }
     </>
   );
 };

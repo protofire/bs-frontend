@@ -22,7 +22,6 @@ async function run() {
 
     await checkPlaceholdersCongruity(appEnvs);
     await validateEnvs(appEnvs);
-
   } catch (error) {
     process.exit(1);
   }
@@ -42,7 +41,7 @@ async function validateEnvs(appEnvs: Record<string, string>) {
 
     for await (const envName of envsWithJsonConfig) {
       if (appEnvs[envName]) {
-        appEnvs[envName] = await getExternalJsonContent(envName) || '[]';
+        appEnvs[envName] = (await getExternalJsonContent(envName)) || '[]';
       }
     }
 
@@ -125,7 +124,7 @@ function getEnvsPlaceholders(filePath: string): Promise<Array<string>> {
       }
 
       const lines = data.split('\n');
-      const variables = lines.map(line => {
+      const variables = lines.map((line) => {
         const variable = line.split('=')[0];
         return variable.trim();
       });

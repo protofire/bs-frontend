@@ -188,29 +188,29 @@ const TxsTableItem = ({ tx, showBlockInfo, currentAddress, enableTimeIncrement, 
       </Td>
       { !config.UI.views.tx.hiddenFields?.value && (
         <Td isNumeric>
-          { (dayjs().diff(dayjs(tx.timestamp), 'day') < 1 || Number(txValue) === 0) ?
-            (
-              <CurrencyValue
-                value={ txValue }
-                accuracy={ 4 }
-                exchangeRate={ Number(txValue) > 0 ? getPriceByTimestamp(tx.timestamp) : null }
-                isLoading={ isLoading }
-              />
-            ) : (
-              <Tooltip label={ `Displaying value on ${
-                dayjs(tx.timestamp).format('DD MMM YYYY')
-              }. Current value: $${ currentTxValue }` }>
-                <Box style={{ cursor: 'pointer' }}>
-                  <CurrencyValue
-                    value={ txValue }
-                    accuracy={ 4 }
-                    exchangeRate={ Number(txValue) > 0 ? getPriceByTimestamp(tx.timestamp) : null }
-                    isLoading={ isLoading }
-                  />
-                </Box>
-              </Tooltip>
-            )
-          }
+          { dayjs().diff(dayjs(tx.timestamp), 'day') < 1 || Number(txValue) === 0 ? (
+            <CurrencyValue
+              value={ txValue }
+              accuracy={ 4 }
+              exchangeRate={ Number(txValue) > 0 ? getPriceByTimestamp(tx.timestamp) : null }
+              isLoading={ isLoading }
+            />
+          ) : (
+            <Tooltip
+              label={ `Displaying value on ${ dayjs(tx.timestamp).format(
+                'DD MMM YYYY',
+              ) }. Current value: $${ currentTxValue }` }
+            >
+              <Box style={{ cursor: 'pointer' }}>
+                <CurrencyValue
+                  value={ txValue }
+                  accuracy={ 4 }
+                  exchangeRate={ Number(txValue) > 0 ? getPriceByTimestamp(tx.timestamp) : null }
+                  isLoading={ isLoading }
+                />
+              </Box>
+            </Tooltip>
+          ) }
         </Td>
       ) }
       { !config.UI.views.tx.hiddenFields?.tx_fee && (

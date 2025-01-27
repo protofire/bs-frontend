@@ -6,10 +6,7 @@ import config from 'configs/app';
 
 import { KEY_WORDS } from '../utils';
 
-const MAIN_DOMAINS = [
-  `*.${ config.app.host }`,
-  config.app.host,
-].filter(Boolean);
+const MAIN_DOMAINS = [ `*.${ config.app.host }`, config.app.host ].filter(Boolean);
 
 const getCspReportUrl = () => {
   try {
@@ -67,15 +64,16 @@ export function app(): CspDev.DirectiveDescriptor {
 
       // chain RPC server
       config.chain.rpcUrl,
-      ...(
-        getFeaturePayload(config.features.shards)?.shards ?
-          Object.values(getFeaturePayload(config.features.shards)?.shards || {}).map(shard => shard.chain.rpcUrl) :
-          []
-      ),
+      ...(getFeaturePayload(config.features.shards)?.shards ?
+        Object.values(getFeaturePayload(config.features.shards)?.shards || {}).map((shard) => shard.chain.rpcUrl) :
+        []),
       'https://infragrid.v.network', // RPC providers
 
       // github (spec for api-docs page)
       'raw.githubusercontent.com',
+
+      // Staking API
+      config.stakingApi.endpoint,
     ].filter(Boolean),
 
     'script-src': [
@@ -126,34 +124,25 @@ export function app(): CspDev.DirectiveDescriptor {
       '*', // see comment for img-src directive
     ],
 
-    'font-src': [
-      KEY_WORDS.DATA,
-      ...MAIN_DOMAINS,
-    ],
+    'font-src': [ KEY_WORDS.DATA, ...MAIN_DOMAINS ],
 
-    'object-src': [
-      KEY_WORDS.NONE,
-    ],
+    'object-src': [ KEY_WORDS.NONE ],
 
-    'base-uri': [
-      KEY_WORDS.NONE,
-    ],
+    'base-uri': [ KEY_WORDS.NONE ],
 
     'frame-src': [
       // could be a marketplace app or NFT media (html-page)
       '*',
     ],
 
-    ...((() => {
+    ...(() => {
       if (!config.features.sentry.isEnabled) {
         return {};
       }
 
       return {
-        'report-uri': [
-          getCspReportUrl(),
-        ].filter(Boolean),
+        'report-uri': [ getCspReportUrl() ].filter(Boolean),
       };
-    })()),
+    })(),
   };
 }

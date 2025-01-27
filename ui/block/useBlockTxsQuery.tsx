@@ -41,11 +41,13 @@ export default function useBlockTxsQuery({ heightOrHash, blockQuery, tab }: Para
     pathParams: { height_or_hash: heightOrHash },
     options: {
       enabled: Boolean(tab === 'txs' && !blockQuery.isPlaceholderData && !blockQuery.isDegradedData),
-      placeholderData: generateListStub<'block_txs'>(TX, 50, { next_page_params: {
-        block_number: 9004925,
-        index: 49,
-        items_count: 50,
-      } }),
+      placeholderData: generateListStub<'block_txs'>(TX, 50, {
+        next_page_params: {
+          block_number: 9004925,
+          index: 49,
+          items_count: 50,
+        },
+      }),
       refetchOnMount: false,
       retry: (failureCount, error) => {
         if (isRefetchEnabled) {
@@ -129,7 +131,10 @@ export default function useBlockTxsQuery({ heightOrHash, blockQuery, tab }: Para
       };
     },
     placeholderData: GET_BLOCK_WITH_TRANSACTIONS,
-    enabled: publicClient !== undefined && tab === 'txs' && (blockQuery.isDegradedData || apiQuery.isError || apiQuery.errorUpdateCount > 0),
+    enabled:
+      publicClient !== undefined &&
+      tab === 'txs' &&
+      (blockQuery.isDegradedData || apiQuery.isError || apiQuery.errorUpdateCount > 0),
     retry: false,
     refetchOnMount: false,
   });
@@ -152,14 +157,16 @@ export default function useBlockTxsQuery({ heightOrHash, blockQuery, tab }: Para
     }
   }, [ rpcQuery.data, rpcQuery.isPlaceholderData ]);
 
-  const isRpcQuery = Boolean((
-    blockQuery.isDegradedData ||
-    ((apiQuery.isError || apiQuery.isPlaceholderData) && apiQuery.errorUpdateCount > 0)
-  ) && rpcQuery.data && publicClient);
+  const isRpcQuery = Boolean(
+    (blockQuery.isDegradedData ||
+      ((apiQuery.isError || apiQuery.isPlaceholderData) && apiQuery.errorUpdateCount > 0)) &&
+      rpcQuery.data &&
+      publicClient,
+  );
 
   const rpcQueryWithPages: QueryWithPagesResult<'block_txs'> = React.useMemo(() => {
     return {
-      ...rpcQuery as UseQueryResult<BlockTransactionsResponse, ResourceError>,
+      ...(rpcQuery as UseQueryResult<BlockTransactionsResponse, ResourceError>),
       pagination: emptyPagination,
       onFilterChange: () => {},
       onSortingChange: () => {},
