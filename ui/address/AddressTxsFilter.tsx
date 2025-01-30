@@ -40,6 +40,7 @@ const AddressTxsFilter = ({ onFilterChange, defaultFilter, isActive, isLoading }
           <MenuItemOption value="all">All</MenuItemOption>
           <MenuItemOption value="from">Outgoing transactions</MenuItemOption>
           <MenuItemOption value="to">Incoming transactions</MenuItemOption>
+          <MenuItemOption value="staking_transactions">Staking transactions</MenuItemOption>
         </MenuOptionGroup>
       </MenuList>
     </Menu>

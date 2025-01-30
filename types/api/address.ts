@@ -116,7 +116,7 @@ export interface AddressStakingTransactionsResponse {
   } | null;
 }
 
-export const AddressFromToFilterValues = [ 'from', 'to' ] as const;
+export const AddressFromToFilterValues = [ 'from', 'to', 'staking_transactions' ] as const;
 
 export type AddressFromToFilter = typeof AddressFromToFilterValues[number] | undefined;
 

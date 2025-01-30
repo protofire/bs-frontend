@@ -6,6 +6,7 @@ import type { StakingTransaction } from 'types/api/stakingTransaction';
 
 import { AddressHighlightProvider } from 'lib/contexts/addressHighlight';
 import useLazyRenderedList from 'lib/hooks/useLazyRenderedList';
+import { currencyUnits } from 'lib/units';
 import TheadSticky from 'ui/shared/TheadSticky';
 
 import StakingTxsTableItem from './StakingTxsTableItem';
@@ -34,6 +35,7 @@ const StakingTxsTable = ({
             <Th width="160px">Block</Th>
             <Th width="160px">Validator</Th>
             <Th width="160px">From</Th>
+            <Th width="160px">Value { `${ currencyUnits.ether }` }</Th>
           </Tr>
         </TheadSticky>
         <Tbody>

@@ -6,6 +6,7 @@ import type { StakingTransaction } from 'types/api/stakingTransaction';
 
 import useTimeAgoIncrement from 'lib/hooks/useTimeAgoIncrement';
 import AddressFromTo from 'ui/shared/address/AddressFromTo';
+import CurrencyValue from 'ui/shared/CurrencyValue';
 import AddressEntity from 'ui/shared/entities/address/AddressEntity';
 import BlockEntity from 'ui/shared/entities/block/BlockEntity';
 import StakingTxEntity from 'ui/shared/entities/stakingTx/StakingTxEntity';
@@ -84,6 +85,15 @@ const StakingTxsTableItem = ({ tx, currentAddress, isLoading }: Props) => {
           isLoading={ isLoading }
           mt="2px"
           mode="compact"
+        />
+      </Td>
+      <Td>
+        <CurrencyValue
+          value={ tx.type !== 'collect_rewards' ? tx.msg_amount : tx.claimed_reward }
+          accuracyUsd={ 2 }
+          accuracy={ 8 }
+          isLoading={ isLoading }
+          flexWrap="wrap"
         />
       </Td>
     </Tr>
