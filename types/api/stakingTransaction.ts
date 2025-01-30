@@ -30,4 +30,5 @@ export type StakingTransaction = {
   msg_slot_pub_key_to_add: string;
   msg_slot_pub_key_to_remove: string;
   claimed_reward: string | null;
+  exchange_rate: string | null;
 };

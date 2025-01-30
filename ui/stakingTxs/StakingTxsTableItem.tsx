@@ -93,6 +93,8 @@ const StakingTxsTableItem = ({ tx, currentAddress, isLoading }: Props) => {
           accuracyUsd={ 2 }
           accuracy={ 8 }
           isLoading={ isLoading }
+          exchangeRate={ tx.exchange_rate }
+          exchangeOnTooltip={ true }
           flexWrap="wrap"
         />
       </Td>

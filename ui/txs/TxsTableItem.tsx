@@ -193,6 +193,7 @@ const TxsTableItem = ({ tx, showBlockInfo, currentAddress, enableTimeIncrement, 
               value={ txValue }
               accuracy={ 4 }
               exchangeRate={ Number(txValue) > 0 ? getPriceByTimestamp(tx.timestamp) : null }
+              exchangeOnTooltip={ true }
               isLoading={ isLoading }
             />
           ) : (
