@@ -31,6 +31,7 @@ import AddressQrCode from 'ui/address/details/AddressQrCode';
 import AddressEnsDomains from 'ui/address/ensDomains/AddressEnsDomains';
 import SolidityscanReport from 'ui/address/SolidityscanReport';
 import useAddressQuery from 'ui/address/utils/useAddressQuery';
+import { useStakingQuery } from 'ui/address/utils/useStakingQuery';
 import AccountActionsMenu from 'ui/shared/AccountActionsMenu/AccountActionsMenu';
 import TextAd from 'ui/shared/ad/TextAd';
 import AddressAddToWallet from 'ui/shared/address/AddressAddToWallet';
@@ -54,6 +55,7 @@ const AddressPageContent = () => {
   const hash = getQueryParamString(router.query.hash);
 
   const addressQuery = useAddressQuery({ hash });
+  const stakingQuery = useStakingQuery({ hash });
 
   const { toOne } = useAddressFormatContext();
 
@@ -182,7 +184,7 @@ const AddressPageContent = () => {
       data={ addressQuery.data }
       isLoading={ isLoading }
       tagsBefore={ [
-        !addressQuery.data?.is_contract ? { label: 'eoa', display_name: 'EOAAA' } : undefined,
+        !addressQuery.data?.is_contract ? { label: 'eoa', display_name: 'EOA' } : undefined,
         config.features.validators.isEnabled && addressQuery.data?.has_validated_blocks ?
           { label: 'validator', display_name: 'Validator' } :
           undefined,
@@ -273,7 +275,7 @@ const AddressPageContent = () => {
           </EntityBase.Link>
         </Box>
       ) }
-      <AddressDetails key={ shardId } addressQuery={ addressQuery } scrollRef={ tabsScrollRef }/>
+      <AddressDetails key={ shardId } addressQuery={ addressQuery } stakingQuery={ stakingQuery } scrollRef={ tabsScrollRef }/>
       { /* should stay before tabs to scroll up with pagination */ }
       <Box ref={ tabsScrollRef }></Box>
       { isLoading || addressTabsCountersQuery.isPlaceholderData ? <TabsSkeleton tabs={ tabs }/> : content }

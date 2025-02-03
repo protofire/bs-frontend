@@ -16,9 +16,14 @@ type Props = {
   top: number;
   currentAddress?: string;
   isLoading?: boolean;
-};
+}
 
-const StakingTxsTable = ({ txs, top, currentAddress, isLoading }: Props) => {
+const StakingTxsTable = ({
+  txs,
+  top,
+  currentAddress,
+  isLoading,
+}: Props) => {
   const { cutRef, renderedItemsNum } = useLazyRenderedList(txs, !isLoading);
   return (
     <AddressHighlightProvider>
@@ -30,7 +35,7 @@ const StakingTxsTable = ({ txs, top, currentAddress, isLoading }: Props) => {
             <Th width="160px">Block</Th>
             <Th width="160px">Validator</Th>
             <Th width="160px">From</Th>
-            <Th width="160px">{ `Value ${ currencyUnits.ether }` }</Th>
+            <Th width="160px">Value { `${ currencyUnits.ether }` }</Th>
           </Tr>
         </TheadSticky>
         <Tbody>

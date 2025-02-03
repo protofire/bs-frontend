@@ -84,6 +84,9 @@ const StakingTxInfo = ({ data, isLoading }: Props) => {
       <DetailsInfoItem title="Type" hint="Type of staking transaction" isLoading={ isLoading }>
         <StakingTxType data={ data.type } isLoading={ isLoading }/>
       </DetailsInfoItem>
+      <DetailsInfoItem title="Nonce" hint="Nonce of the transaction" isLoading={ isLoading }>
+        <Text>{ data.nonce }</Text>
+      </DetailsInfoItem>
       { data.claimed_reward && (
         <DetailsInfoItem
           title="Claimed Reward"
@@ -100,9 +103,6 @@ const StakingTxInfo = ({ data, isLoading }: Props) => {
           />
         </DetailsInfoItem>
       ) }
-      <DetailsInfoItem title="Nonce" hint="Nonce of the transaction" isLoading={ isLoading }>
-        <Text>{ data.nonce }</Text>
-      </DetailsInfoItem>
       <DetailsInfoItem title="Index" hint="Transaction index" isLoading={ isLoading }>
         <Text>{ data.transaction_index }</Text>
       </DetailsInfoItem>

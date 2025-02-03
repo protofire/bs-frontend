@@ -357,14 +357,11 @@ const TxInfo = ({ data, isLoading, socketStatus }: Props) => {
         </DetailsInfoItem>
       ) }
       { data.claimed_reward && (
-        <DetailsInfoItem
-          title="Claimed Reward"
-          hint="Staking reward claimed from this transaction"
-          isLoading={ isLoading }
-        >
+        <DetailsInfoItem title="Claimed Reward" hint="Reward claimed from this transaction" isLoading={ isLoading }>
           <CurrencyValue
             value={ data.claimed_reward }
             currency={ currencyUnits.ether }
+            exchangeRate={ data.exchange_rate }
             accuracyUsd={ 2 }
             accuracy={ 8 }
             isLoading={ isLoading }
@@ -381,6 +378,7 @@ const TxInfo = ({ data, isLoading, socketStatus }: Props) => {
           <CurrencyValue
             value={ data.delegated_amount }
             currency={ currencyUnits.ether }
+            exchangeRate={ data.exchange_rate }
             accuracyUsd={ 2 }
             accuracy={ 8 }
             isLoading={ isLoading }
@@ -397,6 +395,7 @@ const TxInfo = ({ data, isLoading, socketStatus }: Props) => {
           <CurrencyValue
             value={ data.undelegated_amount }
             currency={ currencyUnits.ether }
+            exchangeRate={ data.exchange_rate }
             accuracyUsd={ 2 }
             accuracy={ 8 }
             isLoading={ isLoading }

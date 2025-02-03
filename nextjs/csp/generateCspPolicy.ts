@@ -15,6 +15,7 @@ function generateCspPolicy() {
     descriptors.safe(),
     descriptors.sentry(),
     descriptors.walletConnect(),
+    descriptors.binance(),
   );
 
   return makePolicyString(policyDescriptor);

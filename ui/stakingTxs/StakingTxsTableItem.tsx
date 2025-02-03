@@ -41,7 +41,11 @@ const StakingTxsTableItem = ({ tx, currentAddress, isLoading }: Props) => {
             truncation="constant_long"
           />
           { tx.timestamp && (
-            <Skeleton color="text_secondary" fontWeight="400" isLoaded={ !isLoading }>
+            <Skeleton
+              color="text_secondary"
+              fontWeight="400"
+              isLoaded={ !isLoading }
+            >
               <span>{ timeAgo }</span>
             </Skeleton>
           ) }
@@ -51,7 +55,14 @@ const StakingTxsTableItem = ({ tx, currentAddress, isLoading }: Props) => {
         <StakingTxType isLoading={ isLoading } data={ tx.type }/>
       </Td>
       <Td>
-        <BlockEntity isLoading={ isLoading } number={ tx.block } noIcon fontSize="sm" lineHeight={ 6 } fontWeight={ 500 }/>
+        <BlockEntity
+          isLoading={ isLoading }
+          number={ tx.block }
+          noIcon
+          fontSize="sm"
+          lineHeight={ 6 }
+          fontWeight={ 500 }
+        />
       </Td>
       <Td>
         { tx.msg_validator_address ? (
@@ -82,6 +93,8 @@ const StakingTxsTableItem = ({ tx, currentAddress, isLoading }: Props) => {
           accuracyUsd={ 2 }
           accuracy={ 8 }
           isLoading={ isLoading }
+          exchangeRate={ tx.exchange_rate }
+          exchangeOnTooltip={ true }
           flexWrap="wrap"
         />
       </Td>

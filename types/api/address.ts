@@ -56,13 +56,13 @@ export type AddressNFT = TokenInstance & {
   token: TokenInfo;
   token_type: Omit<TokenType, 'ERC-20'>;
   value: string;
-};
+}
 
 export type AddressCollection = {
   token: TokenInfo;
   amount: string;
   token_instances: Array<Omit<AddressNFT, 'token'>>;
-};
+}
 
 export interface AddressTokensResponse {
   items: Array<AddressTokenBalance>;
@@ -118,11 +118,11 @@ export interface AddressStakingTransactionsResponse {
 
 export const AddressFromToFilterValues = [ 'from', 'to', 'staking_transactions' ] as const;
 
-export type AddressFromToFilter = (typeof AddressFromToFilterValues)[number] | undefined;
+export type AddressFromToFilter = typeof AddressFromToFilterValues[number] | undefined;
 
 export type AddressTxsFilters = {
   filter: AddressFromToFilter;
-};
+}
 
 export interface AddressTokenTransferResponse {
   items: Array<TokenTransfer>;
@@ -133,15 +133,15 @@ export type AddressTokenTransferFilters = {
   filter?: AddressFromToFilter;
   type?: Array<TokenType>;
   token?: string;
-};
+}
 
 export type AddressTokensFilter = {
   type: TokenType;
-};
+}
 
 export type AddressNFTTokensFilter = {
   type: Array<NFTTokenType> | undefined;
-};
+}
 
 export interface AddressCoinBalanceHistoryItem {
   block_number: number;
@@ -162,7 +162,7 @@ export interface AddressCoinBalanceHistoryResponse {
 export type AddressCoinBalanceHistoryChart = Array<{
   date: string;
   value: string;
-}>;
+}>
 
 export interface AddressBlocksValidatedResponse {
   items: Array<Block>;
@@ -187,7 +187,7 @@ export type AddressWithdrawalsResponse = {
     index: number;
     items_count: number;
   };
-};
+}
 
 export type AddressWithdrawalsItem = {
   amount: string;
@@ -195,7 +195,7 @@ export type AddressWithdrawalsItem = {
   index: number;
   timestamp: string;
   validator_index: number;
-};
+}
 
 export type AddressTabsCounters = {
   internal_txs_count: number | null;
@@ -206,4 +206,4 @@ export type AddressTabsCounters = {
   staking_transactions_count: number | null;
   validations_count: number | null;
   withdrawals_count: number | null;
-};
+}

@@ -1,10 +1,11 @@
-import { Tr, Td, VStack, Skeleton, Button } from '@chakra-ui/react';
+import { Tr, Td, VStack, Skeleton, Button, Box, Tooltip } from '@chakra-ui/react';
 import { motion } from 'framer-motion';
-import React from 'react';
+import React, { useMemo } from 'react';
 
 import type { Transaction } from 'types/api/transaction';
 
 import config from 'configs/app';
+import dayjs from 'lib/date/dayjs';
 import { toBech32 } from 'lib/formatting/formatAddress';
 import useTimeAgoIncrement from 'lib/hooks/useTimeAgoIncrement';
 import AddressFromTo from 'ui/shared/address/AddressFromTo';
@@ -20,6 +21,8 @@ import TxWatchListTags from 'ui/shared/tx/TxWatchListTags';
 import useTxMethod from 'ui/tx/useTxMethod';
 import TxAdditionalInfo from 'ui/txs/TxAdditionalInfo';
 
+import { useTokenPrice } from '../../lib/contexts/tokenPrice';
+import getCurrencyValue from '../../lib/getCurrencyValue';
 import TxType from './TxType';
 
 type Props = {
@@ -82,6 +85,32 @@ const TxsTableItem = ({ tx, showBlockInfo, currentAddress, enableTimeIncrement, 
   const timeAgo = useTimeAgoIncrement(tx.timestamp, enableTimeIncrement);
 
   const method = useTxMethod(tx);
+  const { getPriceByTimestamp } = useTokenPrice();
+
+  const txValue = useMemo(() => {
+    if (tx.claimed_reward) {
+      return tx.claimed_reward;
+    } else if (tx.delegated_amount) {
+      return tx.delegated_amount;
+    } else if (tx.undelegated_amount) {
+      return tx.undelegated_amount;
+    } else {
+      return tx.value;
+    }
+  }, [ tx ]);
+
+  const currentTxValue = useMemo(() => {
+    const exchangeRate = getPriceByTimestamp(Date.now());
+    if (exchangeRate) {
+      const value = getCurrencyValue({
+        value: txValue,
+        accuracy: 4,
+        exchangeRate: exchangeRate.toString(),
+      });
+      return value.usd;
+    }
+    return null;
+  }, [ getPriceByTimestamp, txValue ]);
 
   return (
     <Tr
@@ -159,15 +188,29 @@ const TxsTableItem = ({ tx, showBlockInfo, currentAddress, enableTimeIncrement, 
       </Td>
       { !config.UI.views.tx.hiddenFields?.value && (
         <Td isNumeric>
-          { /* eslint-disable no-nested-ternary */ }
-          { tx.claimed_reward ? (
-            <CurrencyValue value={ tx.claimed_reward } accuracy={ 8 } isLoading={ isLoading }/>
-          ) : tx.delegated_amount ? (
-            <CurrencyValue value={ tx.delegated_amount } accuracy={ 8 } isLoading={ isLoading }/>
-          ) : tx.undelegated_amount ? (
-            <CurrencyValue value={ tx.undelegated_amount } accuracy={ 8 } isLoading={ isLoading }/>
+          { dayjs().diff(dayjs(tx.timestamp), 'day') < 1 || Number(txValue) === 0 ? (
+            <CurrencyValue
+              value={ txValue }
+              accuracy={ 4 }
+              exchangeRate={ Number(txValue) > 0 ? getPriceByTimestamp(tx.timestamp) : null }
+              exchangeOnTooltip={ true }
+              isLoading={ isLoading }
+            />
           ) : (
-            <CurrencyValue value={ tx.value } accuracy={ 8 } isLoading={ isLoading }/>
+            <Tooltip
+              label={ `Displaying value on ${ dayjs(tx.timestamp).format(
+                'DD MMM YYYY',
+              ) }. Current value: $${ currentTxValue }` }
+            >
+              <Box style={{ cursor: 'pointer' }}>
+                <CurrencyValue
+                  value={ txValue }
+                  accuracy={ 4 }
+                  exchangeRate={ Number(txValue) > 0 ? getPriceByTimestamp(tx.timestamp) : null }
+                  isLoading={ isLoading }
+                />
+              </Box>
+            </Tooltip>
           ) }
         </Td>
       ) }
