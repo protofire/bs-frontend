@@ -24,6 +24,7 @@ interface AddressBalance {
   liquidBalance: string;
   stakedBalance: string;
   unstakedBalance: string;
+  rewardBalance: string;
   totalBalance: string;
 }
 
@@ -31,6 +32,7 @@ const initialAddressBalance: AddressBalance = {
   liquidBalance: '0',
   stakedBalance: '0',
   unstakedBalance: '0',
+  rewardBalance: '0',
   totalBalance: '0',
 };
 
@@ -81,6 +83,7 @@ const AddressBalance = ({ data, isLoading, stakingData }: Props) => {
       liquidBalance: liquidBalance ? liquidBalance : '0',
       stakedBalance: '0',
       unstakedBalance: '0',
+      rewardBalance: '0',
       totalBalance: '0',
     };
 
@@ -88,6 +91,11 @@ const AddressBalance = ({ data, isLoading, stakingData }: Props) => {
       if (delegation.amount) {
         balances.stakedBalance = BigNumber.sum(balances.stakedBalance, delegation.amount).toString();
       }
+
+      if (delegation.reward) {
+        balances.rewardBalance = BigNumber.sum(balances.rewardBalance, delegation.reward).toString();
+      }
+
       if (delegation.Undelegations && delegation.Undelegations?.length > 0) {
         delegation.Undelegations.forEach((unstake) => {
           balances.unstakedBalance = BigNumber.sum(balances.unstakedBalance, unstake.Amount).toString();
@@ -151,6 +159,24 @@ const AddressBalance = ({ data, isLoading, stakingData }: Props) => {
       </DetailsInfoItem>
       { stakingData && stakingData.length > 0 && (
         <>
+          <DetailsInfoItem
+            title="Reward Balance"
+            hint={ `Address reward balance in ${ currencyUnits.ether }.` }
+            flexWrap="nowrap"
+            alignItems="flex-start"
+            isLoading={ isLoading }
+          >
+            <CurrencyValue
+              value={ addressBalances.rewardBalance }
+              exchangeRate={ data.exchange_rate }
+              decimals={ String(config.chain.currency.decimals) }
+              currency={ currencyUnits.ether }
+              accuracyUsd={ 2 }
+              accuracy={ 8 }
+              flexWrap="wrap"
+              isLoading={ isLoading }
+            />
+          </DetailsInfoItem>
           <DetailsInfoItem
             title="Staked Balance"
             hint={ `Address staked balance in ${ currencyUnits.ether }.` }
