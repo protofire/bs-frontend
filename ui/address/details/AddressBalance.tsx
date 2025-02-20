@@ -107,6 +107,7 @@ const AddressBalance = ({ data, isLoading, stakingData }: Props) => {
       balances.liquidBalance,
       balances.stakedBalance,
       balances.unstakedBalance,
+      balances.rewardBalance,
     ).toString();
 
     return balances;
