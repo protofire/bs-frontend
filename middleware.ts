@@ -19,6 +19,16 @@ export function middleware(req: NextRequest) {
     return accountResponse;
   }
 
+  const pathname = req.nextUrl.pathname;
+  const accept = req.headers.get('accept') || '';
+
+  // If browser tries to access a data route as HTML, redirect.
+  // This fixes the caching of pageProps which is not correct, only HTML for a
+  // given page should be cached.
+  if (pathname.startsWith('/_next/') && accept.includes('text/html')) {
+    return NextResponse.redirect(new URL('/', req.url));
+  }
+
   const end = Date.now();
   const res = NextResponse.next();
   res.headers.append('Content-Security-Policy', cspPolicy);
