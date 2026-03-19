@@ -105,9 +105,6 @@ const Footer = () => {
               <IconSvg name="networks/logo-placeholder-blockscout" width="80px" height={ 4 }/>
             </Link>
           </Flex>
-          <Text fontSize="xs" color="text_secondary" mb={ 2 }>
-            Blockscout is a tool for inspecting and analyzing EVM based blockchains. Blockchain explorer for Ethereum Networks.
-          </Text>
           { backendVersionData?.backend_version && (
             <Text fontSize="xs">
               Backend: { apiVersionUrl ? (
