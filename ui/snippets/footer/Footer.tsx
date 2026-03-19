@@ -1,5 +1,5 @@
 import type { GridProps } from '@chakra-ui/react';
-import { Box, Grid, Flex, Link, VStack, Skeleton } from '@chakra-ui/react';
+import { Box, Grid, Flex, Link, VStack, Skeleton, Text } from '@chakra-ui/react';
 import { useQuery } from '@tanstack/react-query';
 import React from 'react';
 
@@ -7,14 +7,18 @@ import type { CustomLinksGroup } from 'types/footerLinks';
 
 import config from 'configs/app';
 import type { ResourceError } from 'lib/api/resources';
+import useApiQuery from 'lib/api/useApiQuery';
 import useFetch from 'lib/hooks/useFetch';
 import IconSvg from 'ui/shared/IconSvg';
 import NetworkAddToWallet from 'ui/shared/NetworkAddToWallet';
 
 import FooterLinkItem from './FooterLinkItem';
 import IntTxsIndexingStatus from './IntTxsIndexingStatus';
+import getApiVersionUrl from './utils/getApiVersionUrl';
 
 const MAX_LINKS_COLUMNS = 4;
+
+const FRONT_COMMIT_URL = `https://github.com/protofire/bs-frontend/commit/${ config.UI.footer.frontendCommit }`;
 
 const logoColor = { base: 'blue.600', _dark: 'white' };
 
@@ -41,6 +45,11 @@ const Footer = () => {
   ];
 
   const fetch = useFetch();
+
+  const { data: backendVersionData } = useApiQuery('config_backend_version', {
+    queryOptions: { staleTime: Infinity },
+  });
+  const apiVersionUrl = getApiVersionUrl(backendVersionData?.backend_version);
 
   const { isPlaceholderData, data: linksData } = useQuery<
   unknown,
@@ -80,6 +89,56 @@ const Footer = () => {
     [],
   );
 
+  const renderProjectInfo = React.useCallback(
+    (gridArea?: GridProps['gridArea']) => {
+      return (
+        <Box gridArea={ gridArea }>
+          <Flex columnGap={ 2 } fontSize="xs" alignItems="center" mb={ 2 }>
+            <span>Made with</span>
+            <Link
+              href="https://www.blockscout.com"
+              target="_blank"
+              display="inline-flex"
+              color={ logoColor }
+              _hover={{ color: logoColor }}
+            >
+              <IconSvg name="networks/logo-placeholder-blockscout" width="80px" height={ 4 }/>
+            </Link>
+          </Flex>
+          <Text fontSize="xs" color="text_secondary" mb={ 2 }>
+            Blockscout is a tool for inspecting and analyzing EVM based blockchains. Blockchain explorer for Ethereum Networks.
+          </Text>
+          { backendVersionData?.backend_version && (
+            <Text fontSize="xs">
+              Backend: { apiVersionUrl ? (
+                <Link href={ apiVersionUrl } target="_blank">
+                  { backendVersionData.backend_version }
+                </Link>
+              ) : (
+                <span>{ backendVersionData.backend_version }</span>
+              ) }
+            </Text>
+          ) }
+          { !backendVersionData && (
+            <Skeleton w="120px" h="16px" mb={ 1 }/>
+          ) }
+          { config.UI.footer.frontendCommit && (
+            <Text fontSize="xs">
+              Frontend: { ' ' }
+              <Link href={ FRONT_COMMIT_URL } target="_blank">
+                { config.UI.footer.frontendCommit }
+              </Link>
+            </Text>
+          ) }
+          <Text fontSize="xs" mt={ 2 } color="text_secondary">
+            Copyright © Blockscout Limited 2023-2026
+          </Text>
+        </Box>
+      );
+    },
+    [ backendVersionData, apiVersionUrl ],
+  );
+
   const containerProps: GridProps = {
     as: 'footer',
     px: { base: 4, lg: 12 },
@@ -94,18 +153,7 @@ const Footer = () => {
       <Grid { ...containerProps }>
         <div>
           { renderNetworkInfo() }
-          <Flex columnGap={ 2 } fontSize="xs" alignItems="center">
-            <span>Made with</span>
-            <Link
-              href="https://www.blockscout.com"
-              target="_blank"
-              display="inline-flex"
-              color={ logoColor }
-              _hover={{ color: logoColor }}
-            >
-              <IconSvg name="networks/logo-placeholder-blockscout" width="80px" height={ 4 }/>
-            </Link>
-          </Flex>
+          { renderProjectInfo() }
         </div>
 
         <Grid
@@ -157,23 +205,13 @@ const Footer = () => {
       gridTemplateAreas={{
         lg: `
           "network links-top"
+          "info links-top"
         `,
       }}
     >
       { renderNetworkInfo({ lg: 'network' }) }
 
-      <Flex columnGap={ 2 } fontSize="xs" alignItems="center">
-        <span>Made with</span>
-        <Link
-          href="https://www.blockscout.com"
-          target="_blank"
-          display="inline-flex"
-          color={ logoColor }
-          _hover={{ color: logoColor }}
-        >
-          <IconSvg name="networks/logo-placeholder-blockscout" width="80px" height={ 4 }/>
-        </Link>
-      </Flex>
+      { renderProjectInfo({ lg: 'info' }) }
 
       <Grid
         gridArea={{ lg: 'links-top' }}
