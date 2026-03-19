@@ -121,7 +121,7 @@ const Footer = () => {
   const renderProjectInfo = React.useCallback((gridArea?: GridProps['gridArea']) => {
     return (
       <Box gridArea={ gridArea }>
-        <Flex columnGap={ 2 } textStyle="xs" alignItems="center" mb={ 3 }>
+        <Flex columnGap={ 2 } fontSize="xs" alignItems="center" mb={ 3 }>
           <span>Made with</span>
           <Link
             href="https://www.blockscout.com"
