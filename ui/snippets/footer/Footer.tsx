@@ -10,6 +10,7 @@ import type { ResourceError } from 'lib/api/resources';
 import useApiQuery from 'lib/api/useApiQuery';
 import useFetch from 'lib/hooks/useFetch';
 import useIssueUrl from 'lib/hooks/useIssueUrl';
+import IconSvg from 'ui/shared/IconSvg';
 import NetworkAddToWallet from 'ui/shared/NetworkAddToWallet';
 
 import FooterLinkItem from './FooterLinkItem';
@@ -17,6 +18,8 @@ import IntTxsIndexingStatus from './IntTxsIndexingStatus';
 import getApiVersionUrl from './utils/getApiVersionUrl';
 
 const MAX_LINKS_COLUMNS = 4;
+
+const logoColor = { base: 'blue.600', _dark: 'white' };
 
 const FRONT_VERSION_URL = `https://github.com/blockscout/frontend/tree/${ config.UI.footer.frontendVersion }`;
 const FRONT_COMMIT_URL = `https://github.com/blockscout/frontend/commit/${ config.UI.footer.frontendCommit }`;
@@ -118,7 +121,18 @@ const Footer = () => {
   const renderProjectInfo = React.useCallback((gridArea?: GridProps['gridArea']) => {
     return (
       <Box gridArea={ gridArea }>
-        <Link fontSize="xs" href="https://www.blockscout.com">blockscout.com</Link>
+        <Flex columnGap={ 2 } textStyle="xs" alignItems="center" mb={ 3 }>
+          <span>Made with</span>
+          <Link
+            href="https://www.blockscout.com"
+            target="_blank"
+            display="inline-flex"
+            color={ logoColor }
+            _hover={{ color: logoColor }}
+          >
+            <IconSvg name="networks/logo-placeholder-blockscout" width="80px" height={ 4 }/>
+          </Link>
+        </Flex>
         <Text mt={ 3 } fontSize="xs">
           Blockscout is a tool for inspecting and analyzing EVM based blockchains. Blockchain explorer for Ethereum Networks.
         </Text>
