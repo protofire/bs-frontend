@@ -1,5 +1,5 @@
 import type { GridProps } from '@chakra-ui/react';
-import { Box, Grid, Flex, VStack, Skeleton } from '@chakra-ui/react';
+import { Box, Grid, Flex, Link, VStack, Skeleton } from '@chakra-ui/react';
 import { useQuery } from '@tanstack/react-query';
 import React from 'react';
 
@@ -8,12 +8,15 @@ import type { CustomLinksGroup } from 'types/footerLinks';
 import config from 'configs/app';
 import type { ResourceError } from 'lib/api/resources';
 import useFetch from 'lib/hooks/useFetch';
+import IconSvg from 'ui/shared/IconSvg';
 import NetworkAddToWallet from 'ui/shared/NetworkAddToWallet';
 
 import FooterLinkItem from './FooterLinkItem';
 import IntTxsIndexingStatus from './IntTxsIndexingStatus';
 
 const MAX_LINKS_COLUMNS = 4;
+
+const logoColor = { base: 'blue.600', _dark: 'white' };
 
 const Footer = () => {
   const BLOCKSCOUT_LINKS = [
@@ -89,7 +92,21 @@ const Footer = () => {
   if (config.UI.footer.links) {
     return (
       <Grid { ...containerProps }>
-        <div>{ renderNetworkInfo() }</div>
+        <div>
+          { renderNetworkInfo() }
+          <Flex columnGap={ 2 } textStyle="xs" alignItems="center">
+            <span>Made with</span>
+            <Link
+              href="https://www.blockscout.com"
+              target="_blank"
+              display="inline-flex"
+              color={ logoColor }
+              _hover={{ color: logoColor }}
+            >
+              <IconSvg name="networks/logo-placeholder" width="80px" height={ 4 }/>
+            </Link>
+          </Flex>
+        </div>
 
         <Grid
           gap={{
@@ -144,6 +161,19 @@ const Footer = () => {
       }}
     >
       { renderNetworkInfo({ lg: 'network' }) }
+
+      <Flex columnGap={ 2 } textStyle="xs" alignItems="center">
+        <span>Made with</span>
+        <Link
+          href="https://www.blockscout.com"
+          target="_blank"
+          display="inline-flex"
+          color={ logoColor }
+          _hover={{ color: logoColor }}
+        >
+          <IconSvg name="networks/logo-placeholder" width="80px" height={ 4 }/>
+        </Link>
+      </Flex>
 
       <Grid
         gridArea={{ lg: 'links-top' }}
