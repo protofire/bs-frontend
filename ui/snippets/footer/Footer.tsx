@@ -94,7 +94,7 @@ const Footer = () => {
       <Grid { ...containerProps }>
         <div>
           { renderNetworkInfo() }
-          <Flex columnGap={ 2 } textStyle="xs" alignItems="center">
+          <Flex columnGap={ 2 } fontSize="xs" alignItems="center">
             <span>Made with</span>
             <Link
               href="https://www.blockscout.com"
@@ -162,7 +162,7 @@ const Footer = () => {
     >
       { renderNetworkInfo({ lg: 'network' }) }
 
-      <Flex columnGap={ 2 } textStyle="xs" alignItems="center">
+      <Flex columnGap={ 2 } fontSize="xs" alignItems="center">
         <span>Made with</span>
         <Link
           href="https://www.blockscout.com"
