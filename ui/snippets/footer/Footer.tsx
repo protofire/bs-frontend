@@ -103,7 +103,7 @@ const Footer = () => {
               color={ logoColor }
               _hover={{ color: logoColor }}
             >
-              <IconSvg name="networks/logo-placeholder" width="80px" height={ 4 }/>
+              <IconSvg name="networks/logo-placeholder-blockscout" width="80px" height={ 4 }/>
             </Link>
           </Flex>
         </div>
@@ -171,7 +171,7 @@ const Footer = () => {
           color={ logoColor }
           _hover={{ color: logoColor }}
         >
-          <IconSvg name="networks/logo-placeholder" width="80px" height={ 4 }/>
+          <IconSvg name="networks/logo-placeholder-blockscout" width="80px" height={ 4 }/>
         </Link>
       </Flex>
 
