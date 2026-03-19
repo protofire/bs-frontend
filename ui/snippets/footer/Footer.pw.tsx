@@ -44,6 +44,14 @@ base.describe('with custom links, max cols', () => {
       body: JSON.stringify({ finished_indexing: false, indexed_internal_transactions_ratio: 0.1 }),
     }));
 
+    await page.route(BACKEND_VERSION_API_URL, (route) => {
+      return route.fulfill({
+        body: JSON.stringify({
+          backend_version: 'v5.2.0-beta.+commit.1ce1a355',
+        }),
+      });
+    });
+
     await mount(
       <TestApp>
         <Footer/>
