@@ -12,6 +12,7 @@ import config from 'configs/app';
 import { useAddressFormatContext } from 'lib/contexts/addressFormat';
 
 import ColorModeSwitch from './ColorModeSwitch';
+import SunsetBanner from './SunsetBanner';
 import SwapButton from './SwapButton';
 import TopBarStats from './TopBarStats';
 
@@ -59,6 +60,7 @@ const TopBar = () => {
 
   return (
     <>
+      <SunsetBanner/>
       <Flex
         py={ 2 }
         px={ 6 }
